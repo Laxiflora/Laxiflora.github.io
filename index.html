@@ -61,12 +61,12 @@
       </nav>
       <nav id="sub-nav">
         
-          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS"></a>
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
         
-        <a id="nav-search-btn" class="nav-icon" title="Buscar"></a>
+        <a id="nav-search-btn" class="nav-icon" title="Suche"></a>
       </nav>
       <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Buscar"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://laxiflora.github.io"></form>
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Suche"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://laxiflora.github.io"></form>
       </div>
     </div>
   </div>
@@ -75,16 +75,12 @@
       <div class="outer">
         <section id="main">
   
-    <article id="post-李弘毅-機器學習-Week1正課" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+    <article id="post-Hexo使用技巧" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
-    <a href="/2022/06/23/%E6%9D%8E%E5%BC%98%E6%AF%85-%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92-Week1%E6%AD%A3%E8%AA%B2/" class="article-date">
-  <time class="dt-published" datetime="2022-06-23T14:49:25.000Z" itemprop="datePublished">2022-06-23</time>
+    <a href="/2022/06/28/Hexo%E4%BD%BF%E7%94%A8%E6%8A%80%E5%B7%A7/" class="article-date">
+  <time class="dt-published" datetime="2022-06-28T13:13:03.000Z" itemprop="datePublished">2022-06-28</time>
 </a>
     
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/AAA/">AAA</a>
-  </div>
-
   </div>
   <div class="article-inner">
     
@@ -93,7 +89,7 @@
         
   
     <h1 itemprop="name">
-      <a class="p-name article-title" href="/2022/06/23/%E6%9D%8E%E5%BC%98%E6%AF%85-%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92-Week1%E6%AD%A3%E8%AA%B2/">李弘毅_機器學習_Week1正課</a>
+      <a class="p-name article-title" href="/2022/06/28/Hexo%E4%BD%BF%E7%94%A8%E6%8A%80%E5%B7%A7/">Hexo使用技巧</a>
     </h1>
   
 
@@ -101,70 +97,142 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <p>機器學習，就是用機器的力量幫忙找出一個合適的函數<br>深度學習，就是用神經網路的方法來操作機器</p>
-<h2 id="Sequence-Container"><a href="#Sequence-Container" class="headerlink" title="Sequence Container"></a>Sequence Container</h2><ul>
-<li>這類的容器資料是有序存放的</li>
-<li>常用範例如Vector、Deque、List</li>
+        <h1 id="目錄"><a href="#目錄" class="headerlink" title="目錄"></a>目錄</h1><p><a href="#%E5%A6%82%E4%BD%95%E5%9C%A8git-repo%E8%A3%A1%E9%9D%A2%E5%8A%A0%E4%B8%8AREADME">如何在get repo裡面加上README ?</a><br><a href="#%E5%A6%82%E4%BD%95%E5%9C%A8hexo%E8%A8%AD%E7%BD%AE%E7%9A%84%E7%B6%B2%E9%A0%81%E6%8F%92%E5%85%A5%E5%9C%96%E7%89%87">如何在hexo設置的網頁插入圖片 ?</a><br><a href="#%E5%A6%82%E4%BD%95%E5%9C%A8hexo%E8%A8%AD%E7%BD%AE%E7%B6%B2%E9%A0%81%E9%8C%A8%E9%BB%9E">如何在hexo設置網頁錨點 ?</a></p>
+<h1 id="如何在git-repo裡面加-上README"><a href="#如何在git-repo裡面加-上README" class="headerlink" title="如何在git repo裡面加(((上README"></a>如何在git repo裡面加(((上README</h1><ul>
+<li>由於hexo會幫你自動把md檔轉成html上傳github，因此直接在_posts裡面新增README是不可行的</li>
 </ul>
-<h3 id="Vector-常用"><a href="#Vector-常用" class="headerlink" title="Vector(常用)"></a>Vector(常用)</h3><ul>
-<li>類似一個動態大小的陣列</li>
-<li>支援隨機存取</li>
-<li>保證記憶體空間連續 (可善用Spatial Locality)</li>
-<li>雙頭皆可加入元素，且加入與刪除的複雜度其平攤成本均為O(1)</li>
-<li>相比於Deque，insertion in rear在速度上更有利</li>
-<li>一般建議除非很清楚知道使用其他結構的原因，不然建議使用Vector</li>
+<h2 id="Step1"><a href="#Step1" class="headerlink" title="Step1"></a>Step1</h2><ul>
+<li>到_config.yml裡面找到#Directory子項，在裡面的skip_render補上README.md</li>
 </ul>
-<h3 id="Deque"><a href="#Deque" class="headerlink" title="Deque"></a>Deque</h3><ul>
-<li>又名double-ended queue</li>
-<li>跟vector很像，但是不保證記憶體空間連續</li>
-<li>相比於Vector，insertion in front在速度上更有利</li>
+<h2 id="Step2"><a href="#Step2" class="headerlink" title="Step2"></a>Step2</h2><ul>
+<li>完成以後就可以直接在source&#x2F;_posts裡面直接補上README囉~上傳的時候也可以正常顯示了<br><img src="/../images/20220621_4.png"></li>
 </ul>
-<h3 id="List"><a href="#List" class="headerlink" title="List"></a>List</h3><ul>
-<li>以doubled link list實作</li>
-<li><a target="_blank" rel="noopener" href="https://imgur.com/a/Jc894yi?third_party=1#_=_">對於任意位置的插入與刪除均為O(1)</a></li>
-<li>若是要存取中間的元素，仍然需要整個遍歷過一遍</li>
+<h3 id="回目錄"><a href="#回目錄" class="headerlink" title="(回目錄)"></a><a href="#%E7%9B%AE%E9%8C%84">(回目錄)</a></h3><hr>
+<h1 id="如何在hexo設置的網頁插入圖片"><a href="#如何在hexo設置的網頁插入圖片" class="headerlink" title="如何在hexo設置的網頁插入圖片"></a>如何在hexo設置的網頁插入圖片</h1><ul>
+<li>如果直接在source&#x2F;image放入圖片並且在md連連結的話，會連不上圖片</li>
+<li>可以使用admin套件來協助</li>
 </ul>
-<h2 id="Associative-Container"><a href="#Associative-Container" class="headerlink" title="Associative Container"></a>Associative Container</h2><ul>
-<li>這類容器中的元素無序存放，但通常元素之間有對應關係</li>
-<li>常用範例如Set、Multiset、Map、Multimap</li>
+<h2 id="Step1-1"><a href="#Step1-1" class="headerlink" title="Step1"></a>Step1</h2><p>在終端機輸入</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$npm install hexo-admin --save</span><br></pre></td></tr></table></figure>
+<p>來安裝admin套件</p>
+<h2 id="Step2-1"><a href="#Step2-1" class="headerlink" title="Step2"></a>Step2</h2><ul>
+<li>安裝完以後，在localhost狀態下補一個<code>/admin</code>就可以進入admin介面</li>
+<li>在admin介面可以直接看到你的所有貼文，按下筆進入編輯，在這頁面下直接貼上圖片即可</li>
 </ul>
-<h3 id="Set"><a href="#Set" class="headerlink" title="Set"></a>Set</h3><ul>
-<li>如數學集合定義，集合內同樣的元素只允許存在1個，若是重複加入同樣元素則會被忽略</li>
+<p><img src="/../images/20220628_1.png"></p>
+<ul>
+<li>在貼上成功以後會出現<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">![upload successful](\\images\yourPicName.png\)</span><br></pre></td></tr></table></figure>
+請把<code>\</code>改成<code>/</code>並且把<code>\\</code>改成<code>../</code>即可 (Win11，其他系統可能改法不同，請依照系統特性修改)</li>
 </ul>
-<h3 id="Multiset"><a href="#Multiset" class="headerlink" title="Multiset"></a>Multiset</h3><ul>
-<li>這類集合允許重複的元素存在於集合中，這個結構會追蹤各個元素有幾個</li>
+<h3 id="回目錄-1"><a href="#回目錄-1" class="headerlink" title="(回目錄)"></a><a href="#%E7%9B%AE%E9%8C%84">(回目錄)</a></h3><hr>
+<h1 id="如何在hexo設置網頁錨點"><a href="#如何在hexo設置網頁錨點" class="headerlink" title="如何在hexo設置網頁錨點"></a>如何在hexo設置網頁錨點</h1><p>markdown語法為：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[連結文字](#你要連結的標題名稱)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>碰上空格需要以-代替</li>
+<li>如果碰上.或是()，依照各編輯器與網站，處理方法不同<ul>
+<li>有些編輯器直接忽略即可</li>
+<li>有些編輯器(如本站)同樣用-代替(複數.跟()相連也只需要一個-)，若遇到結尾有)可以忽略</li>
 </ul>
-<h3 id="Map"><a href="#Map" class="headerlink" title="Map"></a>Map</h3><ul>
-<li>又名Associative Array</li>
-<li>有點像Python的基本字典，一次插入是一對key-value</li>
+</li>
+<li>以錨定標題『有夠 歪七扭八)標()題)』為例，語法為<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[嘗試看看吧!](#有夠-歪七扭八-標-題)</span><br></pre></td></tr></table></figure>
+<a href="#%E6%9C%89%E5%A4%A0-%E6%AD%AA%E4%B8%83%E6%89%AD%E5%85%AB-%E6%A8%99-%E9%A1%8C">嘗試看看吧!</a></li>
 </ul>
-<h3 id="Multimap"><a href="#Multimap" class="headerlink" title="Multimap"></a>Multimap</h3><ul>
-<li>有點像python裡面的字典，不過每組value都是一個list(multiple values for the same key)</li>
-<li>當用一個key搜尋的時候，得到一個包含所有值的container</li>
-</ul>
-<h2 id="Container-Adapters"><a href="#Container-Adapters" class="headerlink" title="Container Adapters"></a>Container Adapters</h2><ul>
-<li>一種介面，用於放在一個Container之上，用於限制他的方法</li>
-<li>比如我們會用Stack adapters型態宣告Deque Container，限制Deque的功能，讓他表現得像Stack</li>
-<li>常見範例如Stack、Queue、Priority_queue</li>
-</ul>
-<h3 id="Stack"><a href="#Stack" class="headerlink" title="Stack"></a>Stack</h3><ul>
-<li>LIFO access</li>
-<li>通常架在Deque上</li>
-</ul>
-<h3 id="Queue"><a href="#Queue" class="headerlink" title="Queue"></a>Queue</h3><ul>
-<li>FIFO access</li>
-<li>通常架在Deque上</li>
-</ul>
-<h3 id="Priority-queue"><a href="#Priority-queue" class="headerlink" title="Priority_queue"></a>Priority_queue</h3><ul>
-<li>插入的元素按照所決定的優先順序(優先取最低值)排列，其餘表現同queue</li>
-<li>內部通常是用heap實作，所以通常架在vector上面</li>
-</ul>
-<p>以上是比較常用的一些STL容器以及相關介紹，更多的內容(物件的方法、複雜度等等)可以到<a target="_blank" rel="noopener" href="https://cplusplus.com/reference/stl/">這裡</a>翻閱</p>
+<h3 id="有夠-歪七扭八-標-題"><a href="#有夠-歪七扭八-標-題" class="headerlink" title="有夠 歪七扭八)標()題)"></a>有夠 歪七扭八)標()題)</h3><h3 id="回目錄-2"><a href="#回目錄-2" class="headerlink" title="(回目錄)"></a><a href="#%E7%9B%AE%E9%8C%84">(回目錄)</a></h3><hr>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://laxiflora.github.io/2022/06/23/%E6%9D%8E%E5%BC%98%E6%AF%85-%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92-Week1%E6%AD%A3%E8%AA%B2/" data-id="cl4xw678g0000zwve5077hum8" data-title="李弘毅_機器學習_Week1正課" class="article-share-link">Compartir</a>
+      <a data-url="https://laxiflora.github.io/2022/06/28/Hexo%E4%BD%BF%E7%94%A8%E6%8A%80%E5%B7%A7/" data-id="cl4y7uj780001jkve2907gcx0" data-title="Hexo使用技巧" class="article-share-link">Teilen</a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Hexo/" rel="tag">Hexo</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-李弘毅-機器學習-Week1正課" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2022/06/23/%E6%9D%8E%E5%BC%98%E6%AF%85-%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92-Week1%E6%AD%A3%E8%AA%B2/" class="article-date">
+  <time class="dt-published" datetime="2022-06-23T14:49:25.000Z" itemprop="datePublished">2022-06-23</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2022/06/23/%E6%9D%8E%E5%BC%98%E6%AF%85-%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92-Week1%E6%AD%A3%E8%AA%B2/">李弘毅_機器學習_Week1</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="目錄"><a href="#目錄" class="headerlink" title="目錄"></a>目錄</h1><p><a href="#%E4%BB%80%E9%BA%BC%E6%98%AF%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92">什麼是機器學習</a><br><a href="#%E6%AD%A3%E8%AA%B2%E5%85%A7%E5%AE%B9%E4%BB%8B%E7%B4%B9">正課內容介紹</a></p>
+<h1 id="什麼是機器學習"><a href="#什麼是機器學習" class="headerlink" title="什麼是機器學習"></a>什麼是機器學習</h1><p>機器學習，就是用機器的力量幫忙找出一個合適的函數</p>
+<ul>
+<li>函數的輸入可以是vector、matrix、sequence</li>
+<li>輸出可以是數值(regression)、類別(classification)、文章、圖片<br>深度學習，就是用神經網路的方法來製造函數</li>
+</ul>
+<h1 id="正課內容介紹"><a href="#正課內容介紹" class="headerlink" title="正課內容介紹"></a>正課內容介紹</h1><h3 id="Supervised-Learning"><a href="#Supervised-Learning" class="headerlink" title="Supervised Learning"></a>Supervised Learning</h3><h3 id="Self-supervised-Learning"><a href="#Self-supervised-Learning" class="headerlink" title="Self-supervised Learning"></a>Self-supervised Learning</h3><ul>
+<li>在訓練之前先做基本功(Pre-Train)</li>
+<li>訓練集就不需要label了</li>
+<li>比如在網路上先爬相關資料</li>
+<li>以分類圖片為例，實際分類圖片的過程稱為(Downstream)</li>
+<li>Pre-trained model(又稱Foundation Model)就好像OS，Downstream就像APP<ul>
+<li>最出名的模型就是BERT</li>
+</ul>
+</li>
+</ul>
+<h3 id="Lec6-GAN"><a href="#Lec6-GAN" class="headerlink" title="Lec6 : GAN"></a>Lec6 : GAN</h3><ul>
+<li>一般函數需要大量成對的X與Y來讓他們配對</li>
+<li>現今只需要大量的X，就可自行產生Y</li>
+</ul>
+<h3 id="Lac12-Reinforcement-Learning"><a href="#Lac12-Reinforcement-Learning" class="headerlink" title="Lac12 : Reinforcement Learning"></a>Lac12 : Reinforcement Learning</h3><ul>
+<li>當資料很難以標註時使用 (ex.學會下圍棋)</li>
+</ul>
+<h2 id="進階課題"><a href="#進階課題" class="headerlink" title="進階課題"></a>進階課題</h2><h3 id="Lac8-Anomaly-Detection"><a href="#Lac8-Anomaly-Detection" class="headerlink" title="Lac8 : Anomaly Detection"></a>Lac8 : Anomaly Detection</h3><ul>
+<li>過擬合等問題</li>
+</ul>
+<h3 id="Lac9-Explainable-AI-可解釋性AI"><a href="#Lac9-Explainable-AI-可解釋性AI" class="headerlink" title="Lac9 : Explainable AI (可解釋性AI)"></a>Lac9 : Explainable AI (可解釋性AI)</h3><ul>
+<li>不只是知道答案，還要讓機器知道為甚麼</li>
+<li>EX.PNG與JPG輸入的問題ww</li>
+</ul>
+<h3 id="Lac10-Model-Attack"><a href="#Lac10-Model-Attack" class="headerlink" title="Lac10 : Model Attack"></a>Lac10 : Model Attack</h3><ul>
+<li>在圖片加入一點點雜訊，讓圖片難以識別</li>
+<li>介紹攻擊技術與防禦可能性</li>
+</ul>
+<h3 id="Lac11-Domain-Adaptation"><a href="#Lac11-Domain-Adaptation" class="headerlink" title="Lac11 : Domain Adaptation"></a>Lac11 : Domain Adaptation</h3><ul>
+<li>當訓練資料與測試資料的分布不相似</li>
+<li>EX. 手寫數字辨識，黑白與彩色的差別</li>
+</ul>
+<h3 id="Lac13-Network-Compression-模型壓縮"><a href="#Lac13-Network-Compression-模型壓縮" class="headerlink" title="Lac13 : Network Compression(模型壓縮)"></a>Lac13 : Network Compression(模型壓縮)</h3><ul>
+<li>在嵌入式、小硬體跑ML</li>
+</ul>
+<h3 id="Lac14-Life-long-Learning"><a href="#Lac14-Life-long-Learning" class="headerlink" title="Lac14 : Life-long Learning"></a>Lac14 : Life-long Learning</h3><ul>
+<li>機器能像人一樣一直學習所有技術</li>
+<li>挑戰有哪些</li>
+</ul>
+<h3 id="Lac15-Meta-Learning-學習如何學習"><a href="#Lac15-Meta-Learning-學習如何學習" class="headerlink" title="Lac15 : Meta Learning(學習如何學習)"></a>Lac15 : Meta Learning(學習如何學習)</h3><ul>
+<li>以往都是人設計學習演算法給機器</li>
+<li>讓機器從大量學習任務裡面發明更好的演算法</li>
+<li>Few-shot Learning通常與他相關</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://laxiflora.github.io/2022/06/23/%E6%9D%8E%E5%BC%98%E6%AF%85-%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92-Week1%E6%AD%A3%E8%AA%B2/" data-id="cl4y7uj7b0004jkve6i6ddmkr" data-title="李弘毅_機器學習_Week1" class="article-share-link">Teilen</a>
       
       
       
@@ -268,7 +336,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://laxiflora.github.io/2022/06/22/C++%20%E5%B8%B8%E8%A6%8BSTL%E5%AE%B9%E5%99%A8%E6%A6%82%E8%BF%B0/" data-id="cl4xw678n0004zwveeqnq1ata" data-title="C++ 常見STL容器概述" class="article-share-link">Compartir</a>
+      <a data-url="https://laxiflora.github.io/2022/06/22/C++%20%E5%B8%B8%E8%A6%8BSTL%E5%AE%B9%E5%99%A8%E6%A6%82%E8%BF%B0/" data-id="cl4y7uj7a0003jkvedlp07to3" data-title="C++ 常見STL容器概述" class="article-share-link">Teilen</a>
       
       
       
@@ -366,7 +434,7 @@ hexo就會幫你建立一個新的網誌，並且會在 <em>source&#x2F;_posts</
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://laxiflora.github.io/2022/06/21/%E5%A6%82%E4%BD%95%E7%94%A8hexo%E5%9C%A8github%20page%E4%B8%8A%E9%83%A8%E7%BD%B2%E5%B1%AC%E6%96%BC%E8%87%AA%E5%B7%B1%E7%9A%84%E7%AC%AC%E4%B8%80%E5%80%8B%E7%B6%B2%E7%AB%99/" data-id="cl4xw678k0001zwvehlhsc42x" data-title="如何用hexo在github page上部署屬於自己的第一個網站" class="article-share-link">Compartir</a>
+      <a data-url="https://laxiflora.github.io/2022/06/21/%E5%A6%82%E4%BD%95%E7%94%A8hexo%E5%9C%A8github%20page%E4%B8%8A%E9%83%A8%E7%BD%B2%E5%B1%AC%E6%96%BC%E8%87%AA%E5%B7%B1%E7%9A%84%E7%AC%AC%E4%B8%80%E5%80%8B%E7%B6%B2%E7%AB%99/" data-id="cl4y7uj740000jkve6xwpbpvn" data-title="如何用hexo在github page上部署屬於自己的第一個網站" class="article-share-link">Teilen</a>
       
       
       
@@ -387,13 +455,6 @@ hexo就會幫你建立一個新的網誌，並且會在 <em>source&#x2F;_posts</
           <aside id="sidebar">
   
     
-  <div class="widget-wrap">
-    <h3 class="widget-title">Categorías</h3>
-    <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/AAA/">AAA</a></li></ul>
-    </div>
-  </div>
-
 
   
     
@@ -408,16 +469,16 @@ hexo就會幫你建立一個新的網誌，並且會在 <em>source&#x2F;_posts</
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Nube de Tags</h3>
+    <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/C/" style="font-size: 10px;">C++</a> <a href="/tags/Hexo/" style="font-size: 10px;">Hexo</a> <a href="/tags/%E6%9D%8E%E5%BC%98%E6%AF%85%E7%B3%BB%E5%88%97/" style="font-size: 10px;">李弘毅系列</a> <a href="/tags/%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92/" style="font-size: 10px;">機器學習</a>
+      <a href="/tags/C/" style="font-size: 10px;">C++</a> <a href="/tags/Hexo/" style="font-size: 20px;">Hexo</a> <a href="/tags/%E6%9D%8E%E5%BC%98%E6%AF%85%E7%B3%BB%E5%88%97/" style="font-size: 10px;">李弘毅系列</a> <a href="/tags/%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92/" style="font-size: 10px;">機器學習</a>
     </div>
   </div>
 
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Archivos</h3>
+    <h3 class="widget-title">Archiv</h3>
     <div class="widget">
       <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">June 2022</a></li></ul>
     </div>
@@ -427,12 +488,16 @@ hexo就會幫你建立一個新的網誌，並且會在 <em>source&#x2F;_posts</
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Posts recientes</h3>
+    <h3 class="widget-title">letzter Beitrag</h3>
     <div class="widget">
       <ul>
         
           <li>
-            <a href="/2022/06/23/%E6%9D%8E%E5%BC%98%E6%AF%85-%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92-Week1%E6%AD%A3%E8%AA%B2/">李弘毅_機器學習_Week1正課</a>
+            <a href="/2022/06/28/Hexo%E4%BD%BF%E7%94%A8%E6%8A%80%E5%B7%A7/">Hexo使用技巧</a>
+          </li>
+        
+          <li>
+            <a href="/2022/06/23/%E6%9D%8E%E5%BC%98%E6%AF%85-%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92-Week1%E6%AD%A3%E8%AA%B2/">李弘毅_機器學習_Week1</a>
           </li>
         
           <li>
@@ -457,7 +522,7 @@ hexo就會幫你建立一個新的網誌，並且會在 <em>source&#x2F;_posts</
     <div id="footer-info" class="inner">
       
       &copy; 2022 劉宇承<br>
-      Construido por <a href="https://hexo.io/" target="_blank">Hexo</a>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
     </div>
   </div>
 </footer>
