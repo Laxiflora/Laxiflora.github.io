@@ -6,22 +6,22 @@
   
   <title>如何用hexo在github page上部署屬於自己的第一個網站 | laxiflora的小天地</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="起頭部落格開張的第一篇文章，就決定以部署hexo產生的靜態網頁到github上來開頭了！ 前置需求 常用的文字編輯器(我是用visual studio code) node.js安裝完之後，就可以開啟終端機來安裝hexo了~  hexo的環境建置Step1. 安裝hexo 打開終端機以後，輸入以下指令安裝hexo  1npm install hexo-cli -g   安裝完以後，可以在終端機輸入">
+  <meta name="description" content="起頭 部落格開張的第一篇文章，就決定以部署hexo產生的靜態網頁到github上來開頭了！ 前置需求  常用的文字編輯器(我是用visual studio code) node.js  安裝完之後，就可以開啟終端機來安裝hexo了~  hexo的環境建置 Step1. 安裝hexo  打開終端機以後，輸入以下指令安裝hexo  1npm install hexo-cli -g  安裝完以後，可以在">
 <meta property="og:type" content="article">
 <meta property="og:title" content="如何用hexo在github page上部署屬於自己的第一個網站">
 <meta property="og:url" content="https://laxiflora.github.io/2022/06/21/%E5%A6%82%E4%BD%95%E7%94%A8hexo%E5%9C%A8github%20page%E4%B8%8A%E9%83%A8%E7%BD%B2%E5%B1%AC%E6%96%BC%E8%87%AA%E5%B7%B1%E7%9A%84%E7%AC%AC%E4%B8%80%E5%80%8B%E7%B6%B2%E7%AB%99/index.html">
 <meta property="og:site_name" content="laxiflora的小天地">
-<meta property="og:description" content="起頭部落格開張的第一篇文章，就決定以部署hexo產生的靜態網頁到github上來開頭了！ 前置需求 常用的文字編輯器(我是用visual studio code) node.js安裝完之後，就可以開啟終端機來安裝hexo了~  hexo的環境建置Step1. 安裝hexo 打開終端機以後，輸入以下指令安裝hexo  1npm install hexo-cli -g   安裝完以後，可以在終端機輸入">
+<meta property="og:description" content="起頭 部落格開張的第一篇文章，就決定以部署hexo產生的靜態網頁到github上來開頭了！ 前置需求  常用的文字編輯器(我是用visual studio code) node.js  安裝完之後，就可以開啟終端機來安裝hexo了~  hexo的環境建置 Step1. 安裝hexo  打開終端機以後，輸入以下指令安裝hexo  1npm install hexo-cli -g  安裝完以後，可以在">
 <meta property="og:locale">
-<meta property="og:image" content="https://laxiflora.github.io/images/20220621_1.png">
-<meta property="og:image" content="https://laxiflora.github.io/images/20220621_2.png">
-<meta property="og:image" content="https://laxiflora.github.io/images/20220621_3.png">
+<meta property="og:image" content="https://laxiflora.github.io/2022/06/21/images/20220621_1.png">
+<meta property="og:image" content="https://laxiflora.github.io/2022/06/21/images/20220621_2.png">
+<meta property="og:image" content="https://laxiflora.github.io/2022/06/21/images/20220621_3.png">
 <meta property="article:published_time" content="2022-06-21T09:45:00.000Z">
 <meta property="article:modified_time" content="2022-06-28T13:42:10.758Z">
 <meta property="article:author" content="劉宇承">
 <meta property="article:tag" content="Hexo">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://laxiflora.github.io/images/20220621_1.png">
+<meta name="twitter:image" content="https://laxiflora.github.io/2022/06/21/images/20220621_1.png">
   
     <link rel="alternate" href="/atom.xml" title="laxiflora的小天地" type="application/atom+xml">
   
@@ -41,7 +41,11 @@
 <link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
 
   
-<meta name="generator" content="Hexo 6.2.0"></head>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.2.0"></head>
 
 <body>
   <div id="container">
@@ -70,12 +74,12 @@
       </nav>
       <nav id="sub-nav">
         
-          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS-hírfolyam"></a>
         
-        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+        <a id="nav-search-btn" class="nav-icon" title="Keresés"></a>
       </nav>
       <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://laxiflora.github.io"></form>
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Keresés"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://laxiflora.github.io"></form>
       </div>
     </div>
   </div>
@@ -104,44 +108,68 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <h1 id="起頭"><a href="#起頭" class="headerlink" title="起頭"></a>起頭</h1><p>部落格開張的第一篇文章，就決定以部署hexo產生的靜態網頁到github上來開頭了！</p>
-<h1 id="前置需求"><a href="#前置需求" class="headerlink" title="前置需求"></a>前置需求</h1><ul>
+        <h1 id="%E8%B5%B7%E9%A0%AD" tabindex="-1">起頭</h1>
+<p>部落格開張的第一篇文章，就決定以部署hexo產生的靜態網頁到github上來開頭了！</p>
+<h1 id="%E5%89%8D%E7%BD%AE%E9%9C%80%E6%B1%82" tabindex="-1">前置需求</h1>
+<ul>
 <li>常用的文字編輯器(我是用visual studio code)</li>
-<li><a target="_blank" rel="noopener" href="https://nodejs.org/en/">node.js</a><br><br><br><br><tab>安裝完之後，就可以開啟終端機來安裝hexo了~</li>
+<li><a target="_blank" rel="noopener" href="https://nodejs.org/en/">node.js</a><br>
+<br><br><br>
+<tab>安裝完之後，就可以開啟終端機來安裝hexo了~</li>
 </ul>
-<h1 id="hexo的環境建置"><a href="#hexo的環境建置" class="headerlink" title="hexo的環境建置"></a>hexo的環境建置</h1><h2 id="Step1-安裝hexo"><a href="#Step1-安裝hexo" class="headerlink" title="Step1. 安裝hexo"></a>Step1. 安裝hexo</h2><ul>
+<h1 id="hexo%E7%9A%84%E7%92%B0%E5%A2%83%E5%BB%BA%E7%BD%AE" tabindex="-1">hexo的環境建置</h1>
+<h2 id="step1.-%E5%AE%89%E8%A3%9Dhexo" tabindex="-1">Step1. 安裝hexo</h2>
+<ul>
 <li>打開終端機以後，輸入以下指令安裝hexo<br></li>
 </ul>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo-cli -g</span><br></pre></td></tr></table></figure>
-
 <ul>
 <li>安裝完以後，可以在終端機輸入’hexo -v’，確定一下hexo是否成功安裝並顯示版本。</li>
 </ul>
-<h2 id="Step2-初始化一個Hexo資料夾"><a href="#Step2-初始化一個Hexo資料夾" class="headerlink" title="Step2. 初始化一個Hexo資料夾"></a>Step2. 初始化一個Hexo資料夾</h2><p> 輸入以下指令<br> <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo init &lt;資料夾名稱&gt;</span><br></pre></td></tr></table></figure><br> 則hexo會幫你產生一個資料夾，這個資料夾內就是你的blog根目錄了<br></p>
-<h2 id="Step3-在資料夾安裝必要檔案"><a href="#Step3-在資料夾安裝必要檔案" class="headerlink" title="Step3. 在資料夾安裝必要檔案"></a>Step3. 在資料夾安裝必要檔案</h2><ul>
-<li>目前的資料夾內部還沒有東西，首先先把終端機的目錄切換到剛剛產生的資料夾，接著執行以下指令來安裝所需要的套件:<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install</span><br></pre></td></tr></table></figure>
-至此基本的hexo網頁架構就完成了！你的blog資料夾應該會長得像這樣：<br></li>
+<h2 id="step2.-%E5%88%9D%E5%A7%8B%E5%8C%96%E4%B8%80%E5%80%8Bhexo%E8%B3%87%E6%96%99%E5%A4%BE" tabindex="-1">Step2. 初始化一個Hexo資料夾</h2>
+<p>輸入以下指令</p>
+ <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo init &lt;資料夾名稱&gt;</span><br></pre></td></tr></table></figure>
+<p>則hexo會幫你產生一個資料夾，這個資料夾內就是你的blog根目錄了<br></p>
+<h2 id="step3.-%E5%9C%A8%E8%B3%87%E6%96%99%E5%A4%BE%E5%AE%89%E8%A3%9D%E5%BF%85%E8%A6%81%E6%AA%94%E6%A1%88" tabindex="-1">Step3. 在資料夾安裝必要檔案</h2>
+<ul>
+<li>目前的資料夾內部還沒有東西，首先先把終端機的目錄切換到剛剛產生的資料夾，接著執行以下指令來安裝所需要的套件:</li>
 </ul>
-<p><img src="/../images/20220621_1.png"><br><br>之後要針對網頁內容的修改都會到<em>source&#x2F;_posts</em>裡面更改<br></p>
-<h2 id="Step4-建立一個新的網誌"><a href="#Step4-建立一個新的網誌" class="headerlink" title="Step4. 建立一個新的網誌"></a>Step4. 建立一個新的網誌</h2><ul>
-<li>如果想要建立一個新的空白網誌，在終端機輸入<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo new post &quot;你的網誌標題&quot;</span><br></pre></td></tr></table></figure>
-hexo就會幫你建立一個新的網誌，並且會在 <em>source&#x2F;_posts</em> 新增一個md檔，md檔使用markdown語法來撰寫，因此建議對markdown有些基本認識<a target="_blank" rel="noopener" href="https://hackmd.io/@eMP9zQQ0Qt6I8Uqp2Vqy6w/SyiOheL5N/%2FBVqowKshRH246Q7UDyodFA?type=book">[點我來去看新手教學]</a>。在md檔裡面撰寫的內容會直接更新到網頁上<br><br><br></li>
-<li>如果想要測試你的網站的實際模樣，可以輸入<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo server</span><br></pre></td></tr></table></figure>
-或是<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo s</span><br></pre></td></tr></table></figure>
-來讓hexo把網頁部署到localhost，根據終端機顯示的ip用瀏覽器打開就會看到你剛剛的成果囉~<br><br>至此基本的hexo網頁就完成了!<br></li>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install</span><br></pre></td></tr></table></figure>
+<p>至此基本的hexo網頁架構就完成了！你的blog資料夾應該會長得像這樣：<br></p>
+<p><img src="../images/20220621_1.png" alt=""><br><br>
+之後要針對網頁內容的修改都會到<em>source/_posts</em>裡面更改<br></p>
+<h2 id="step4.-%E5%BB%BA%E7%AB%8B%E4%B8%80%E5%80%8B%E6%96%B0%E7%9A%84%E7%B6%B2%E8%AA%8C" tabindex="-1">Step4. 建立一個新的網誌</h2>
+<ul>
+<li>如果想要建立一個新的空白網誌，在終端機輸入<br></li>
 </ul>
-<h1 id="將hexo產生的網頁部署到github-pages"><a href="#將hexo產生的網頁部署到github-pages" class="headerlink" title="將hexo產生的網頁部署到github pages"></a>將hexo產生的網頁部署到github pages</h1><p>先假定大家都已經有一個github帳號了，首先到github先開一個新的Repository，我們會將網頁內容上傳到這裡<br><img src="/../images/20220621_2.png"><br></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo new post &quot;你的網誌標題&quot;</span><br></pre></td></tr></table></figure>
+<p>hexo就會幫你建立一個新的網誌，並且會在 <em>source/_posts</em> 新增一個md檔，md檔使用markdown語法來撰寫，因此建議對markdown有些基本認識<a target="_blank" rel="noopener" href="https://hackmd.io/@eMP9zQQ0Qt6I8Uqp2Vqy6w/SyiOheL5N/%2FBVqowKshRH246Q7UDyodFA?type=book">[點我來去看新手教學]</a>。在md檔裡面撰寫的內容會直接更新到網頁上<br>
+<br><br></p>
+<ul>
+<li>如果想要測試你的網站的實際模樣，可以輸入</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo server</span><br></pre></td></tr></table></figure>
+<p>或是</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo s</span><br></pre></td></tr></table></figure>
+<p>來讓hexo把網頁部署到localhost，根據終端機顯示的ip用瀏覽器打開就會看到你剛剛的成果囉~<br><br>
+至此基本的hexo網頁就完成了!<br></p>
+<h1 id="%E5%B0%87hexo%E7%94%A2%E7%94%9F%E7%9A%84%E7%B6%B2%E9%A0%81%E9%83%A8%E7%BD%B2%E5%88%B0github-pages" tabindex="-1">將hexo產生的網頁部署到github pages</h1>
+<p>先假定大家都已經有一個github帳號了，首先到github先開一個新的Repository，我們會將網頁內容上傳到這裡<br>
+<img src="../images/20220621_2.png" alt=""><br></p>
 <p>接下來回到文字編輯器，打開_config.yml檔案，找到deploy子項，將repo改成你剛剛的repository連結</p>
-<p><img src="/../images/20220621_3.png"><br><br>完成後到終端機輸入</p>
+<p><img src="../images/20220621_3.png" alt=""><br><br>
+完成後到終端機輸入</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">hexo cl  //清空hexo的快取，避免有些內容沒有更新到</span><br><span class="line">hexo g //在部署網站前先產生好靜態檔案</span><br><span class="line">hexo d //deploy，把檔案上傳到你設定的deploy目的地，本篇教學是送到git</span><br></pre></td></tr></table></figure>
 <p>或也可以直接輸入</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hexo cl</span><br><span class="line">hexo g -d</span><br></pre></td></tr></table></figure>
 <p>這樣就完成網站部署了，在瀏覽器中輸入<code>https://username.github.io/</code>就可以實際看到你部署好的網頁囉~</p>
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/markdown-it-texmath/css/texmath.min.css">
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://laxiflora.github.io/2022/06/21/%E5%A6%82%E4%BD%95%E7%94%A8hexo%E5%9C%A8github%20page%E4%B8%8A%E9%83%A8%E7%BD%B2%E5%B1%AC%E6%96%BC%E8%87%AA%E5%B7%B1%E7%9A%84%E7%AC%AC%E4%B8%80%E5%80%8B%E7%B6%B2%E7%AB%99/" data-id="cl4y7xq340004fgve91l4da5n" data-title="如何用hexo在github page上部署屬於自己的第一個網站" class="article-share-link">Share</a>
+      <a data-url="https://laxiflora.github.io/2022/06/21/%E5%A6%82%E4%BD%95%E7%94%A8hexo%E5%9C%A8github%20page%E4%B8%8A%E9%83%A8%E7%BD%B2%E5%B1%AC%E6%96%BC%E8%87%AA%E5%B7%B1%E7%9A%84%E7%AC%AC%E4%B8%80%E5%80%8B%E7%B6%B2%E7%AB%99/" data-id="cl4zgvf0n0001u4ve27g03aj6" data-title="如何用hexo在github page上部署屬於自己的第一個網站" class="article-share-link">Megosztás</a>
       
       
       
@@ -154,7 +182,7 @@ hexo就會幫你建立一個新的網誌，並且會在 <em>source&#x2F;_posts</
 <nav id="article-nav">
   
     <a href="/2022/06/22/C++%20%E5%B8%B8%E8%A6%8BSTL%E5%AE%B9%E5%99%A8%E6%A6%82%E8%BF%B0/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Newer</strong>
+      <strong class="article-nav-caption">Újabb</strong>
       <div class="article-nav-title">
         
           C++ 常見STL容器概述
@@ -178,7 +206,7 @@ hexo就會幫你建立一個新的網誌，並且會在 <em>source&#x2F;_posts</
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Tags</h3>
+    <h3 class="widget-title">Címkék</h3>
     <div class="widget">
       <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/" rel="tag">C++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/" rel="tag">Hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9D%8E%E5%BC%98%E6%AF%85%E7%B3%BB%E5%88%97/" rel="tag">李弘毅系列</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92/" rel="tag">機器學習</a></li></ul>
     </div>
@@ -188,7 +216,7 @@ hexo就會幫你建立一個新的網誌，並且會在 <em>source&#x2F;_posts</
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Tag Cloud</h3>
+    <h3 class="widget-title">Címkefelhő</h3>
     <div class="widget tagcloud">
       <a href="/tags/C/" style="font-size: 10px;">C++</a> <a href="/tags/Hexo/" style="font-size: 20px;">Hexo</a> <a href="/tags/%E6%9D%8E%E5%BC%98%E6%AF%85%E7%B3%BB%E5%88%97/" style="font-size: 10px;">李弘毅系列</a> <a href="/tags/%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92/" style="font-size: 10px;">機器學習</a>
     </div>
@@ -197,7 +225,7 @@ hexo就會幫你建立一個新的網誌，並且會在 <em>source&#x2F;_posts</
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Archives</h3>
+    <h3 class="widget-title">Archív</h3>
     <div class="widget">
       <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">June 2022</a></li></ul>
     </div>
@@ -207,7 +235,7 @@ hexo就會幫你建立一個新的網誌，並且會在 <em>source&#x2F;_posts</
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Recent Posts</h3>
+    <h3 class="widget-title">Legfrissebb bejegyzések</h3>
     <div class="widget">
       <ul>
         
@@ -216,7 +244,7 @@ hexo就會幫你建立一個新的網誌，並且會在 <em>source&#x2F;_posts</
           </li>
         
           <li>
-            <a href="/2022/06/23/%E6%9D%8E%E5%BC%98%E6%AF%85-%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92-Week1%E6%AD%A3%E8%AA%B2/">李弘毅_機器學習_Week1</a>
+            <a href="/2022/06/23/%E6%9D%8E%E5%BC%98%E6%AF%85-%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92-Week1/">李弘毅_機器學習_Week1</a>
           </li>
         
           <li>
