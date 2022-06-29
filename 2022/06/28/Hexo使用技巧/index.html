@@ -6,17 +6,17 @@
   
   <title>Hexo使用技巧 | laxiflora的小天地</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="目錄 如何在get repo裡面加上README ? 如何在hexo設置的網頁插入圖片 ? 如何在hexo設置網頁錨點 ? 如何在git repo裡面加上README  由於hexo會幫你自動把md檔轉成html上傳github，因此直接在_posts裡面新增README是不可行的  Step1  到_config.yml裡面找到#Directory子項，在裡面的skip_render補上READ">
+  <meta name="description" content="目錄 如何在get repo裡面加上README ? 如何在hexo設置的網頁插入圖片 ? 如何在hexo設置網頁錨點 ? 如何在hexo輸入數學式 ? 如何在git repo裡面加上README  由於hexo會幫你自動把md檔轉成html上傳github，因此直接在_posts裡面新增README是不可行的  Step1  到_config.yml裡面找到#Directory子項，在裡面的sk">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Hexo使用技巧">
 <meta property="og:url" content="https://laxiflora.github.io/2022/06/28/Hexo%E4%BD%BF%E7%94%A8%E6%8A%80%E5%B7%A7/index.html">
 <meta property="og:site_name" content="laxiflora的小天地">
-<meta property="og:description" content="目錄 如何在get repo裡面加上README ? 如何在hexo設置的網頁插入圖片 ? 如何在hexo設置網頁錨點 ? 如何在git repo裡面加上README  由於hexo會幫你自動把md檔轉成html上傳github，因此直接在_posts裡面新增README是不可行的  Step1  到_config.yml裡面找到#Directory子項，在裡面的skip_render補上READ">
+<meta property="og:description" content="目錄 如何在get repo裡面加上README ? 如何在hexo設置的網頁插入圖片 ? 如何在hexo設置網頁錨點 ? 如何在hexo輸入數學式 ? 如何在git repo裡面加上README  由於hexo會幫你自動把md檔轉成html上傳github，因此直接在_posts裡面新增README是不可行的  Step1  到_config.yml裡面找到#Directory子項，在裡面的sk">
 <meta property="og:locale">
 <meta property="og:image" content="https://laxiflora.github.io/2022/06/28/images/20220621_4.png">
 <meta property="og:image" content="https://laxiflora.github.io/2022/06/28/images/20220628_1.png">
 <meta property="article:published_time" content="2022-06-28T13:13:03.000Z">
-<meta property="article:modified_time" content="2022-06-29T10:18:18.356Z">
+<meta property="article:modified_time" content="2022-06-29T12:02:59.558Z">
 <meta property="article:author" content="劉宇承">
 <meta property="article:tag" content="Hexo">
 <meta name="twitter:card" content="summary">
@@ -73,12 +73,12 @@
       </nav>
       <nav id="sub-nav">
         
-          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS-hírfolyam"></a>
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS"></a>
         
-        <a id="nav-search-btn" class="nav-icon" title="Keresés"></a>
+        <a id="nav-search-btn" class="nav-icon" title="Buscar"></a>
       </nav>
       <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Keresés"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://laxiflora.github.io"></form>
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Buscar"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://laxiflora.github.io"></form>
       </div>
     </div>
   </div>
@@ -107,35 +107,36 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <h1 id="%E7%9B%AE%E9%8C%84" tabindex="-1">目錄</h1>
+        <h1>目錄</h1>
 <p><a href="#%E5%A6%82%E4%BD%95%E5%9C%A8git-repo%E8%A3%A1%E9%9D%A2%E5%8A%A0%E4%B8%8AREADME">如何在get repo裡面加上README ?</a><br>
 <a href="#%E5%A6%82%E4%BD%95%E5%9C%A8hexo%E8%A8%AD%E7%BD%AE%E7%9A%84%E7%B6%B2%E9%A0%81%E6%8F%92%E5%85%A5%E5%9C%96%E7%89%87">如何在hexo設置的網頁插入圖片 ?</a><br>
-<a href="#%E5%A6%82%E4%BD%95%E5%9C%A8hexo%E8%A8%AD%E7%BD%AE%E7%B6%B2%E9%A0%81%E9%8C%A8%E9%BB%9E">如何在hexo設置網頁錨點 ?</a></p>
-<h1 id="%E5%A6%82%E4%BD%95%E5%9C%A8git-repo%E8%A3%A1%E9%9D%A2%E5%8A%A0%E4%B8%8Areadme" tabindex="-1">如何在git repo裡面加上README</h1>
+<a href="#%E5%A6%82%E4%BD%95%E5%9C%A8hexo%E8%A8%AD%E7%BD%AE%E7%B6%B2%E9%A0%81%E9%8C%A8%E9%BB%9E">如何在hexo設置網頁錨點 ?</a><br>
+<a href="#%E5%A6%82%E4%BD%95%E5%9C%A8hexo%E8%BC%B8%E5%85%A5%E6%95%B8%E5%AD%B8%E5%BC%8F">如何在hexo輸入數學式 ?</a></p>
+<h1>如何在git repo裡面加上README</h1>
 <ul>
 <li>由於hexo會幫你自動把md檔轉成html上傳github，因此直接在_posts裡面新增README是不可行的</li>
 </ul>
-<h2 id="step1" tabindex="-1">Step1</h2>
+<h2 id="Step1">Step1</h2>
 <ul>
 <li>到_config.yml裡面找到#Directory子項，在裡面的skip_render補上README.md</li>
 </ul>
-<h2 id="step2" tabindex="-1">Step2</h2>
+<h2 id="Step2">Step2</h2>
 <ul>
 <li>完成以後就可以直接在source/_posts裡面直接補上README囉~上傳的時候也可以正常顯示了<br>
 <img src="../images/20220621_4.png" alt=""></li>
 </ul>
-<h3 id="(%E5%9B%9E%E7%9B%AE%E9%8C%84)" tabindex="-1"><a href="#%E7%9B%AE%E9%8C%84">(回目錄)</a></h3>
+<h3 id="回目錄"><a href="#%E7%9B%AE%E9%8C%84">(回目錄)</a></h3>
 <hr>
-<h1 id="%E5%A6%82%E4%BD%95%E5%9C%A8hexo%E8%A8%AD%E7%BD%AE%E7%9A%84%E7%B6%B2%E9%A0%81%E6%8F%92%E5%85%A5%E5%9C%96%E7%89%87" tabindex="-1">如何在hexo設置的網頁插入圖片</h1>
+<h1>如何在hexo設置的網頁插入圖片</h1>
 <ul>
 <li>如果直接在source/image放入圖片並且在md連連結的話，會連不上圖片</li>
 <li>可以使用admin套件來協助</li>
 </ul>
-<h2 id="step1-1" tabindex="-1">Step1</h2>
+<h2 id="Step1-2">Step1</h2>
 <p>在終端機輸入</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$npm install hexo-admin --save</span><br></pre></td></tr></table></figure>
 <p>來安裝admin套件</p>
-<h2 id="step2-1" tabindex="-1">Step2</h2>
+<h2 id="Step2-2">Step2</h2>
 <ul>
 <li>安裝完以後，在localhost狀態下補一個<code>/admin</code>就可以進入admin介面</li>
 <li>在admin介面可以直接看到你的所有貼文，按下筆進入編輯，在這頁面下直接貼上圖片即可</li>
@@ -146,9 +147,9 @@
 </ul>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">![upload successful](\\images\yourPicName.png\)</span><br></pre></td></tr></table></figure>
 <p>請把<code>\</code>改成<code>/</code>並且把<code>\\</code>改成<code>../</code>即可 (Win11，其他系統可能改法不同，請依照系統特性修改)</p>
-<h3 id="(%E5%9B%9E%E7%9B%AE%E9%8C%84)-1" tabindex="-1"><a href="#%E7%9B%AE%E9%8C%84">(回目錄)</a></h3>
+<h3 id="回目錄-2"><a href="#%E7%9B%AE%E9%8C%84">(回目錄)</a></h3>
 <hr>
-<h1 id="%E5%A6%82%E4%BD%95%E5%9C%A8hexo%E8%A8%AD%E7%BD%AE%E7%B6%B2%E9%A0%81%E9%8C%A8%E9%BB%9E" tabindex="-1">如何在hexo設置網頁錨點</h1>
+<h1>如何在hexo設置網頁錨點</h1>
 <p>markdown語法為：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[連結文字](#你要連結的標題名稱)</span><br></pre></td></tr></table></figure>
 <ul>
@@ -163,12 +164,12 @@
 </ul>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[嘗試看看吧!](#有夠-歪七扭八-標-題)</span><br></pre></td></tr></table></figure>
 <p><a href="#%E6%9C%89%E5%A4%A0-%E6%AD%AA%E4%B8%83%E6%89%AD%E5%85%AB-%E6%A8%99-%E9%A1%8C">嘗試看看吧!</a></p>
-<h3 id="%E6%9C%89%E5%A4%A0-%E6%AD%AA%E4%B8%83%E6%89%AD%E5%85%AB)%E6%A8%99()%E9%A1%8C)" tabindex="-1">有夠 歪七扭八)標()題)</h3>
-<h3 id="(%E5%9B%9E%E7%9B%AE%E9%8C%84)-2" tabindex="-1"><a href="#%E7%9B%AE%E9%8C%84">(回目錄)</a></h3>
+<h3 id="有夠-歪七扭八-標-題">有夠 歪七扭八)標()題)</h3>
+<h3 id="回目錄-3"><a href="#%E7%9B%AE%E9%8C%84">(回目錄)</a></h3>
 <hr>
-<h1 id="%E5%A6%82%E4%BD%95%E5%9C%A8hexo%E8%BC%B8%E5%85%A5%E6%95%B8%E5%AD%B8%E5%BC%8F" tabindex="-1">如何在hexo輸入數學式</h1>
-<h2 id="%E6%B3%95%E4%B8%80%EF%BC%9Ahexo-math" tabindex="-1">法一：hexo-math</h2>
-<p><a href="%22https://www.tzingtao.com/2019/06/21/Math-Equations-in-Hexo/%22">參考資料來源</a></p>
+<h1>如何在hexo輸入數學式</h1>
+<h2 id="法一：hexo-renderer-marked-hexo-math">法一：hexo-renderer-marked + hexo-math</h2>
+<p><a target="_blank" rel="noopener" href="https://www.tzingtao.com/2019/06/21/Math-Equations-in-Hexo/">參考資料來源</a></p>
 <ul>
 <li>Hexo預設的renderer是不支持直接在md中使用<code>$...$</code>的，一般來說推薦的工具是hexo-math，直接在終端機輸入以下指令即可安裝</li>
 </ul>
@@ -178,14 +179,28 @@
 <li>依照官方文件建議，我們可以使用hexo-math指定的標籤<code>『&#123;% math %&#125; ... &#123;% endmath %&#125;』</code>來包住數學式，這樣我們就可以防止數學式的文字被markdown randerer影響</li>
 <li>這麼做的好處是簡單易用，但是壞處就是在對於沒有支援hexo-math的地方使用這樣的標籤會導致相容性出問題，使網頁跑版。</li>
 </ul>
+<h2 id="法二：hexo-renderer-markdown-it-markdown-it-latex2img">法二：hexo-renderer-markdown-it + markdown-it-latex2img</h2>
+<p><a target="_blank" rel="noopener" href="https://github.com/MakerGYT/markdown-it-latex2img#hexo">markdown-it-latex2img頁面</a><br>
+<a target="_blank" rel="noopener" href="https://github.com/hexojs/hexo-renderer-markdown-it">hexo-renderer-markdown-it頁面</a></p>
+<ul>
+<li>相比於官方原始的renderer，這個版本的渲染器支援更多功能</li>
+<li>markdown-it-laten2img是一個plugin，用於支援LaTex的文字格式<br>
+指令如下:</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">npm uni hexo-renderer-marked --save</span><br><span class="line">npm i hexo-renderer-markdown-it --save</span><br><span class="line">npm i markdown-it-latex2img --save</span><br></pre></td></tr></table></figure>
+<p>安裝完以後，到<code>_config.yml</code>中補這段：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#markdown setting for hexo-renderer-markdown-it</span></span><br><span class="line"><span class="attr">markdown:</span></span><br><span class="line">  <span class="attr">plugins:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">markdown-it-latex2img</span></span><br></pre></td></tr></table></figure>
+<p>就可以了<br>
+PS. 目前已知問題：改用這個renderer會導致錨點功能失效！</p>
+<h3 id="回目錄-4"><a href="#%E7%9B%AE%E9%8C%84">(回目錄)</a></h3>
+<hr>
 <!-- ## 法二：使用 -->
-<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
-<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/markdown-it-texmath/css/texmath.min.css">
-
+<!-- 附註給自己
+目前使用法二 -->
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://laxiflora.github.io/2022/06/28/Hexo%E4%BD%BF%E7%94%A8%E6%8A%80%E5%B7%A7/" data-id="cl4zgvf0i0000u4ve7si326rl" data-title="Hexo使用技巧" class="article-share-link">Megosztás</a>
+      <a data-url="https://laxiflora.github.io/2022/06/28/Hexo%E4%BD%BF%E7%94%A8%E6%8A%80%E5%B7%A7/" data-id="cl4zk0h0c0004ncveeb9rdcj7" data-title="Hexo使用技巧" class="article-share-link">Compartir</a>
       
       
       
@@ -199,7 +214,7 @@
   
   
     <a href="/2022/06/23/%E6%9D%8E%E5%BC%98%E6%AF%85-%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92-Week1/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Régebbi</strong>
+      <strong class="article-nav-caption">Viejo</strong>
       <div class="article-nav-title">李弘毅_機器學習_Week1</div>
     </a>
   
@@ -218,7 +233,7 @@
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Címkék</h3>
+    <h3 class="widget-title">Tags</h3>
     <div class="widget">
       <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/" rel="tag">C++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/" rel="tag">Hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9D%8E%E5%BC%98%E6%AF%85%E7%B3%BB%E5%88%97/" rel="tag">李弘毅系列</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92/" rel="tag">機器學習</a></li></ul>
     </div>
@@ -228,7 +243,7 @@
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Címkefelhő</h3>
+    <h3 class="widget-title">Nube de Tags</h3>
     <div class="widget tagcloud">
       <a href="/tags/C/" style="font-size: 10px;">C++</a> <a href="/tags/Hexo/" style="font-size: 20px;">Hexo</a> <a href="/tags/%E6%9D%8E%E5%BC%98%E6%AF%85%E7%B3%BB%E5%88%97/" style="font-size: 10px;">李弘毅系列</a> <a href="/tags/%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92/" style="font-size: 10px;">機器學習</a>
     </div>
@@ -237,7 +252,7 @@
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Archív</h3>
+    <h3 class="widget-title">Archivos</h3>
     <div class="widget">
       <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">June 2022</a></li></ul>
     </div>
@@ -247,7 +262,7 @@
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Legfrissebb bejegyzések</h3>
+    <h3 class="widget-title">Posts recientes</h3>
     <div class="widget">
       <ul>
         
@@ -281,7 +296,7 @@
     <div id="footer-info" class="inner">
       
       &copy; 2022 劉宇承<br>
-      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+      Construido por <a href="https://hexo.io/" target="_blank">Hexo</a>
     </div>
   </div>
 </footer>
