@@ -75,6 +75,200 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-李弘毅-機器學習-Week2" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2022/07/03/%E6%9D%8E%E5%BC%98%E6%AF%85-%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92-Week2/" class="article-date">
+  <time class="dt-published" datetime="2022-07-02T16:26:43.000Z" itemprop="datePublished">2022-07-03</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2022/07/03/%E6%9D%8E%E5%BC%98%E6%AF%85-%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92-Week2/">李弘毅_機器學習_Week2</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="目錄"><a href="#目錄" class="headerlink" title="目錄"></a>目錄</h1><p><a href="#%E9%A0%90%E6%B8%AC%E9%A0%BB%E9%81%93%E8%A7%80%E7%9C%8B%E4%BA%BA%E6%95%B8">Preclass:預測頻道觀看人數</a><br><a href="#%E4%BB%80%E9%BA%BC%E6%98%AF%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92">Class:什麼是機器學習</a><br><a href="#%E6%AD%A3%E8%AA%B2%E5%85%A7%E5%AE%B9%E4%BB%8B%E7%B4%B9">Class:正課內容介紹</a></p>
+<details>
+  <summary><b><font size="+3">Preclass</font></b></summary>
+
+  <details>
+    <summary><b><font size="+2">機器學習任務攻略</font></b></summary>
+  
+<h2 id="機器學習任務攻略"><a href="#機器學習任務攻略" class="headerlink" title="機器學習任務攻略"></a>機器學習任務攻略</h2><p><img src="/../images/202200703_7.png"><br>  - 當有一個模型的表現不佳，有時候不一定是overfitting的問題<br>  - 問題來源可能有數種<br>    - Model Bias：模型本身的彈性不足，值域過小導致找不到最佳解<br>    - Optimization Issue：模型的彈性是夠的，也就是$f^*(x)$存在，只是因為optimizer不給力，始終無法把$\theta$帶到loss更小的地方</p>
+<h2 id="如何分辨是model-bias-issue-or-Optimization-issue"><a href="#如何分辨是model-bias-issue-or-Optimization-issue" class="headerlink" title="如何分辨是model bias issue or Optimization issue?"></a>如何分辨是model bias issue or Optimization issue?</h2><p>  - 以下圖為例<br><img src="/../images/20220703_1.png"></p>
+<ul>
+<li>通常我們會認為這是模型overfitting了，才會導致層數增加反倒命中率下降</li>
+<li>overfitting固然有可能，但它不是唯一的可能性，我們應該要從訓練資料的loss下手<br><img src="/../images/20220703_2.png"></li>
+<li>可以發現就算是訓練資料，56層的loss也是大於20層的，故排除overfitting的可能</li>
+<li>至於模型彈性這個可能也可以排除，因為56層的複雜度&gt;20層，故56層的loss只可能比20層還小，若是顛倒的話表示應該不是模型彈性問題，而是optimizer的鍋</li>
+</ul>
+<hr>
+<ul>
+<li>若是發現類似優化器的問題，可以試試看先跑一些比較淺層的model或是簡易的model(如linear regression)，先觀察得出來的結果</li>
+<li>再跑深度的model，比較他們的結果，若深度的結果沒比較好，可以考慮換optimizer<br>原因樹狀圖(?<br><img src="/../images/20220703_3.png"></li>
+</ul>
+<h2 id="Overfitting的成因"><a href="#Overfitting的成因" class="headerlink" title="Overfitting的成因"></a>Overfitting的成因</h2><p><img src="/../images/20220703_4.png"></p>
+<ol>
+<li>若訓練資料不足，模型彈性過高也可能導致overfitting(增加training data最有效)<ul>
+<li>data augmentation也是一種方法(ex.圖片翻轉作為新資料)</li>
+</ul>
+</li>
+<li>降低模型的彈性也可以降低這個可能</li>
+<li>採用一些技巧<ul>
+<li>Early stopping</li>
+<li>Regularization</li>
+<li>Dropout</li>
+<li>Less features</li>
+</ul>
+</li>
+</ol>
+<h2 id="衡量模型"><a href="#衡量模型" class="headerlink" title="衡量模型"></a>衡量模型</h2><ul>
+<li>或許某個model在所有model裡面test成績最突出，但它未必會真的是最好的模型(運氣問題)<br><img src="/../images/20220703_5.png"></li>
+<li>極端範例，一個模型剛好隨機出了最好的結果</li>
+<li>所以testing set有分public跟private，避免一直上傳模型賭出最好成績</li>
+</ul>
+<h3 id="N-fold-Cross-Validation"><a href="#N-fold-Cross-Validation" class="headerlink" title="N-fold Cross Validation"></a>N-fold Cross Validation</h3><ul>
+<li>把train set切成3份，2份是training data，1份是val data</li>
+<li>交叉身分去訓練n次</li>
+</ul>
+<p><img src="/../images/20220703_6.png" alt="upload successful"></p>
+<h4 id="data-mismatch"><a href="#data-mismatch" class="headerlink" title="data mismatch"></a>data mismatch</h4><ul>
+<li>training data 跟 testing data有不同分布</li>
+<li>ex. 機器學習2020年觀看人數預測2021年觀看人數，很高可能會mismatch</li>
+</ul>
+</details>
+  <details>
+    <summary><b><font size="+2">類神經網路訓練不起來怎麼辦</font></b></summary>
+  
+  - 這裡只討論optimazion失靈的時候，如何把梯度下降做得更好
+  
+</details>
+
+
+
+</details>
+
+
+
+
+
+
+
+
+<details>
+  <summary><b><font size="+3">Class : 再探寶可夢、數碼寶貝分類器</font></b></summary>
+
+<ul>
+<li>機器學習的第三個任務：讓機器學會創造-Structure learnin</li>
+</ul>
+<h2 id="基本原理"><a href="#基本原理" class="headerlink" title="基本原理"></a>基本原理</h2><ul>
+<li>loss function的輸入是weight跟bias，輸出是這組參數有多好」</li>
+<li>Optimization : 找出最好的一組參數(w*,b*)使loss function最小<ul>
+<li>常用gradient descent<ul>
+<li>隨機決定w_0</li>
+<li>把L對w做偏微分，若斜率&gt;0則提高w，反之降低w(變動量&#x3D;η，屬於hyperparameters)</details></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://laxiflora.github.io/2022/07/03/%E6%9D%8E%E5%BC%98%E6%AF%85-%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92-Week2/" data-id="cl553gm9q0008osveef2pe2qx" data-title="李弘毅_機器學習_Week2" class="article-share-link">Teilen</a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%9D%8E%E5%BC%98%E6%AF%85%E7%B3%BB%E5%88%97/" rel="tag">李弘毅系列</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92/" rel="tag">機器學習</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-pytorch入門" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2022/07/02/pytorch%E5%85%A5%E9%96%80/" class="article-date">
+  <time class="dt-published" datetime="2022-07-02T12:39:19.000Z" itemprop="datePublished">2022-07-02</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2022/07/02/pytorch%E5%85%A5%E9%96%80/">pytorch入門</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="讀取資料"><a href="#讀取資料" class="headerlink" title="讀取資料"></a>讀取資料</h1><h2 id="需import的套件"><a href="#需import的套件" class="headerlink" title="需import的套件"></a>需import的套件</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">torch.utils.data.Dataset</span><br><span class="line">torch.utils.data.DataLoader</span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">dataset = MyDataset(file)</span><br><span class="line">dataloader = DataLoader(dataset, batch_size, shuffle=<span class="literal">True</span>) //Training用true, Testing用false</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>MyDataset屬於自定義的類別，定義如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">MyDataset</span>(<span class="title class_ inherited__">Dataset</span>):</span><br><span class="line">	<span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self,file</span>):</span><br><span class="line">    	self.data = ...</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__getitem__</span>(<span class="params">self, index</span>):</span><br><span class="line">    	<span class="keyword">return</span> self.data[index]</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__len__</span>(<span class="params">self</span>):</span><br><span class="line">    	<span class="keyword">return</span> <span class="built_in">len</span>(self.data)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>pytorch裡面的資料大多是以tensor來表示(向量)</p>
+</li>
+<li><p>我們除了讀取資料，也可以自行創建，範例如下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">x = torch.tensor([1,2],[3,4]) // 得到2x2</span><br><span class="line">x = torch.from_numpy(np.array([1,2],[3,4])) //也可以自numpy轉移矩陣</span><br><span class="line">x  torch.zeros([2,2]) //創建一個shape為(2,2)的全0矩陣</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h1 id="常用函數"><a href="#常用函數" class="headerlink" title="常用函數"></a>常用函數</h1><ul>
+<li><p>transpose : 讓兩個維度之間互換<br>範例</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">x.shape() == (2,3)</span><br><span class="line">x = x.transpose(0,1)</span><br><span class="line">x.shape() == (3,2)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>x.squeeze(0)：將一個大小為1維度消除</p>
+</li>
+<li><p>相對的，呼叫x.unsqueeze(0)就是增加一個大小&#x3D;1的維度</p>
+</li>
+<li><p>torch.cat：將一個維度連接起來(其餘維度大小需相同)</p>
+</li>
+</ul>
+<h1 id="常見問題"><a href="#常見問題" class="headerlink" title="常見問題"></a>常見問題</h1><ul>
+<li>data type</li>
+<li>運算用的處理器 <code>x = x.to(&#39;...&#39;)</code></li>
+<li></li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://laxiflora.github.io/2022/07/02/pytorch%E5%85%A5%E9%96%80/" data-id="cl553gm9p0005osvecxr84wfj" data-title="pytorch入門" class="article-share-link">Teilen</a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Pytorch/" rel="tag">Pytorch</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92/" rel="tag">機器學習</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-Hexo使用技巧" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2022/06/28/Hexo%E4%BD%BF%E7%94%A8%E6%8A%80%E5%B7%A7/" class="article-date">
@@ -176,7 +370,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://laxiflora.github.io/2022/06/28/Hexo%E4%BD%BF%E7%94%A8%E6%8A%80%E5%B7%A7/" data-id="cl53mx6vm000450ved4ssb414" data-title="Hexo使用技巧" class="article-share-link">Teilen</a>
+      <a data-url="https://laxiflora.github.io/2022/06/28/Hexo%E4%BD%BF%E7%94%A8%E6%8A%80%E5%B7%A7/" data-id="cl553gm9o0003osve4i6002w2" data-title="Hexo使用技巧" class="article-share-link">Teilen</a>
       
       
       
@@ -400,7 +594,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://laxiflora.github.io/2022/06/23/%E6%9D%8E%E5%BC%98%E6%AF%85-%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92-Week1/" data-id="cl53mx6vj000150ve1y4c85b5" data-title="李弘毅_機器學習_Week1" class="article-share-link">Teilen</a>
+      <a data-url="https://laxiflora.github.io/2022/06/23/%E6%9D%8E%E5%BC%98%E6%AF%85-%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92-Week1/" data-id="cl553gm9l0001osvediw3hvgh" data-title="李弘毅_機器學習_Week1" class="article-share-link">Teilen</a>
       
       
       
@@ -504,7 +698,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://laxiflora.github.io/2022/06/22/C++%20%E5%B8%B8%E8%A6%8BSTL%E5%AE%B9%E5%99%A8%E6%A6%82%E8%BF%B0/" data-id="cl53mx6vf000050ve8xf1hafr" data-title="C++ 常見STL容器概述" class="article-share-link">Teilen</a>
+      <a data-url="https://laxiflora.github.io/2022/06/22/C++%20%E5%B8%B8%E8%A6%8BSTL%E5%AE%B9%E5%99%A8%E6%A6%82%E8%BF%B0/" data-id="cl553gm9h0000osvea5g2ak0l" data-title="C++ 常見STL容器概述" class="article-share-link">Teilen</a>
       
       
       
@@ -577,7 +771,7 @@ hexo就會幫你建立一個新的網誌，並且會在 <em>source&#x2F;_posts</
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://laxiflora.github.io/2022/06/21/%E5%A6%82%E4%BD%95%E7%94%A8hexo%E5%9C%A8github%20page%E4%B8%8A%E9%83%A8%E7%BD%B2%E5%B1%AC%E6%96%BC%E8%87%AA%E5%B7%B1%E7%9A%84%E7%AC%AC%E4%B8%80%E5%80%8B%E7%B6%B2%E7%AB%99/" data-id="cl53mx6vl000350ve8jvn3tb4" data-title="如何用hexo在github page上部署屬於自己的第一個網站" class="article-share-link">Teilen</a>
+      <a data-url="https://laxiflora.github.io/2022/06/21/%E5%A6%82%E4%BD%95%E7%94%A8hexo%E5%9C%A8github%20page%E4%B8%8A%E9%83%A8%E7%BD%B2%E5%B1%AC%E6%96%BC%E8%87%AA%E5%B7%B1%E7%9A%84%E7%AC%AC%E4%B8%80%E5%80%8B%E7%B6%B2%E7%AB%99/" data-id="cl553gm9o0004osve2mshgalg" data-title="如何用hexo在github page上部署屬於自己的第一個網站" class="article-share-link">Teilen</a>
       
       
       
@@ -604,7 +798,7 @@ hexo就會幫你建立一個新的網誌，並且會在 <em>source&#x2F;_posts</
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/" rel="tag">C++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/" rel="tag">Hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9D%8E%E5%BC%98%E6%AF%85%E7%B3%BB%E5%88%97/" rel="tag">李弘毅系列</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92/" rel="tag">機器學習</a></li></ul>
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/" rel="tag">C++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/" rel="tag">Hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Pytorch/" rel="tag">Pytorch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9D%8E%E5%BC%98%E6%AF%85%E7%B3%BB%E5%88%97/" rel="tag">李弘毅系列</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92/" rel="tag">機器學習</a></li></ul>
     </div>
   </div>
 
@@ -614,7 +808,7 @@ hexo就會幫你建立一個新的網誌，並且會在 <em>source&#x2F;_posts</
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/C/" style="font-size: 10px;">C++</a> <a href="/tags/Hexo/" style="font-size: 20px;">Hexo</a> <a href="/tags/%E6%9D%8E%E5%BC%98%E6%AF%85%E7%B3%BB%E5%88%97/" style="font-size: 10px;">李弘毅系列</a> <a href="/tags/%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92/" style="font-size: 10px;">機器學習</a>
+      <a href="/tags/C/" style="font-size: 10px;">C++</a> <a href="/tags/Hexo/" style="font-size: 15px;">Hexo</a> <a href="/tags/Pytorch/" style="font-size: 10px;">Pytorch</a> <a href="/tags/%E6%9D%8E%E5%BC%98%E6%AF%85%E7%B3%BB%E5%88%97/" style="font-size: 15px;">李弘毅系列</a> <a href="/tags/%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92/" style="font-size: 20px;">機器學習</a>
     </div>
   </div>
 
@@ -623,7 +817,7 @@ hexo就會幫你建立一個新的網誌，並且會在 <em>source&#x2F;_posts</
   <div class="widget-wrap">
     <h3 class="widget-title">Archiv</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">June 2022</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">July 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">June 2022</a></li></ul>
     </div>
   </div>
 
@@ -636,6 +830,14 @@ hexo就會幫你建立一個新的網誌，並且會在 <em>source&#x2F;_posts</
       <ul>
         
           <li>
+            <a href="/2022/07/03/%E6%9D%8E%E5%BC%98%E6%AF%85-%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92-Week2/">李弘毅_機器學習_Week2</a>
+          </li>
+        
+          <li>
+            <a href="/2022/07/02/pytorch%E5%85%A5%E9%96%80/">pytorch入門</a>
+          </li>
+        
+          <li>
             <a href="/2022/06/28/Hexo%E4%BD%BF%E7%94%A8%E6%8A%80%E5%B7%A7/">Hexo使用技巧</a>
           </li>
         
@@ -645,10 +847,6 @@ hexo就會幫你建立一個新的網誌，並且會在 <em>source&#x2F;_posts</
         
           <li>
             <a href="/2022/06/22/C++%20%E5%B8%B8%E8%A6%8BSTL%E5%AE%B9%E5%99%A8%E6%A6%82%E8%BF%B0/">C++ 常見STL容器概述</a>
-          </li>
-        
-          <li>
-            <a href="/2022/06/21/%E5%A6%82%E4%BD%95%E7%94%A8hexo%E5%9C%A8github%20page%E4%B8%8A%E9%83%A8%E7%BD%B2%E5%B1%AC%E6%96%BC%E8%87%AA%E5%B7%B1%E7%9A%84%E7%AC%AC%E4%B8%80%E5%80%8B%E7%B6%B2%E7%AB%99/">如何用hexo在github page上部署屬於自己的第一個網站</a>
           </li>
         
       </ul>

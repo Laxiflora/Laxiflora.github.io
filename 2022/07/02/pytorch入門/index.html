@@ -4,19 +4,20 @@
   <meta charset="utf-8">
   
   
-  <title>C++ 常見STL容器概述 | laxiflora的小天地</title>
+  <title>pytorch入門 | laxiflora的小天地</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="在C++中，我們常常會使用Container來存儲資料，而Container分為三種  Sequence Container Associative Container Container Adapters在這裡簡單介紹一下他們的特性，暫不包括method以及使用範例的部分  Sequence Container 這類的容器資料是有序存放的 常用範例如Vector、Deque、List  Vect">
+  <meta name="description" content="讀取資料需import的套件12torch.utils.data.Datasettorch.utils.data.DataLoader   123dataset &#x3D; MyDataset(file)dataloader &#x3D; DataLoader(dataset, batch_size, shuffle&#x3D;True) &#x2F;&#x2F;Training用true, Testing用false  MyDataset屬於">
 <meta property="og:type" content="article">
-<meta property="og:title" content="C++ 常見STL容器概述">
-<meta property="og:url" content="https://laxiflora.github.io/2022/06/22/C++%20%E5%B8%B8%E8%A6%8BSTL%E5%AE%B9%E5%99%A8%E6%A6%82%E8%BF%B0/index.html">
+<meta property="og:title" content="pytorch入門">
+<meta property="og:url" content="https://laxiflora.github.io/2022/07/02/pytorch%E5%85%A5%E9%96%80/index.html">
 <meta property="og:site_name" content="laxiflora的小天地">
-<meta property="og:description" content="在C++中，我們常常會使用Container來存儲資料，而Container分為三種  Sequence Container Associative Container Container Adapters在這裡簡單介紹一下他們的特性，暫不包括method以及使用範例的部分  Sequence Container 這類的容器資料是有序存放的 常用範例如Vector、Deque、List  Vect">
+<meta property="og:description" content="讀取資料需import的套件12torch.utils.data.Datasettorch.utils.data.DataLoader   123dataset &#x3D; MyDataset(file)dataloader &#x3D; DataLoader(dataset, batch_size, shuffle&#x3D;True) &#x2F;&#x2F;Training用true, Testing用false  MyDataset屬於">
 <meta property="og:locale">
-<meta property="article:published_time" content="2022-06-22T09:51:30.000Z">
-<meta property="article:modified_time" content="2022-07-01T05:06:44.076Z">
+<meta property="article:published_time" content="2022-07-02T12:39:19.000Z">
+<meta property="article:modified_time" content="2022-07-02T16:26:17.989Z">
 <meta property="article:author" content="劉宇承">
-<meta property="article:tag" content="C++">
+<meta property="article:tag" content="機器學習">
+<meta property="article:tag" content="Pytorch">
 <meta name="twitter:card" content="summary">
   
     <link rel="alternate" href="/atom.xml" title="laxiflora的小天地" type="application/atom+xml">
@@ -78,10 +79,10 @@
 </header>
 
       <div class="outer">
-        <section id="main"><article id="post-C++ 常見STL容器概述" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+        <section id="main"><article id="post-pytorch入門" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
-    <a href="/2022/06/22/C++%20%E5%B8%B8%E8%A6%8BSTL%E5%AE%B9%E5%99%A8%E6%A6%82%E8%BF%B0/" class="article-date">
-  <time class="dt-published" datetime="2022-06-22T09:51:30.000Z" itemprop="datePublished">2022-06-22</time>
+    <a href="/2022/07/02/pytorch%E5%85%A5%E9%96%80/" class="article-date">
+  <time class="dt-published" datetime="2022-07-02T12:39:19.000Z" itemprop="datePublished">2022-07-02</time>
 </a>
     
   </div>
@@ -92,7 +93,7 @@
         
   
     <h1 class="p-name article-title" itemprop="headline name">
-      C++ 常見STL容器概述
+      pytorch入門
     </h1>
   
 
@@ -100,79 +101,44 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <p>在C++中，我們常常會使用Container來存儲資料，而Container分為三種</p>
+        <h1 id="讀取資料"><a href="#讀取資料" class="headerlink" title="讀取資料"></a>讀取資料</h1><h2 id="需import的套件"><a href="#需import的套件" class="headerlink" title="需import的套件"></a>需import的套件</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">torch.utils.data.Dataset</span><br><span class="line">torch.utils.data.DataLoader</span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">dataset = MyDataset(file)</span><br><span class="line">dataloader = DataLoader(dataset, batch_size, shuffle=<span class="literal">True</span>) //Training用true, Testing用false</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 <ul>
-<li>Sequence Container</li>
-<li>Associative Container</li>
-<li>Container Adapters<br><br>在這裡簡單介紹一下他們的特性，暫不包括method以及使用範例的部分</li>
+<li><p>MyDataset屬於自定義的類別，定義如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">MyDataset</span>(<span class="title class_ inherited__">Dataset</span>):</span><br><span class="line">	<span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self,file</span>):</span><br><span class="line">    	self.data = ...</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__getitem__</span>(<span class="params">self, index</span>):</span><br><span class="line">    	<span class="keyword">return</span> self.data[index]</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__len__</span>(<span class="params">self</span>):</span><br><span class="line">    	<span class="keyword">return</span> <span class="built_in">len</span>(self.data)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>pytorch裡面的資料大多是以tensor來表示(向量)</p>
+</li>
+<li><p>我們除了讀取資料，也可以自行創建，範例如下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">x = torch.tensor([1,2],[3,4]) // 得到2x2</span><br><span class="line">x = torch.from_numpy(np.array([1,2],[3,4])) //也可以自numpy轉移矩陣</span><br><span class="line">x  torch.zeros([2,2]) //創建一個shape為(2,2)的全0矩陣</span><br></pre></td></tr></table></figure></li>
 </ul>
-<h2 id="Sequence-Container"><a href="#Sequence-Container" class="headerlink" title="Sequence Container"></a>Sequence Container</h2><ul>
-<li>這類的容器資料是有序存放的</li>
-<li>常用範例如Vector、Deque、List</li>
+<h1 id="常用函數"><a href="#常用函數" class="headerlink" title="常用函數"></a>常用函數</h1><ul>
+<li><p>transpose : 讓兩個維度之間互換<br>範例</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">x.shape() == (2,3)</span><br><span class="line">x = x.transpose(0,1)</span><br><span class="line">x.shape() == (3,2)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>x.squeeze(0)：將一個大小為1維度消除</p>
+</li>
+<li><p>相對的，呼叫x.unsqueeze(0)就是增加一個大小&#x3D;1的維度</p>
+</li>
+<li><p>torch.cat：將一個維度連接起來(其餘維度大小需相同)</p>
+</li>
 </ul>
-<h3 id="Vector-常用"><a href="#Vector-常用" class="headerlink" title="Vector(常用)"></a>Vector(常用)</h3><ul>
-<li>類似一個動態大小的陣列</li>
-<li>支援隨機存取</li>
-<li>保證記憶體空間連續 (可善用Spatial Locality)</li>
-<li>雙頭皆可加入元素，且加入與刪除的複雜度其平攤成本均為O(1)</li>
-<li>相比於Deque，insertion in rear在速度上更有利</li>
-<li>一般建議除非很清楚知道使用其他結構的原因，不然建議使用Vector</li>
+<h1 id="常見問題"><a href="#常見問題" class="headerlink" title="常見問題"></a>常見問題</h1><ul>
+<li>data type</li>
+<li>運算用的處理器 <code>x = x.to(&#39;...&#39;)</code></li>
+<li></li>
 </ul>
-<h3 id="Deque"><a href="#Deque" class="headerlink" title="Deque"></a>Deque</h3><ul>
-<li>又名double-ended queue</li>
-<li>跟vector很像，但是不保證記憶體空間連續</li>
-<li>相比於Vector，insertion in front在速度上更有利</li>
-</ul>
-<h3 id="List"><a href="#List" class="headerlink" title="List"></a>List</h3><ul>
-<li>以doubled link list實作</li>
-<li><a target="_blank" rel="noopener" href="https://imgur.com/a/Jc894yi?third_party=1#_=_">對於任意位置的插入與刪除均為O(1)</a></li>
-<li>若是要存取中間的元素，仍然需要整個遍歷過一遍</li>
-</ul>
-<h2 id="Associative-Container"><a href="#Associative-Container" class="headerlink" title="Associative Container"></a>Associative Container</h2><ul>
-<li>這類容器中的元素無序存放，但通常元素之間有對應關係</li>
-<li>常用範例如Set、Multiset、Map、Multimap</li>
-</ul>
-<h3 id="Set"><a href="#Set" class="headerlink" title="Set"></a>Set</h3><ul>
-<li>如數學集合定義，集合內同樣的元素只允許存在1個，若是重複加入同樣元素則會被忽略</li>
-</ul>
-<h3 id="Multiset"><a href="#Multiset" class="headerlink" title="Multiset"></a>Multiset</h3><ul>
-<li>這類集合允許重複的元素存在於集合中，這個結構會追蹤各個元素有幾個</li>
-</ul>
-<h3 id="Map"><a href="#Map" class="headerlink" title="Map"></a>Map</h3><ul>
-<li>又名Associative Array</li>
-<li>有點像Python的基本字典，一次插入是一對key-value</li>
-</ul>
-<h3 id="Multimap"><a href="#Multimap" class="headerlink" title="Multimap"></a>Multimap</h3><ul>
-<li>有點像python裡面的字典，不過每組value都是一個list(multiple values for the same key)</li>
-<li>當用一個key搜尋的時候，得到一個包含所有值的container</li>
-</ul>
-<h2 id="Container-Adapters"><a href="#Container-Adapters" class="headerlink" title="Container Adapters"></a>Container Adapters</h2><ul>
-<li>一種介面，用於放在一個Container之上，用於限制他的方法</li>
-<li>比如我們會用Stack adapters型態宣告Deque Container，限制Deque的功能，讓他表現得像Stack</li>
-<li>常見範例如Stack、Queue、Priority_queue</li>
-</ul>
-<h3 id="Stack"><a href="#Stack" class="headerlink" title="Stack"></a>Stack</h3><ul>
-<li>LIFO access</li>
-<li>通常架在Deque上</li>
-</ul>
-<h3 id="Queue"><a href="#Queue" class="headerlink" title="Queue"></a>Queue</h3><ul>
-<li>FIFO access</li>
-<li>通常架在Deque上</li>
-</ul>
-<h3 id="Priority-queue"><a href="#Priority-queue" class="headerlink" title="Priority_queue"></a>Priority_queue</h3><ul>
-<li>插入的元素按照所決定的優先順序(優先取最低值)排列，其餘表現同queue</li>
-<li>內部通常是用heap實作，所以通常架在vector上面</li>
-</ul>
-<p>以上是比較常用的一些STL容器以及相關介紹，更多的內容(物件的方法、複雜度等等)可以到<a target="_blank" rel="noopener" href="https://cplusplus.com/reference/stl/">這裡</a>翻閱</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://laxiflora.github.io/2022/06/22/C++%20%E5%B8%B8%E8%A6%8BSTL%E5%AE%B9%E5%99%A8%E6%A6%82%E8%BF%B0/" data-id="cl553gm9h0000osvea5g2ak0l" data-title="C++ 常見STL容器概述" class="article-share-link">Teilen</a>
+      <a data-url="https://laxiflora.github.io/2022/07/02/pytorch%E5%85%A5%E9%96%80/" data-id="cl553gm9p0005osvecxr84wfj" data-title="pytorch入門" class="article-share-link">Teilen</a>
       
       
       
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/C/" rel="tag">C++</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Pytorch/" rel="tag">Pytorch</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92/" rel="tag">機器學習</a></li></ul>
 
     </footer>
   </div>
@@ -180,19 +146,19 @@
     
 <nav id="article-nav">
   
-    <a href="/2022/06/23/%E6%9D%8E%E5%BC%98%E6%AF%85-%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92-Week1/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2022/07/03/%E6%9D%8E%E5%BC%98%E6%AF%85-%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92-Week2/" id="article-nav-newer" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Neuer</strong>
       <div class="article-nav-title">
         
-          李弘毅_機器學習_Week1
+          李弘毅_機器學習_Week2
         
       </div>
     </a>
   
   
-    <a href="/2022/06/21/%E5%A6%82%E4%BD%95%E7%94%A8hexo%E5%9C%A8github%20page%E4%B8%8A%E9%83%A8%E7%BD%B2%E5%B1%AC%E6%96%BC%E8%87%AA%E5%B7%B1%E7%9A%84%E7%AC%AC%E4%B8%80%E5%80%8B%E7%B6%B2%E7%AB%99/" id="article-nav-older" class="article-nav-link-wrap">
+    <a href="/2022/06/28/Hexo%E4%BD%BF%E7%94%A8%E6%8A%80%E5%B7%A7/" id="article-nav-older" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Älter</strong>
-      <div class="article-nav-title">如何用hexo在github page上部署屬於自己的第一個網站</div>
+      <div class="article-nav-title">Hexo使用技巧</div>
     </a>
   
 </nav>
