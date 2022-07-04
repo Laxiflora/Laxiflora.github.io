@@ -4,34 +4,25 @@
   <meta charset="utf-8">
   
   
-  <title>李弘毅_機器學習_Week2 | laxiflora的小天地</title>
+  <title>ML_2021_2-2 類神經網路訓練不起來怎麼辦(一) | laxiflora的小天地</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="目錄Preclass:預測頻道觀看人數Class:什麼是機器學習Class:正課內容介紹    Preclass         機器學習任務攻略    機器學習任務攻略  - 當有一個模型的表現不佳，有時候不一定是overfitting的問題  - 問題來源可能有數種    - Model Bias：模型本身的彈性不足，值域過小導致找不到最佳解    - Optimization Issue：模">
+  <meta name="description" content="這裡只討論optimazion失靈的時候，如何把梯度下降做得更好  為何opti會失敗（grad）？ gradient decent&#x3D;0，使參數無法再更新 點卡在local minima or saddle point(稱為卡在critical point)  分辨critical point是saddle point or local minima 雖然我們無法知道loss func">
 <meta property="og:type" content="article">
-<meta property="og:title" content="李弘毅_機器學習_Week2">
-<meta property="og:url" content="https://laxiflora.github.io/2022/07/03/%E6%9D%8E%E5%BC%98%E6%AF%85-%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92-Week2/index.html">
+<meta property="og:title" content="ML_2021_2-2 類神經網路訓練不起來怎麼辦(一)">
+<meta property="og:url" content="https://laxiflora.github.io/2022/07/04/ML-2021-2-2-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%B8%80/index.html">
 <meta property="og:site_name" content="laxiflora的小天地">
-<meta property="og:description" content="目錄Preclass:預測頻道觀看人數Class:什麼是機器學習Class:正課內容介紹    Preclass         機器學習任務攻略    機器學習任務攻略  - 當有一個模型的表現不佳，有時候不一定是overfitting的問題  - 問題來源可能有數種    - Model Bias：模型本身的彈性不足，值域過小導致找不到最佳解    - Optimization Issue：模">
+<meta property="og:description" content="這裡只討論optimazion失靈的時候，如何把梯度下降做得更好  為何opti會失敗（grad）？ gradient decent&#x3D;0，使參數無法再更新 點卡在local minima or saddle point(稱為卡在critical point)  分辨critical point是saddle point or local minima 雖然我們無法知道loss func">
 <meta property="og:locale">
-<meta property="og:image" content="https://laxiflora.github.io/images/202200703_7.png">
-<meta property="og:image" content="https://laxiflora.github.io/images/20220703_1.png">
-<meta property="og:image" content="https://laxiflora.github.io/images/20220703_2.png">
-<meta property="og:image" content="https://laxiflora.github.io/images/20220703_3.png">
-<meta property="og:image" content="https://laxiflora.github.io/images/20220703_4.png">
-<meta property="og:image" content="https://laxiflora.github.io/images/20220703_5.png">
-<meta property="og:image" content="https://laxiflora.github.io/images/20220703_6.png">
 <meta property="og:image" content="https://laxiflora.github.io/images/20220704_1.png">
 <meta property="og:image" content="https://laxiflora.github.io/images/20220704_3.png">
 <meta property="og:image" content="https://laxiflora.github.io/images/20220704_2.png">
 <meta property="og:image" content="https://laxiflora.github.io/images/20220704_5.png">
 <meta property="og:image" content="https://laxiflora.github.io/images/20220704_6.png">
-<meta property="article:published_time" content="2022-07-02T16:26:43.000Z">
-<meta property="article:modified_time" content="2022-07-04T14:08:08.438Z">
+<meta property="article:published_time" content="2022-07-04T14:22:35.000Z">
+<meta property="article:modified_time" content="2022-07-04T15:16:47.639Z">
 <meta property="article:author" content="劉宇承">
-<meta property="article:tag" content="李弘毅系列">
-<meta property="article:tag" content="機器學習">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://laxiflora.github.io/images/202200703_7.png">
+<meta name="twitter:image" content="https://laxiflora.github.io/images/20220704_1.png">
   
     <link rel="alternate" href="/atom.xml" title="laxiflora的小天地" type="application/atom+xml">
   
@@ -92,10 +83,10 @@
 </header>
 
       <div class="outer">
-        <section id="main"><article id="post-李弘毅-機器學習-Week2" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+        <section id="main"><article id="post-ML-2021-2-2-類神經網路訓練不起來怎麼辦-一" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
-    <a href="/2022/07/03/%E6%9D%8E%E5%BC%98%E6%AF%85-%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92-Week2/" class="article-date">
-  <time class="dt-published" datetime="2022-07-02T16:26:43.000Z" itemprop="datePublished">2022-07-03</time>
+    <a href="/2022/07/04/ML-2021-2-2-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%B8%80/" class="article-date">
+  <time class="dt-published" datetime="2022-07-04T14:22:35.000Z" itemprop="datePublished">2022-07-04</time>
 </a>
     
   </div>
@@ -106,7 +97,7 @@
         
   
     <h1 class="p-name article-title" itemprop="headline name">
-      李弘毅_機器學習_Week2
+      ML_2021_2-2 類神經網路訓練不起來怎麼辦(一)
     </h1>
   
 
@@ -114,61 +105,9 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <h1 id="目錄"><a href="#目錄" class="headerlink" title="目錄"></a>目錄</h1><p><a href="#%E9%A0%90%E6%B8%AC%E9%A0%BB%E9%81%93%E8%A7%80%E7%9C%8B%E4%BA%BA%E6%95%B8">Preclass:預測頻道觀看人數</a><br><a href="#%E4%BB%80%E9%BA%BC%E6%98%AF%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92">Class:什麼是機器學習</a><br><a href="#%E6%AD%A3%E8%AA%B2%E5%85%A7%E5%AE%B9%E4%BB%8B%E7%B4%B9">Class:正課內容介紹</a></p>
-<details>
-  <summary><b><font size="+3">Preclass</font></b></summary>
-
-  <details>
-    <summary><b><font size="+2">機器學習任務攻略</font></b></summary>
-  
-<h2 id="機器學習任務攻略"><a href="#機器學習任務攻略" class="headerlink" title="機器學習任務攻略"></a>機器學習任務攻略</h2><p><img src="/../images/202200703_7.png"><br>  - 當有一個模型的表現不佳，有時候不一定是overfitting的問題<br>  - 問題來源可能有數種<br>    - Model Bias：模型本身的彈性不足，值域過小導致找不到最佳解<br>    - Optimization Issue：模型的彈性是夠的，也就是$f^*(x)$存在，只是因為optimizer不給力，始終無法把$\theta$帶到loss更小的地方</p>
-<h2 id="如何分辨是model-bias-issue-or-Optimization-issue"><a href="#如何分辨是model-bias-issue-or-Optimization-issue" class="headerlink" title="如何分辨是model bias issue or Optimization issue?"></a>如何分辨是model bias issue or Optimization issue?</h2><p>  - 以下圖為例<br><img src="/../images/20220703_1.png"></p>
-<ul>
-<li>通常我們會認為這是模型overfitting了，才會導致層數增加反倒命中率下降</li>
-<li>overfitting固然有可能，但它不是唯一的可能性，我們應該要從訓練資料的loss下手<br><img src="/../images/20220703_2.png"></li>
-<li>可以發現就算是訓練資料，56層的loss也是大於20層的，故排除overfitting的可能</li>
-<li>至於模型彈性這個可能也可以排除，因為56層的複雜度&gt;20層，故56層的loss只可能比20層還小，若是顛倒的話表示應該不是模型彈性問題，而是optimizer的鍋</li>
+        <ul>
+<li>這裡只討論optimazion失靈的時候，如何把梯度下降做得更好</li>
 </ul>
-<hr>
-<ul>
-<li>若是發現類似優化器的問題，可以試試看先跑一些比較淺層的model或是簡易的model(如linear regression)，先觀察得出來的結果</li>
-<li>再跑深度的model，比較他們的結果，若深度的結果沒比較好，可以考慮換optimizer<br>原因樹狀圖(?<br><img src="/../images/20220703_3.png"></li>
-</ul>
-<h2 id="Overfitting的成因"><a href="#Overfitting的成因" class="headerlink" title="Overfitting的成因"></a>Overfitting的成因</h2><p><img src="/../images/20220703_4.png"></p>
-<ol>
-<li>若訓練資料不足，模型彈性過高也可能導致overfitting(增加training data最有效)<ul>
-<li>data augmentation也是一種方法(ex.圖片翻轉作為新資料)</li>
-</ul>
-</li>
-<li>降低模型的彈性也可以降低這個可能</li>
-<li>採用一些技巧<ul>
-<li>Early stopping</li>
-<li>Regularization</li>
-<li>Dropout</li>
-<li>Less features</li>
-</ul>
-</li>
-</ol>
-<h2 id="衡量模型"><a href="#衡量模型" class="headerlink" title="衡量模型"></a>衡量模型</h2><ul>
-<li>或許某個model在所有model裡面test成績最突出，但它未必會真的是最好的模型(運氣問題)<br><img src="/../images/20220703_5.png"></li>
-<li>極端範例，一個模型剛好隨機出了最好的結果</li>
-<li>所以testing set有分public跟private，避免一直上傳模型賭出最好成績</li>
-</ul>
-<h3 id="N-fold-Cross-Validation"><a href="#N-fold-Cross-Validation" class="headerlink" title="N-fold Cross Validation"></a>N-fold Cross Validation</h3><ul>
-<li>把train set切成3份，2份是training data，1份是val data</li>
-<li>交叉身分去訓練n次</li>
-</ul>
-<p><img src="/../images/20220703_6.png" alt="upload successful"></p>
-<h4 id="data-mismatch"><a href="#data-mismatch" class="headerlink" title="data mismatch"></a>data mismatch</h4><ul>
-<li>training data 跟 testing data有不同分布</li>
-<li>ex. 機器學習2020年觀看人數預測2021年觀看人數，很高可能會mismatch</li>
-</ul>
-</details>
-  <details>
-    <summary><b><font size="+2">類神經網路訓練不起來怎麼辦</font></b></summary>
-  
-  - 這裡只討論optimazion失靈的時候，如何把梯度下降做得更好
-
 <h2 id="為何opti會失敗（grad）？"><a href="#為何opti會失敗（grad）？" class="headerlink" title="為何opti會失敗（grad）？"></a>為何opti會失敗（grad）？</h2><ul>
 <li>gradient decent&#x3D;0，使參數無法再更新</li>
 <li>點卡在local minima or saddle point(稱為卡在critical point)</li>
@@ -211,57 +150,33 @@
 <li>定義一個數值”Minimum ratio &#x3D; $\frac{正\lambda數}{\lambda數}$”，表示你的critical point有多像local minima</li>
 <li>所以我們可以知道，通常一個模型train到loss卡住，極高可能是卡在一個saddle point</li>
 </ul>
-<p>  </details></p>
-</details>
-
-
-
-</details>
-
-
-
-
-
-
-
-
-<details>
-  <summary><b><font size="+3">Class : 再探寶可夢、數碼寶貝分類器</font></b></summary>
-
-<ul>
-<li>機器學習的第三個任務：讓機器學會創造-Structure learnin</li>
-</ul>
-<h2 id="基本原理"><a href="#基本原理" class="headerlink" title="基本原理"></a>基本原理</h2><ul>
-<li>loss function的輸入是weight跟bias，輸出是這組參數有多好」</li>
-<li>Optimization : 找出最好的一組參數(w*,b*)使loss function最小<ul>
-<li>常用gradient descent<ul>
-<li>隨機決定w_0</li>
-<li>把L對w做偏微分，若斜率&gt;0則提高w，反之降低w(變動量&#x3D;η，屬於hyperparameters)</details></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://laxiflora.github.io/2022/07/03/%E6%9D%8E%E5%BC%98%E6%AF%85-%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92-Week2/" data-id="cl56tlv6n000540veb2543imv" data-title="李弘毅_機器學習_Week2" class="article-share-link">Teilen</a>
+      <a data-url="https://laxiflora.github.io/2022/07/04/ML-2021-2-2-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%B8%80/" data-id="cl56vzat400052gve30cy5mi8" data-title="ML_2021_2-2 類神經網路訓練不起來怎麼辦(一)" class="article-share-link">Teilen</a>
       
       
       
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%9D%8E%E5%BC%98%E6%AF%85%E7%B3%BB%E5%88%97/" rel="tag">李弘毅系列</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92/" rel="tag">機器學習</a></li></ul>
-
     </footer>
   </div>
   
     
 <nav id="article-nav">
   
+    <a href="/2022/07/04/ML-2022-2-1-%E5%86%8D%E6%8E%A2%E5%AF%B6%E5%8F%AF%E5%A4%A2%E3%80%81%E6%95%B8%E7%A2%BC%E5%AF%B6%E8%B2%9D%E5%88%86%E9%A1%9E%E5%99%A8/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Neuer</strong>
+      <div class="article-nav-title">
+        
+          ML_2022_2-1 再探寶可夢、數碼寶貝分類器
+        
+      </div>
+    </a>
   
-    <a href="/2022/07/02/pytorch%E5%85%A5%E9%96%80/" id="article-nav-older" class="article-nav-link-wrap">
+  
+    <a href="/2022/07/04/ML-2021-2-1-%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E4%BB%BB%E5%8B%99%E6%94%BB%E7%95%A5/" id="article-nav-older" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Älter</strong>
-      <div class="article-nav-title">pytorch入門</div>
+      <div class="article-nav-title">ML_2021_2-1 機器學習任務攻略</div>
     </a>
   
 </nav>
@@ -281,7 +196,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/" rel="tag">C++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/" rel="tag">Hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Pytorch/" rel="tag">Pytorch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9D%8E%E5%BC%98%E6%AF%85%E7%B3%BB%E5%88%97/" rel="tag">李弘毅系列</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92/" rel="tag">機器學習</a></li></ul>
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/" rel="tag">C++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/" rel="tag">Hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Pytorch/" rel="tag">Pytorch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9D%8E%E5%AE%8F%E6%AF%85%E7%B3%BB%E5%88%97/" rel="tag">李宏毅系列</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92/" rel="tag">機器學習</a></li></ul>
     </div>
   </div>
 
@@ -291,7 +206,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/C/" style="font-size: 10px;">C++</a> <a href="/tags/Hexo/" style="font-size: 15px;">Hexo</a> <a href="/tags/Pytorch/" style="font-size: 10px;">Pytorch</a> <a href="/tags/%E6%9D%8E%E5%BC%98%E6%AF%85%E7%B3%BB%E5%88%97/" style="font-size: 15px;">李弘毅系列</a> <a href="/tags/%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92/" style="font-size: 20px;">機器學習</a>
+      <a href="/tags/C/" style="font-size: 10px;">C++</a> <a href="/tags/Hexo/" style="font-size: 20px;">Hexo</a> <a href="/tags/Pytorch/" style="font-size: 10px;">Pytorch</a> <a href="/tags/%E6%9D%8E%E5%AE%8F%E6%AF%85%E7%B3%BB%E5%88%97/" style="font-size: 10px;">李宏毅系列</a> <a href="/tags/%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92/" style="font-size: 20px;">機器學習</a>
     </div>
   </div>
 
@@ -313,23 +228,23 @@
       <ul>
         
           <li>
-            <a href="/2022/07/03/%E6%9D%8E%E5%BC%98%E6%AF%85-%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92-Week2/">李弘毅_機器學習_Week2</a>
+            <a href="/2022/07/04/ML-2022-2-1-%E5%86%8D%E6%8E%A2%E5%AF%B6%E5%8F%AF%E5%A4%A2%E3%80%81%E6%95%B8%E7%A2%BC%E5%AF%B6%E8%B2%9D%E5%88%86%E9%A1%9E%E5%99%A8/">ML_2022_2-1 再探寶可夢、數碼寶貝分類器</a>
           </li>
         
           <li>
-            <a href="/2022/07/02/pytorch%E5%85%A5%E9%96%80/">pytorch入門</a>
+            <a href="/2022/07/04/ML-2021-2-2-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%B8%80/">ML_2021_2-2 類神經網路訓練不起來怎麼辦(一)</a>
           </li>
         
           <li>
-            <a href="/2022/06/28/Hexo%E4%BD%BF%E7%94%A8%E6%8A%80%E5%B7%A7/">Hexo使用技巧</a>
+            <a href="/2022/07/04/ML-2021-2-1-%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E4%BB%BB%E5%8B%99%E6%94%BB%E7%95%A5/">ML_2021_2-1 機器學習任務攻略</a>
           </li>
         
           <li>
-            <a href="/2022/06/23/%E6%9D%8E%E5%BC%98%E6%AF%85-%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92-Week1/">李弘毅_機器學習_Week1</a>
+            <a href="/2022/07/04/ML-2022-1-1-%E6%AD%A3%E8%AA%B2%E5%85%A7%E5%AE%B9%E4%BB%8B%E7%B4%B9/">ML_2022_1-1 正課內容介紹</a>
           </li>
         
           <li>
-            <a href="/2022/06/22/C++%20%E5%B8%B8%E8%A6%8BSTL%E5%AE%B9%E5%99%A8%E6%A6%82%E8%BF%B0/">C++ 常見STL容器概述</a>
+            <a href="/2022/07/04/ML-2021-1-1-%E7%9B%A3%E7%9D%A3%E5%BC%8F%E5%AD%B8%E7%BF%92%E6%A6%82%E8%AB%96/">ML_2021_1-1 監督式學習概論</a>
           </li>
         
       </ul>
