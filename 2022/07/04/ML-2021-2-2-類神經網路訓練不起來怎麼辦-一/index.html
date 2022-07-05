@@ -19,7 +19,7 @@
 <meta property="og:image" content="https://laxiflora.github.io/images/20220704_5.png">
 <meta property="og:image" content="https://laxiflora.github.io/images/20220704_6.png">
 <meta property="article:published_time" content="2022-07-04T14:22:35.000Z">
-<meta property="article:modified_time" content="2022-07-04T15:16:47.639Z">
+<meta property="article:modified_time" content="2022-07-05T14:14:51.525Z">
 <meta property="article:author" content="劉宇承">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://laxiflora.github.io/images/20220704_1.png">
@@ -135,11 +135,11 @@
 </li>
 </ul>
 <h2 id="case-saddle-point"><a href="#case-saddle-point" class="headerlink" title="case: saddle point"></a>case: saddle point</h2><ul>
-<li>我們可以藉由H來得到參數該移動的方向<br>令$\lambda$是H的一個eigen value, u為$\lambda$的其中一個eigen vector<br>則<br>$$<br>v^THv &#x3D; u^THu &#x3D; u^T(\lambda u) &#x3D; \lambda \vert \vert u \vert \vert^2<br>$$<br>若今天$\lambda &lt; 0$則必定$u^THu&lt;0$<br>可以知道$L(\theta)必定&gt;L(\theta’)$<br><img src="/../images/20220704_6.png"><br>我們只要將$\theta’沿著u的方向更新u得到\theta$，就可以再次降低loss</li>
+<li>我們可以藉由H來得到參數該移動的方向<br>令$\lambda$是H的一個eigen value, u為$\lambda$的其中一個eigen vector<br>則<br>$$<br>v^THv &#x3D; u^THu &#x3D; u^T(\lambda u) &#x3D; \lambda \vert \vert u \vert \vert^2<br>$$<br>若今天$\lambda &lt; 0$則必定$u^THu&lt;0$，回顧剛剛的式子<br>$$<br>L(\theta) \sim L(\theta’)^Tg + \frac{1}{2}(\theta - \theta’)^TH(\theta - \theta’)<br>$$<br>可以知道$L(\theta)必定&gt;L(\theta’)$<br><img src="/../images/20220704_6.png"><br>我們只要將$\theta’沿著u的方向更新u得到\theta$，就可以再次降低loss</li>
 </ul>
 <h3 id="範例說明-1"><a href="#範例說明-1" class="headerlink" title="範例說明"></a>範例說明</h3><ul>
-<li>延續剛剛的例子，我們知道$H的\lamda_1 &#x3D; 2, \lamda_2 &#x3D;-2$，屬於saddle point(非正定與負定)</li>
-<li>取$\lamda_2 &#x3D; -2 , u &#x3D; (1,1)$，則把$\theta &#x3D; (0,0)+(1,1)$，就可以逃出saddle point</li>
+<li>延續剛剛的例子，我們知道$H的\lambda_1 &#x3D; 2, \lambda_2 &#x3D;-2$，屬於saddle point(非正定與負定)</li>
+<li>取$\lambda_2 &#x3D; -2 , u &#x3D; (1,1)$，則把$\theta &#x3D; (0,0)+(1,1)$，就可以逃出saddle point</li>
 <li>實務上不易使用，因為要做出2次微分且還需要用到找出該矩陣的eigen value，計算量過大 (還有別招可以用)</li>
 </ul>
 <h2 id="Saddle-point-vs-Local-Minima"><a href="#Saddle-point-vs-Local-Minima" class="headerlink" title="Saddle point vs. Local Minima"></a>Saddle point vs. Local Minima</h2><ul>
@@ -154,7 +154,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://laxiflora.github.io/2022/07/04/ML-2021-2-2-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%B8%80/" data-id="cl56vzat400052gve30cy5mi8" data-title="ML_2021_2-2 類神經網路訓練不起來怎麼辦(一)" class="article-share-link">Teilen</a>
+      <a data-url="https://laxiflora.github.io/2022/07/04/ML-2021-2-2-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%B8%80/" data-id="cl58dzqjc0004b8ved42z0vml" data-title="ML_2021_2-2 類神經網路訓練不起來怎麼辦(一)" class="article-share-link">Teilen</a>
       
       
       
@@ -228,6 +228,10 @@
       <ul>
         
           <li>
+            <a href="/2022/07/05/ML-2021-2-3-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%BA%8C/">ML_2021_2-3 類神經網路訓練不起來怎麼辦(二)</a>
+          </li>
+        
+          <li>
             <a href="/2022/07/04/ML-2022-2-1-%E5%86%8D%E6%8E%A2%E5%AF%B6%E5%8F%AF%E5%A4%A2%E3%80%81%E6%95%B8%E7%A2%BC%E5%AF%B6%E8%B2%9D%E5%88%86%E9%A1%9E%E5%99%A8/">ML_2022_2-1 再探寶可夢、數碼寶貝分類器</a>
           </li>
         
@@ -241,10 +245,6 @@
         
           <li>
             <a href="/2022/07/04/ML-2022-1-1-%E6%AD%A3%E8%AA%B2%E5%85%A7%E5%AE%B9%E4%BB%8B%E7%B4%B9/">ML_2022_1-1 正課內容介紹</a>
-          </li>
-        
-          <li>
-            <a href="/2022/07/04/ML-2021-1-1-%E7%9B%A3%E7%9D%A3%E5%BC%8F%E5%AD%B8%E7%BF%92%E6%A6%82%E8%AB%96/">ML_2021_1-1 監督式學習概論</a>
           </li>
         
       </ul>
