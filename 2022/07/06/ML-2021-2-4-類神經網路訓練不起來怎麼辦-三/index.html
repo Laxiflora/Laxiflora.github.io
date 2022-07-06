@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>ML_2021_2-4 類神經網路訓練不起來怎麼辦(三) | laxiflora的小天地</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="Critical point 不一定是在訓練模型時會碰到的最大問題  Adaptive Learning Rate 我們都認為training loss卡住了之後，是因為parameters卡在critical point 其實有可能是loss function在兩個谷間碰撞，可能是兩組parameters之間剛好loss差不多 考慮一個情境，高爾夫球一直在球洞兩邊滾來滾去，就是滾不到終點 多數">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ML_2021_2-4 類神經網路訓練不起來怎麼辦(三)">
+<meta property="og:url" content="https://laxiflora.github.io/2022/07/06/ML-2021-2-4-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%B8%89/index.html">
+<meta property="og:site_name" content="laxiflora的小天地">
+<meta property="og:description" content="Critical point 不一定是在訓練模型時會碰到的最大問題  Adaptive Learning Rate 我們都認為training loss卡住了之後，是因為parameters卡在critical point 其實有可能是loss function在兩個谷間碰撞，可能是兩組parameters之間剛好loss差不多 考慮一個情境，高爾夫球一直在球洞兩邊滾來滾去，就是滾不到終點 多數">
+<meta property="og:locale">
+<meta property="og:image" content="https://laxiflora.github.io/images/pasted-3.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220706_2.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220706_3.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/image.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220706_4.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/pasted-4.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220706_5.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/pasted-5.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220706_7.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/pasted-6.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220706_10.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220706_11.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220706_12.png">
+<meta property="article:published_time" content="2022-07-06T06:04:41.000Z">
+<meta property="article:modified_time" content="2022-07-06T08:37:29.058Z">
+<meta property="article:author" content="劉宇承">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://laxiflora.github.io/images/pasted-3.png">
+  
+    <link rel="alternate" href="/atom.xml" title="laxiflora的小天地" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">laxiflora的小天地</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">前進軟體工程師的練功之路</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://laxiflora.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-ML-2021-2-4-類神經網路訓練不起來怎麼辦-三" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2022/07/06/ML-2021-2-4-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%B8%89/" class="article-date">
+  <time class="dt-published" datetime="2022-07-06T06:04:41.000Z" itemprop="datePublished">2022-07-06</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      ML_2021_2-4 類神經網路訓練不起來怎麼辦(三)
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <ul>
+<li>Critical point 不一定是在訓練模型時會碰到的最大問題</li>
+</ul>
+<h1 id="Adaptive-Learning-Rate"><a href="#Adaptive-Learning-Rate" class="headerlink" title="Adaptive Learning Rate"></a>Adaptive Learning Rate</h1><ul>
+<li>我們都認為training loss卡住了之後，是因為parameters卡在critical point</li>
+<li>其實有可能是loss function在兩個谷間碰撞，可能是兩組parameters之間剛好loss差不多</li>
+<li>考慮一個情境，高爾夫球一直在球洞兩邊滾來滾去，就是滾不到終點<br><img src="/../images/pasted-3.png"></li>
+<li>多數training其實還沒走到critical point就已經停止 (所以真正要注意的點不是critical point)</li>
+</ul>
+<h2 id="非卡在critical-point的Example"><a href="#非卡在critical-point的Example" class="headerlink" title="非卡在critical point的Example"></a>非卡在critical point的Example</h2><ul>
+<li><p>給定一個convex error surface，如下圖<br><img src="/../images/20220706_2.png" alt="upload successful"></p>
+</li>
+<li><p>當learning rate太大，會容易在等高線密集的地方邁步過大，如下圖<br><img src="/../images/20220706_3.png" alt="upload successful"></p>
+</li>
+<li><p>或是當learning rate太小，容易卡在低谷幾乎動不了(要挪到X需要好幾百萬次更新)，如下圖<br><img src="/../images/image.png" alt="upload successful"></p>
+</li>
+</ul>
+<p>$\rightarrow$ 單一learning rate通常不能貫徹模型訓練的整個過程</p>
+<h2 id="如何設定learning-rate-Adagrad-Approach"><a href="#如何設定learning-rate-Adagrad-Approach" class="headerlink" title="如何設定learning rate? - Adagrad Approach"></a>如何設定learning rate? - Adagrad Approach</h2><ul>
+<li><p>從上個例子可知，當某方向上等高線密集時，我們需要learning rate 小，反之則要大</p>
+</li>
+<li><p>為了讓$\eta$能自動變動，要調整公式</p>
+</li>
+<li><p>下圖為梯度下降法的原始公式<br><img src="/../images/20220706_4.png" alt="upload successful"></p>
+</li>
+<li><p>方便起見，這裡只用一個參數</p>
+</li>
+<li><p>更動以後的算式如下</p>
+</li>
+</ul>
+<p>$$<br>\theta^{t+1}_i \leftarrow \theta^t_i - \frac{\eta}{\sigma^t_i} g^t_i<br>$$</p>
+<ul>
+<li>我們讓$\sigma^t_i$加入等式，這樣就可以讓learning rate變成一個parameter dependent的hyper parameter</li>
+</ul>
+<h3 id="如何計算sigma"><a href="#如何計算sigma" class="headerlink" title="如何計算sigma?"></a>如何計算sigma?</h3><p>$$<br>\theta^{1}_i \leftarrow \theta^0_i - \frac{\eta}{\sigma^0_i} g^0_i<br>$$<br>其中$\sigma^0_i &#x3D; \sqrt{(g^0_i)^2} &#x3D; \vert g^0_i \vert$<br>接下來<br>$$<br>\theta^{2}_i \leftarrow \theta^1_i - \frac{\eta}{\sigma^0_i} g^1_i<br>$$<br>其中$\sigma^1_i &#x3D; \sqrt{\frac{1}{2}[(g^0_i)^2+(g^1_i)^2]}$</p>
+<p>…<br>一路推廣，可以得到</p>
+<p>$$<br>\theta^{t+1}_i \leftarrow \theta^t_i - \frac{\eta}{\sigma^t_i} g^t_i<br>$$</p>
+<p>其中</p>
+<p>$$<br>\sigma^t_i &#x3D; \sqrt{\frac{1}{t+1}\sum_{j&#x3D;0}^{t}(g_i^j)^2}<br>$$</p>
+<ul>
+<li>目前這個技巧應用在Adagrad</li>
+</ul>
+<h3 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h3><ul>
+<li>當gradient小(平坦)，算出來的$\sigma$就小，learning rate大</li>
+<li>當gradient大(陡峭)，算出來的$\sigma$就大，learning rate小<br><img src="/../images/pasted-4.png"></li>
+</ul>
+<h3 id="這樣會有甚麼問題"><a href="#這樣會有甚麼問題" class="headerlink" title="這樣會有甚麼問題"></a>這樣會有甚麼問題</h3><ul>
+<li>剛才的假設是同一個參數，他的gradient大小就固定一個值(?)</li>
+<li>就算是同一個參數，他需要的learning rate也會隨時間而改變</li>
+<li>我們期待就算是同一個參數在同一個方向，learning rate也會有所改變<br>舉例，我們討論橫軸</li>
+</ul>
+<p><img src="/../images/20220706_5.png" alt="upload successful"></p>
+<hr>
+<h2 id="如何設定learning-rate-RMSProp-Approach"><a href="#如何設定learning-rate-RMSProp-Approach" class="headerlink" title="如何設定learning rate? - RMSProp Approach"></a>如何設定learning rate? - RMSProp Approach</h2><ul>
+<li>一個沒有論文的方法orz</li>
+<li>方法如下圖<br><img src="/../images/pasted-5.png"></li>
+<li>主要改變了紅圈圈起來的部分，捨棄了用前面所有的gradient求MSE決定$\sigma$的方法，RMSProp只採計上一個$\sigma$值以及這次的gradient之MSE和</li>
+<li>多了一個hyper parameter $alpha$，調整對上一個$\sigma$的學習率高低</li>
+<li>其實上一個$\sigma$就包含了前面所有的gradient之MSE，只是權重會隨著疊代越來越小</li>
+</ul>
+<p>learning rate變動範例圖<br><img src="/../images/20220706_7.png"></p>
+<h2 id="回到一開始的範例"><a href="#回到一開始的範例" class="headerlink" title="回到一開始的範例"></a>回到一開始的範例</h2><ul>
+<li>[回到這個範例](# 非卡在critical point的Example)，我們來看看各approach的效果</li>
+</ul>
+<h4 id="Adaptive-learning-rate"><a href="#Adaptive-learning-rate" class="headerlink" title="Adaptive learning rate"></a>Adaptive learning rate</h4><p><img src="/../images/pasted-6.png" alt="filename already exists, renamed"></p>
+<ul>
+<li>為啥爆炸了?<ul>
+<li>根據公式，我們把前面幾次的gradient都列入計算，因為在橫線的部分步伐很大，所以當走到步伐該縮小的時候，會爆衝<br>    - 但也因為公式，爆衝一陣子以後learning rate會逐漸縮小，然後回歸正軌，等待一陣子以後learning rate上升再度爆炸</li>
+</ul>
+</li>
+</ul>
+<h5 id="解法：learning-rate-decay"><a href="#解法：learning-rate-decay" class="headerlink" title="解法：learning rate decay"></a>解法：learning rate decay</h5><ul>
+<li>隨著訓練的進行，我們一定越來越接近終點</li>
+<li>可以隨著時間降低learning rate，開始微調</li>
+</ul>
+<h5 id="解法2：Warm-up"><a href="#解法2：Warm-up" class="headerlink" title="解法2：Warm up"></a>解法2：Warm up</h5><p><img src="/../images/20220706_10.png"></p>
+<ul>
+<li>算是一種黑科技</li>
+<li>先變大learning rate，再縮小(?)</li>
+<li>在訓練bert的時候常常用到，但他在很久以前就出現在<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1512.03385">論文</a>過了</li>
+<li>在transformer中也出現過，見下圖<br><img src="/../images/20220706_11.png"></li>
+<li>一種可能的解釋是，因為$\sigma$是統計的數據，在訓練初期的時候容易失準，故初期讓learning rate小，等到$\sigma$精準一點以後，再讓learning rate變高</li>
+<li>相關paper : <a target="_blank" rel="noopener" href="https://arxiv.org/abs/1908.03265">RAdam</a></li>
+</ul>
+<h2 id="Summary-of-Optimization"><a href="#Summary-of-Optimization" class="headerlink" title="Summary of Optimization"></a>Summary of Optimization</h2><p><img src="/../images/20220706_12.png"></p>
+<ul>
+<li>雖然Momentum跟$\sigma$都使用過去的資料，但不會因此抵銷<ul>
+<li>Momentum是把所有gradient加起來，故有考慮方向與正負號</li>
+<li>$\sigma$只考慮MSE</li>
+</ul>
+</li>
+</ul>
+<h2 id="下次預告"><a href="#下次預告" class="headerlink" title="下次預告"></a>下次預告</h2><ul>
+<li>當訓練過程遭遇大山，要如何闢路繞過去？</li>
+<li>有沒有可能直接炸掉大山，改變error surface呢?<br>$\rightarrow$ Batch normalization<br>PS. 課程跳到2-5哦</li>
+</ul>
+<hr>
+<h1 id="Note"><a href="#Note" class="headerlink" title="Note"></a>Note</h1><ul>
+<li><p>現今最常見的Optimizer:Adam其實就是RMSProp + Momentum</p>
+</li>
+<li><p>Adam的細節自行參考</p>
+</li>
+<li><p>arxiv論文年代看法</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1512.03385%E7%82%BA%E4%BE%8B">https://arxiv.org/abs/1512.03385為例</a><br>    - 15代表2015年出版<br>    - 12代表12月</li>
+</ul>
+</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://laxiflora.github.io/2022/07/06/ML-2021-2-4-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%B8%89/" data-id="cl59cmxno000aqovebhq33p4i" data-title="ML_2021_2-4 類神經網路訓練不起來怎麼辦(三)" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2022/07/05/ML-2021-2-3-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%BA%8C/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">ML_2021_2-3 類神經網路訓練不起來怎麼辦(二)</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/" rel="tag">C++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/" rel="tag">Hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Pytorch/" rel="tag">Pytorch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9D%8E%E5%AE%8F%E6%AF%85%E7%B3%BB%E5%88%97/" rel="tag">李宏毅系列</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92/" rel="tag">機器學習</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/C/" style="font-size: 10px;">C++</a> <a href="/tags/Hexo/" style="font-size: 20px;">Hexo</a> <a href="/tags/Pytorch/" style="font-size: 10px;">Pytorch</a> <a href="/tags/%E6%9D%8E%E5%AE%8F%E6%AF%85%E7%B3%BB%E5%88%97/" style="font-size: 10px;">李宏毅系列</a> <a href="/tags/%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92/" style="font-size: 20px;">機器學習</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">July 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">June 2022</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2022/07/06/ML-2021-2-4-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%B8%89/">ML_2021_2-4 類神經網路訓練不起來怎麼辦(三)</a>
+          </li>
+        
+          <li>
+            <a href="/2022/07/05/ML-2021-2-3-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%BA%8C/">ML_2021_2-3 類神經網路訓練不起來怎麼辦(二)</a>
+          </li>
+        
+          <li>
+            <a href="/2022/07/04/ML-2022-2-1-%E5%86%8D%E6%8E%A2%E5%AF%B6%E5%8F%AF%E5%A4%A2%E3%80%81%E6%95%B8%E7%A2%BC%E5%AF%B6%E8%B2%9D%E5%88%86%E9%A1%9E%E5%99%A8/">ML_2022_2-1 再探寶可夢、數碼寶貝分類器</a>
+          </li>
+        
+          <li>
+            <a href="/2022/07/04/ML-2021-2-2-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%B8%80/">ML_2021_2-2 類神經網路訓練不起來怎麼辦(一)</a>
+          </li>
+        
+          <li>
+            <a href="/2022/07/04/ML-2021-2-1-%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E4%BB%BB%E5%8B%99%E6%94%BB%E7%95%A5/">ML_2021_2-1 機器學習任務攻略</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2022 劉宇承<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+<!-- <script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script> -->
+</body>
+</html>
