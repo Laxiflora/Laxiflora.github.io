@@ -63,10 +63,10 @@
         
           <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
         
-        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+        <a id="nav-search-btn" class="nav-icon" title="Suche"></a>
       </nav>
       <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://laxiflora.github.io"></form>
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Suche"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://laxiflora.github.io"></form>
       </div>
     </div>
   </div>
@@ -74,6 +74,119 @@
 
       <div class="outer">
         <section id="main">
+  
+    <article id="post-ML-2021-2-6-類神經網路訓練不起來怎麼辦-五" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2022/07/07/ML-2021-2-6-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%BA%94/" class="article-date">
+  <time class="dt-published" datetime="2022-07-07T08:34:18.000Z" itemprop="datePublished">2022-07-07</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2022/07/07/ML-2021-2-6-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%BA%94/">ML_2021_2-6 類神經網路訓練不起來怎麼辦(五)</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <ul>
+<li>簡短介紹Batch Normalization的技術</li>
+<li>另一種直接改變error surface的技術(相對於動態lr，一種改善訓練的方法)</li>
+</ul>
+<p><img src="/../images/20220707_1.png" alt="upload successful"></p>
+<ul>
+<li>考慮以下模型，當$x_1$輸出很小、$x_2$輸出很大的時候，就會產生error surface橢圓的問題</li>
+<li>因為$x_1$小，就算$w_1$變化很大，y的變化量也不會很大(因為相乘);$x_2$則相反</li>
+<li>考慮可以把$x_1、x_2$相同的數值範圍<br><img src="/../images/20220707_2.png" alt="upload successful"></li>
+</ul>
+<h1 id="Feature-Normalization"><a href="#Feature-Normalization" class="headerlink" title="Feature Normalization"></a>Feature Normalization</h1><h2 id="其中一種normalization做法"><a href="#其中一種normalization做法" class="headerlink" title="其中一種normalization做法"></a>其中一種normalization做法</h2><ul>
+<li>對多筆feature vector的同一dimention做標準化<br><img src="/../images/pasted-11.png"></li>
+<li>標準化以後，該dim的平均值&#x3D;0，$\sigma$ &#x3D; 1</li>
+<li>像這樣就可以製造比較平衡的error surface，方便optimization作業</li>
+</ul>
+<h2 id="Case：In-deep-learning"><a href="#Case：In-deep-learning" class="headerlink" title="Case：In deep learning"></a>Case：In deep learning</h2><ul>
+<li>因為深度學習有多個層，雖然在一開始我們把x做了標準化，但是在經過一層layer計算以後，數值又失去了標準化，故我們需要進行多次的標準化</li>
+<li>標準化要放在激發函數前後的影響並不大<br><img src="/../images/pasted-12.png"></li>
+<li>以上圖為例，我們需要對z再度進行標準化，公式如下(feature&#x3D;3的case)<br><img src="/../images/20220707_4.png" alt="upload successful"><br>則可以得到<br>$$\tilde{z}^i &#x3D; \frac{z^i-\mu}{\sigma}$$<br>後續層也依此類推</li>
+<li>這個feature標準化的過程使得所有feature之間有了關聯性 -&gt; 這是一個network<br><img src="/../images/20220707_5.png" alt="upload successful"></li>
+</ul>
+<h2 id="Case：training-in-batch-approach"><a href="#Case：training-in-batch-approach" class="headerlink" title="Case：training in batch approach?"></a>Case：training in batch approach?</h2><ul>
+<li>這樣的標準化流程會跟著batch(一組batch內部做標準化)跑，不是所有feature納進來標準化</li>
+<li>這樣的作法稱作batch normalization<ul>
+<li>問題來了，我們會需要足夠大的batch size才能做一個好的標準化(誤差會比較小)<br><img src="/../images/20220707_6.png"></li>
+</ul>
+</li>
+<li>$\beta、\gamma$是模型的另外兩個參數，透過學習得到</li>
+<li>為啥需要這兩個參數?<ul>
+<li>因為標準化會保證$\tilde{z}$之平均值 &#x3D; 0，這樣的結果有可能會對模型產生一些負面影響，所以我們需要$\beta、\gamma$兩個參數來讓數值變成比較貼合模型需求</li>
+<li>問題：這樣不就又破壞掉標準化平衡了嗎?<ul>
+<li>我們初始設定$\gamma &#x3D; 1 , \beta &#x3D; 0$，讓他們初始為真的標準化</li>
+<li>讓模型來決定值該怎麼分步</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="Batch-normalization-testing-data"><a href="#Batch-normalization-testing-data" class="headerlink" title="Batch normalization - testing data"></a>Batch normalization - testing data</h3><ul>
+<li>剛剛講的都是training的情況下</li>
+<li>testing又稱inference</li>
+<li>當真的是線上模型時，我們必須每一筆資料進來就進行預測，不能用batch</li>
+<li>當數據只有一筆，怎麼做normalization($\mu&#x3D;? , \sigma&#x3D;?$)</li>
+<li>實作上的解法(pytorch)：<ul>
+<li>在training若有用這個技術，每次batch算出來的$\mu_i , \sigma_i$就會記錄下來再做以下處理  <br><img src="/../images/pasted-13.png"></li>
+</ul>
+</li>
+</ul>
+<p>在實際test時，就代入<br>$$\tilde{z} &#x3D; \frac{z-\bar{u}}{\bar{\sigma}}<br>$$</p>
+<ul>
+<li>Batch normalization的實際測試結果，<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1502.03167">連結</a><br><img src="/../images/20220707_7.png"></li>
+<li>紅色線是有做batch normalization</li>
+<li>粉色線，使用sigmoid function</li>
+<li>其他線，就是lr乘上$x$倍</li>
+<li>黑色沒有用BN，用inception</li>
+<li>收斂速度更快，但結果差不多</li>
+</ul>
+<h2 id="How-does-Batch-Normalization-help-optimization"><a href="#How-does-Batch-Normalization-help-optimization" class="headerlink" title="How does Batch Normalization help optimization?"></a>How does Batch Normalization help optimization?</h2><ul>
+<li><p>下面這篇論文的作者發明這個詞”Internal covariate shift”</p>
+</li>
+<li><p>根據<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1805.11604">這篇論文</a>所認為有以下可能<br><img src="/../images/pasted-14.png"></p>
+</li>
+<li><p>我們做參數update，將A變成A’，B變成B’，但是B的變動是根據之前算出來的a作為input，當整體更新了以後，B’要面對的input卻不再是a，而是經過A’算出來的a’，故導致仍舊失準</p>
+<ul>
+<li>而Batch normalization的作法，是讓a跟a’有相似的分布(similar statistics)，故誤差會比較接近</li>
+</ul>
+</li>
+<li><p>但是Experimental result並不支持這個緣故(打臉)</p>
+<ul>
+<li>打臉者認為實驗下來，a跟a’的分布都差不多，而且不管分布是不是差很多，影響都不大，於是這個假說是錯的(不是batch normalization的關鍵)</li>
+<li>不過實驗跟理論依然證明，Batch normalization依然會改變error surface的地貌<br><img src="/../images/20220707_9.png"></li>
+<li>此人認為batch normalization的發現可能是偶然(意料之外)的，但無論如何這是有用的方法<br>    - normalization有一堆方法，參考如下<br><img src="/../images/20220707_10.png"></li>
+</ul>
+</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://laxiflora.github.io/2022/07/07/ML-2021-2-6-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%BA%94/" data-id="cl5b3pzog000d1sve4lnl8iw2" data-title="ML_2021_2-6 類神經網路訓練不起來怎麼辦(五)" class="article-share-link">Teilen</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
   
     <article id="post-ML-2021-2-5-類神經網路訓練不起來怎麼辦-四" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
@@ -150,7 +263,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://laxiflora.github.io/2022/07/06/ML-2021-2-5-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E5%9B%9B/" data-id="cl59qqqtz00063kvefzcw4fpv" data-title="ML_2021_2-5 類神經網路訓練不起來怎麼辦(四)" class="article-share-link">Share</a>
+      <a data-url="https://laxiflora.github.io/2022/07/06/ML-2021-2-5-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E5%9B%9B/" data-id="cl5b3pzod00091sve2gwr9yp3" data-title="ML_2021_2-5 類神經網路訓練不起來怎麼辦(四)" class="article-share-link">Teilen</a>
       
       
       
@@ -296,7 +409,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://laxiflora.github.io/2022/07/06/ML-2021-2-4-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%B8%89/" data-id="cl59qqqu100083kveartedzyv" data-title="ML_2021_2-4 類神經網路訓練不起來怎麼辦(三)" class="article-share-link">Share</a>
+      <a data-url="https://laxiflora.github.io/2022/07/06/ML-2021-2-4-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%B8%89/" data-id="cl5b3pzof000b1svef21a6jwj" data-title="ML_2021_2-4 類神經網路訓練不起來怎麼辦(三)" class="article-share-link">Teilen</a>
       
       
       
@@ -407,7 +520,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://laxiflora.github.io/2022/07/05/ML-2021-2-3-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%BA%8C/" data-id="cl59qqqu000073kve6bx03l7k" data-title="ML_2021_2-3 類神經網路訓練不起來怎麼辦(二)" class="article-share-link">Share</a>
+      <a data-url="https://laxiflora.github.io/2022/07/05/ML-2021-2-3-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%BA%8C/" data-id="cl5b3pzoe000a1sveeqbd0y9l" data-title="ML_2021_2-3 類神經網路訓練不起來怎麼辦(二)" class="article-share-link">Teilen</a>
       
       
       
@@ -445,7 +558,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://laxiflora.github.io/2022/07/04/ML-2022-2-1-%E5%86%8D%E6%8E%A2%E5%AF%B6%E5%8F%AF%E5%A4%A2%E3%80%81%E6%95%B8%E7%A2%BC%E5%AF%B6%E8%B2%9D%E5%88%86%E9%A1%9E%E5%99%A8/" data-id="cl59qqqu6000f3kvehhvd1vkk" data-title="ML_2022_2-1 再探寶可夢、數碼寶貝分類器" class="article-share-link">Share</a>
+      <a data-url="https://laxiflora.github.io/2022/07/04/ML-2022-2-1-%E5%86%8D%E6%8E%A2%E5%AF%B6%E5%8F%AF%E5%A4%A2%E3%80%81%E6%95%B8%E7%A2%BC%E5%AF%B6%E8%B2%9D%E5%88%86%E9%A1%9E%E5%99%A8/" data-id="cl5b3pzoi000f1svehyl52oqj" data-title="ML_2022_2-1 再探寶可夢、數碼寶貝分類器" class="article-share-link">Teilen</a>
       
       
       
@@ -528,7 +641,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://laxiflora.github.io/2022/07/04/ML-2021-2-2-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%B8%80/" data-id="cl59qqqu3000b3kve4z7bafiy" data-title="ML_2021_2-2 類神經網路訓練不起來怎麼辦(一)" class="article-share-link">Share</a>
+      <a data-url="https://laxiflora.github.io/2022/07/04/ML-2021-2-2-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%B8%80/" data-id="cl5b3pzoa00061sve4c4d3bu8" data-title="ML_2021_2-2 類神經網路訓練不起來怎麼辦(一)" class="article-share-link">Teilen</a>
       
       
       
@@ -608,7 +721,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://laxiflora.github.io/2022/07/04/ML-2021-2-1-%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E4%BB%BB%E5%8B%99%E6%94%BB%E7%95%A5/" data-id="cl59qqqtp00023kve7lg8er5s" data-title="ML_2021_2-1 機器學習任務攻略" class="article-share-link">Share</a>
+      <a data-url="https://laxiflora.github.io/2022/07/04/ML-2021-2-1-%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E4%BB%BB%E5%8B%99%E6%94%BB%E7%95%A5/" data-id="cl5b3pzo800051sve0lab4hon" data-title="ML_2021_2-1 機器學習任務攻略" class="article-share-link">Teilen</a>
       
       
       
@@ -690,7 +803,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://laxiflora.github.io/2022/07/04/ML-2022-1-1-%E6%AD%A3%E8%AA%B2%E5%85%A7%E5%AE%B9%E4%BB%8B%E7%B4%B9/" data-id="cl59qqqu4000c3kve4edo1brb" data-title="ML_2022_1-1 正課內容介紹" class="article-share-link">Share</a>
+      <a data-url="https://laxiflora.github.io/2022/07/04/ML-2022-1-1-%E6%AD%A3%E8%AA%B2%E5%85%A7%E5%AE%B9%E4%BB%8B%E7%B4%B9/" data-id="cl5b3pzoh000e1svec74ihm87" data-title="ML_2022_1-1 正課內容介紹" class="article-share-link">Teilen</a>
       
       
       
@@ -850,7 +963,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://laxiflora.github.io/2022/07/04/ML-2021-1-1-%E7%9B%A3%E7%9D%A3%E5%BC%8F%E5%AD%B8%E7%BF%92%E6%A6%82%E8%AB%96/" data-id="cl59qqqtn00013kve13b5hydc" data-title="ML_2021_1-1 監督式學習概論" class="article-share-link">Share</a>
+      <a data-url="https://laxiflora.github.io/2022/07/04/ML-2021-1-1-%E7%9B%A3%E7%9D%A3%E5%BC%8F%E5%AD%B8%E7%BF%92%E6%A6%82%E8%AB%96/" data-id="cl5b3pznz00041sve1e1dcg8r" data-title="ML_2021_1-1 監督式學習概論" class="article-share-link">Teilen</a>
       
       
       
@@ -953,6 +1066,16 @@
 </li>
 </ul>
 <hr>
+<p><a href="/2022/07/07/ML-2021-2-6-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%BA%94/">2-6 類神經網路訓練不起來怎麼辦(五)</a></p>
+<ul>
+<li>簡短介紹Batch Normalization的技術</li>
+<li>這是另一種直接改變error surface的技術(相對於動態lr)</li>
+<li>關於batch normalization為何能夠讓模型訓練更好仍是個謎<blockquote>
+<p>關鍵字：<br>Feature Normalization、Batch Normalization</p>
+</blockquote>
+</li>
+</ul>
+<hr>
 <h1 id="2022年正課筆記"><a href="#2022年正課筆記" class="headerlink" title="2022年正課筆記"></a>2022年正課筆記</h1><p><a href="/2022/07/04/ML-2022-1-1-%E6%AD%A3%E8%AA%B2%E5%85%A7%E5%AE%B9%E4%BB%8B%E7%B4%B9/">1-1 正課內容介紹</a></p>
 <ul>
 <li>介紹各講的重點核心</li>
@@ -965,7 +1088,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://laxiflora.github.io/2022/07/04/%E6%9D%8E%E5%AE%8F%E6%AF%85-%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92-%E9%A6%96%E9%A0%81/" data-id="cl59qqqu9000h3kve155h0jks" data-title="李宏毅_機器學習_首頁" class="article-share-link">Share</a>
+      <a data-url="https://laxiflora.github.io/2022/07/04/%E6%9D%8E%E5%AE%8F%E6%AF%85-%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92-%E9%A6%96%E9%A0%81/" data-id="cl5b3pzor000j1svednnmdeae" data-title="李宏毅_機器學習_首頁" class="article-share-link">Teilen</a>
       
       
       
@@ -979,80 +1102,11 @@
 
 
   
-    <article id="post-pytorch入門" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2022/07/02/pytorch%E5%85%A5%E9%96%80/" class="article-date">
-  <time class="dt-published" datetime="2022-07-02T12:39:19.000Z" itemprop="datePublished">2022-07-02</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2022/07/02/pytorch%E5%85%A5%E9%96%80/">pytorch入門</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <h1 id="讀取資料"><a href="#讀取資料" class="headerlink" title="讀取資料"></a>讀取資料</h1><h2 id="需import的套件"><a href="#需import的套件" class="headerlink" title="需import的套件"></a>需import的套件</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">torch.utils.data.Dataset</span><br><span class="line">torch.utils.data.DataLoader</span><br></pre></td></tr></table></figure>
-
-
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">dataset = MyDataset(file)</span><br><span class="line">dataloader = DataLoader(dataset, batch_size, shuffle=<span class="literal">True</span>) //Training用true, Testing用false</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<ul>
-<li><p>MyDataset屬於自定義的類別，定義如下：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">MyDataset</span>(<span class="title class_ inherited__">Dataset</span>):</span><br><span class="line">	<span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self,file</span>):</span><br><span class="line">    	self.data = ...</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__getitem__</span>(<span class="params">self, index</span>):</span><br><span class="line">    	<span class="keyword">return</span> self.data[index]</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__len__</span>(<span class="params">self</span>):</span><br><span class="line">    	<span class="keyword">return</span> <span class="built_in">len</span>(self.data)</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>pytorch裡面的資料大多是以tensor來表示(向量)</p>
-</li>
-<li><p>我們除了讀取資料，也可以自行創建，範例如下</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">x = torch.tensor([1,2],[3,4]) // 得到2x2</span><br><span class="line">x = torch.from_numpy(np.array([1,2],[3,4])) //也可以自numpy轉移矩陣</span><br><span class="line">x  torch.zeros([2,2]) //創建一個shape為(2,2)的全0矩陣</span><br></pre></td></tr></table></figure></li>
-</ul>
-<h1 id="常用函數"><a href="#常用函數" class="headerlink" title="常用函數"></a>常用函數</h1><ul>
-<li><p>transpose : 讓兩個維度之間互換<br>範例</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">x.shape() == (2,3)</span><br><span class="line">x = x.transpose(0,1)</span><br><span class="line">x.shape() == (3,2)</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>x.squeeze(0)：將一個大小為1維度消除</p>
-</li>
-<li><p>相對的，呼叫x.unsqueeze(0)就是增加一個大小&#x3D;1的維度</p>
-</li>
-<li><p>torch.cat：將一個維度連接起來(其餘維度大小需相同)</p>
-</li>
-</ul>
-<h1 id="常見問題"><a href="#常見問題" class="headerlink" title="常見問題"></a>常見問題</h1><ul>
-<li>data type</li>
-<li>運算用的處理器 <code>x = x.to(&#39;...&#39;)</code></li>
-<li></li>
-</ul>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://laxiflora.github.io/2022/07/02/pytorch%E5%85%A5%E9%96%80/" data-id="cl59qqqua000i3kvefppb7b0n" data-title="pytorch入門" class="article-share-link">Share</a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Pytorch/" rel="tag">Pytorch</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92/" rel="tag">機器學習</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
 
 
   <nav id="page-nav">
     
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/">Next &raquo;</a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/">weiter &raquo;</a>
   </nav>
 
 </section>
@@ -1083,7 +1137,7 @@
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Archives</h3>
+    <h3 class="widget-title">Archiv</h3>
     <div class="widget">
       <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">July 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">June 2022</a></li></ul>
     </div>
@@ -1093,9 +1147,13 @@
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Recent Posts</h3>
+    <h3 class="widget-title">letzter Beitrag</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2022/07/07/ML-2021-2-6-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%BA%94/">ML_2021_2-6 類神經網路訓練不起來怎麼辦(五)</a>
+          </li>
         
           <li>
             <a href="/2022/07/06/ML-2021-2-5-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E5%9B%9B/">ML_2021_2-5 類神經網路訓練不起來怎麼辦(四)</a>
@@ -1111,10 +1169,6 @@
         
           <li>
             <a href="/2022/07/04/ML-2022-2-1-%E5%86%8D%E6%8E%A2%E5%AF%B6%E5%8F%AF%E5%A4%A2%E3%80%81%E6%95%B8%E7%A2%BC%E5%AF%B6%E8%B2%9D%E5%88%86%E9%A1%9E%E5%99%A8/">ML_2022_2-1 再探寶可夢、數碼寶貝分類器</a>
-          </li>
-        
-          <li>
-            <a href="/2022/07/04/ML-2021-2-2-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%B8%80/">ML_2021_2-2 類神經網路訓練不起來怎麼辦(一)</a>
           </li>
         
       </ul>
@@ -1164,21 +1218,5 @@
 
 
   </div>
-<script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-        tex2jax: {
-            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
-            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
-            processEscapes: true
-        }
-    });
-    MathJax.Hub.Queue(function() {
-        var all = MathJax.Hub.getAllJax();
-        for (var i = 0; i < all.length; ++i)
-            all[i].SourceElement().parentNode.className += ' has-jax';
-    });
-</script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
-<!-- <script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script> -->
 </body>
 </html>
