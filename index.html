@@ -61,12 +61,12 @@
       </nav>
       <nav id="sub-nav">
         
-          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="Flux RSS"></a>
         
-        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+        <a id="nav-search-btn" class="nav-icon" title="Rechercher"></a>
       </nav>
       <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://laxiflora.github.io"></form>
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Rechercher"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://laxiflora.github.io"></form>
       </div>
     </div>
   </div>
@@ -74,6 +74,193 @@
 
       <div class="outer">
         <section id="main">
+  
+    <article id="post-ML-2021-3-1-卷積神經網路" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2022/07/09/ML-2021-3-1-%E5%8D%B7%E7%A9%8D%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF/" class="article-date">
+  <time class="dt-published" datetime="2022-07-09T08:13:09.000Z" itemprop="datePublished">2022-07-09</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2022/07/09/ML-2021-3-1-%E5%8D%B7%E7%A9%8D%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF/">ML_2021_3-1 卷積神經網路</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <ul>
+<li>network架構的其中一種變形:CNN</li>
+<li>此講專注在CNN專門用在影像上的講解(目前也普遍用在影像)</li>
+</ul>
+<h1 id="Image-classification-Version-1"><a href="#Image-classification-Version-1" class="headerlink" title="Image classification - Version 1"></a>Image classification - Version 1</h1><ul>
+<li>我們需要假設圖片輸入的大小都是固定的<ul>
+<li>如果大小不一，就得要rescale</li>
+</ul>
+</li>
+<li>是classification問題，所以輸出one-hot vector (向量的長度代表你能分出多少種類別)</li>
+</ul>
+<h2 id="如何把影像當作輸入"><a href="#如何把影像當作輸入" class="headerlink" title="如何把影像當作輸入"></a>如何把影像當作輸入</h2><ul>
+<li>一張圖片其實是一個3維的Tensor (RGB)<ul>
+<li>Tensor(長跟寬)，並有3個Channel</li>
+</ul>
+</li>
+<li>我們把3維的Tensor拉直，成為一個向量 (這也是為何影像大小需要相同)</li>
+</ul>
+<h2 id="Train-with-fully-connected-network？"><a href="#Train-with-fully-connected-network？" class="headerlink" title="Train with fully connected network？"></a>Train with fully connected network？</h2><ul>
+<li>如果我們依然使用fully connected network來訓練，又假設neuron取1000個，則一個100x100的圖片輸入，會產生$100<em>100</em>3(彩色)<em>1000 &#x3D; 3</em>10^7$個weight，是一個巨大的數字，大幅增加了overfitting的風險 (彈性過大)<br><img src="/../images/20220709_1.png"></li>
+<li>不採用全連接層，以下透過一些觀察來嘗試簡化這個網路</li>
+</ul>
+<h2 id="Observation-1"><a href="#Observation-1" class="headerlink" title="Observation 1"></a>Observation 1</h2><ul>
+<li>對於圖片辨識，我們要做的是針對圖片裡面找到一些關鍵的部位 (ex. 鳥嘴、眼睛、翅膀)</li>
+<li>每個neuron並不需要看過整張圖片(即，不用fully connected)</li>
+<li>我們可以讓每個neuron只看特定的區塊就好</li>
+</ul>
+<h3 id="Simplification-1-typical-settig"><a href="#Simplification-1-typical-settig" class="headerlink" title="Simplification 1 - typical settig"></a>Simplification 1 - typical settig</h3><ul>
+<li><p>CNN會設定一個『Receptive Field』，每個neuron讀取一個他負責的區塊<br><img src="/../images/20220709_2.png"></p>
+</li>
+<li><p>Receptive Field可以重疊</p>
+</li>
+<li><p>Different neuron是可以有不同的receptive field的</p>
+</li>
+<li><p>上述案例裡面，就是3x3的kernel size</p>
+</li>
+<li><p>通常會有一排(64、128等)個neuron去守備他</p>
+</li>
+<li><p>不同的receptive field之間的距離差距稱為『stride』</p>
+</li>
+<li><p>通常receptive field都會高度重疊</p>
+</li>
+<li><p>如果一個receptive field關注的範圍超出圖片範圍，就需要把外面的值補值(補0、補平均等)，稱為『padding』</p>
+</li>
+<li><p>Receptive fields cover the whole image</p>
+</li>
+</ul>
+<h2 id="Observation-2"><a href="#Observation-2" class="headerlink" title="Observation 2"></a>Observation 2</h2><ul>
+<li>當一個特殊部位落在不同的receptive field內怎麼處理?</li>
+</ul>
+<h3 id="Simplification-2-typical-setting"><a href="#Simplification-2-typical-setting" class="headerlink" title="Simplification 2 -typical setting"></a>Simplification 2 -typical setting</h3><p><img src="/../images/20220709_3.png"></p>
+<ul>
+<li>我們可以讓一些neuron採用共用參數(Parameter sharing)，讓他們的參數都一模一樣</li>
+<li>因為輸入(receptive field)不一樣，所以各自的輸出也不會相同</li>
+<li>可能rf1的第一個neuron跟rf2的第一個neuron共用參數，rf1的第二個跟rf2的第二個neuron共參… etc</li>
+<li>這些共用的參數稱為『Filter』<br><img src="/../images/20220709_4.png"></li>
+</ul>
+<h2 id="Benefit-of-Convolutional-layer"><a href="#Benefit-of-Convolutional-layer" class="headerlink" title="Benefit of Convolutional layer"></a>Benefit of Convolutional layer</h2><ul>
+<li>根據上述的觀察，我們成功讓CNN network針對相片輸入的訓練更加簡化<br><img src="/../images/20220709_5.png"></li>
+<li>Convolutional layer的model bias會比較大，但CNN是專門為影像設計的network<br>PS. 這邊為何CNN bias會比較大，以及為何這樣不好，可以再google一下</li>
+</ul>
+<hr>
+<h1 id="另一個說明CNN的版本"><a href="#另一個說明CNN的版本" class="headerlink" title="另一個說明CNN的版本"></a>另一個說明CNN的版本</h1><h2 id="Convolutional-layer"><a href="#Convolutional-layer" class="headerlink" title="Convolutional layer"></a>Convolutional layer</h2><ul>
+<li><p>所謂Convolutional Layer，裡面有很多的Filter，裡面都有一個3x3xchannel維的tensor</p>
+</li>
+<li><p>每一個filter都是要抓取某個pattern</p>
+</li>
+<li><p>以下假設是channel &#x3D; 1(黑白照片)</p>
+</li>
+<li><p>我們把各個rf跟filter做內積，得出各值<br><img src="/../images/20220709_6.png"></p>
+</li>
+<li><p>接下來把所有pattern對各filter一樣的計算</p>
+</li>
+<li><p>這內積出來的一群數字稱為『Feature map』，再這個例子中，我們有64個filter，則我們的feature map會有64組(channels)數字，每組有4x4個數字</p>
+</li>
+<li><p>接下來進到第二層的convolution，我們的filter必須變成3x3x<em>64</em>，因為上一層輸出了64個channel，相對於第一層只有一個channel，第二層會出現64個channel</p>
+</li>
+</ul>
+<h4 id="Note"><a href="#Note" class="headerlink" title="Note:"></a>Note:</h4><ul>
+<li>隨著捲積層的深入，我們觀察的圖片pattern會越來越大</li>
+<li>繼續上面的例子，如果我們的filter之rf一樣是看3x3大小的話，因為我們的feature map中的3x3大小實際上是對應到圖片裡面的5x5大小(跟stride有關)，所以其實層數越高，我們一次考慮的範圍會越大！<br><img src="/../images/20220709_7.png"></li>
+</ul>
+<h2 id="Comparison-of-2-version"><a href="#Comparison-of-2-version" class="headerlink" title="Comparison of 2 version"></a>Comparison of 2 version</h2><ul>
+<li>第一個版本的共用參數，就是第二版本的filter(本slide忽略bias)</li>
+<li>把一個filter掃過一張圖片，稱作『convolves over』<ul>
+<li>例句(?)： each filter convolves over the input image<br><img src="/../images/pasted-15.png"></li>
+</ul>
+</li>
+</ul>
+<p><img src="/../images/20220709_8.png"></p>
+<h2 id="Observation-3"><a href="#Observation-3" class="headerlink" title="Observation 3"></a>Observation 3</h2><ul>
+<li>如果我們把一張大圖片縮小、拿掉odd columns，圖片還是不會有所影響(看起來差不多)，稱為subsampling -&gt; pooling</li>
+<li>Pooling 本身沒有參數，沒有任何東西要learn，有些人稱他為一種激發函數</li>
+<li>pooling就是把圖片像素分組，然後從裡面只選一個像素留下，簡化圖片像素大小</li>
+<li>下圖為示意圖<br><img src="/../images/20220709_9.png"></li>
+<li>過度pooling仍會傷害訓練效益</li>
+</ul>
+<hr>
+<h1 id="The-whole-CNN"><a href="#The-whole-CNN" class="headerlink" title="The whole CNN"></a>The whole CNN</h1><p><img src="/../images/20220709_10.png"></p>
+<ul>
+<li>做完卷積層以後要做flatten</li>
+<li>flatten就是把矩陣數值拉直</li>
+<li>flatten完以後扔進fully connected layer訓練完，配個softmax(分類)，就是一個經典的CNN network</li>
+</ul>
+<h1 id="Application-GO"><a href="#Application-GO" class="headerlink" title="Application: GO"></a>Application: GO</h1><ul>
+<li><p>我們用一個19x19的向量來描述一個棋盤，把它扔進network以後輸出next move應該在的位置</p>
+</li>
+<li><p>下圍棋可以是一個類別分類問題</p>
+</li>
+<li><p>這個問題也可以用fully-connected network解決</p>
+</li>
+<li><p>但用CNN效果更好-&gt; 棋盤可以看做一個19x19來描述</p>
+</li>
+<li><p>每個棋盤格的channel有48個(這格可能被叫吃等等)</p>
+</li>
+<li><p>這意味著圍棋與影像有許多相似特性</p>
+<ul>
+<li>可以只看小區塊(alpha go: 5x5)<br>    - Same pattern appear in different regions (雙叫吃等等)</li>
+</ul>
+</li>
+<li><p>棋盤可否用pooling ? 因為每格都很重要(精細度高) -&gt; Alpha Go有沒有用呢?
+  </p>
+</li>
+<li><p>李宏毅教你畫重點XD：學著幫論文畫重點，抓critical terms<br><img src="/../images/20220709_11.png"></p>
+</li>
+<li><p>alpha go 正文沒有提到神經網路結構，這是在附件找到的</p>
+<ol>
+<li>視為19x19x48的image</li>
+<li>zero pads(padding補0至23x23)</li>
+<li>有k個filter(競賽用的go，filter &#x3D; 192)</li>
+<li>filter的kernel size &#x3D; 5x5</li>
+<li>stride &#x3D; 1</li>
+<li>用到rectifier nonlinearity(ReLU)</li>
+<li>2~12層都有做zero padding至21x21，filter數同，kernel size &#x3D; 3x3，stride &#x3D; 1</li>
+<li>最後apply softmax function<br><img src="/../images/20220709_12.png"></li>
+</ol>
+</li>
+<li><p>alpha go 沒有用pooling!!</p>
+</li>
+</ul>
+<hr>
+<h1 id="Hen重要的Notes"><a href="#Hen重要的Notes" class="headerlink" title="Hen重要的Notes:"></a>Hen重要的Notes:</h1><ul>
+<li>語音上、文字處理上，文獻上的方法要仔細看，CNN的receptive field設計會特別為他們特化，這裡講的單純是影像的</li>
+<li>CNN並不能處理影像放大縮小(Scaling)旋轉(Rotation)的問題… (向量問題)<ul>
+<li>為此我們需要data augmentation</li>
+</ul>
+</li>
+<li>其實有Network架構(Spatial Transformer Layer)可以解決這個問題，請Ref.<a target="_blank" rel="noopener" href="https://youtu.be/SoCywZ1hZak">這個影片</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://laxiflora.github.io/2022/07/09/ML-2021-3-1-%E5%8D%B7%E7%A9%8D%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF/" data-id="cl5e50sw2000etgvec5zo5673" data-title="ML_2021_3-1 卷積神經網路" class="article-share-link">Partager</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
   
     <article id="post-ML-2021-2-6-類神經網路訓練不起來怎麼辦-五" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
@@ -176,7 +363,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://laxiflora.github.io/2022/07/07/ML-2021-2-6-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%BA%94/" data-id="cl5b3pzog000d1sve4lnl8iw2" data-title="ML_2021_2-6 類神經網路訓練不起來怎麼辦(五)" class="article-share-link">Share</a>
+      <a data-url="https://laxiflora.github.io/2022/07/07/ML-2021-2-6-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%BA%94/" data-id="cl5e50sw1000dtgveeyr7fbg0" data-title="ML_2021_2-6 類神經網路訓練不起來怎麼辦(五)" class="article-share-link">Partager</a>
       
       
       
@@ -263,7 +450,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://laxiflora.github.io/2022/07/06/ML-2021-2-5-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E5%9B%9B/" data-id="cl5b3pzod00091sve2gwr9yp3" data-title="ML_2021_2-5 類神經網路訓練不起來怎麼辦(四)" class="article-share-link">Share</a>
+      <a data-url="https://laxiflora.github.io/2022/07/06/ML-2021-2-5-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E5%9B%9B/" data-id="cl5e50svu0005tgve7cg95a9b" data-title="ML_2021_2-5 類神經網路訓練不起來怎麼辦(四)" class="article-share-link">Partager</a>
       
       
       
@@ -409,7 +596,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://laxiflora.github.io/2022/07/06/ML-2021-2-4-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%B8%89/" data-id="cl5b3pzof000b1svef21a6jwj" data-title="ML_2021_2-4 類神經網路訓練不起來怎麼辦(三)" class="article-share-link">Share</a>
+      <a data-url="https://laxiflora.github.io/2022/07/06/ML-2021-2-4-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%B8%89/" data-id="cl5e50svz000atgvefgbg8vom" data-title="ML_2021_2-4 類神經網路訓練不起來怎麼辦(三)" class="article-share-link">Partager</a>
       
       
       
@@ -520,7 +707,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://laxiflora.github.io/2022/07/05/ML-2021-2-3-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%BA%8C/" data-id="cl5b3pzoe000a1sveeqbd0y9l" data-title="ML_2021_2-3 類神經網路訓練不起來怎麼辦(二)" class="article-share-link">Share</a>
+      <a data-url="https://laxiflora.github.io/2022/07/05/ML-2021-2-3-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%BA%8C/" data-id="cl5e50sw0000btgve0z3i1d5j" data-title="ML_2021_2-3 類神經網路訓練不起來怎麼辦(二)" class="article-share-link">Partager</a>
       
       
       
@@ -558,7 +745,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://laxiflora.github.io/2022/07/04/ML-2022-2-1-%E5%86%8D%E6%8E%A2%E5%AF%B6%E5%8F%AF%E5%A4%A2%E3%80%81%E6%95%B8%E7%A2%BC%E5%AF%B6%E8%B2%9D%E5%88%86%E9%A1%9E%E5%99%A8/" data-id="cl5b3pzoi000f1svehyl52oqj" data-title="ML_2022_2-1 再探寶可夢、數碼寶貝分類器" class="article-share-link">Share</a>
+      <a data-url="https://laxiflora.github.io/2022/07/04/ML-2022-2-1-%E5%86%8D%E6%8E%A2%E5%AF%B6%E5%8F%AF%E5%A4%A2%E3%80%81%E6%95%B8%E7%A2%BC%E5%AF%B6%E8%B2%9D%E5%88%86%E9%A1%9E%E5%99%A8/" data-id="cl5e50sw4000gtgve8y585qr0" data-title="ML_2022_2-1 再探寶可夢、數碼寶貝分類器" class="article-share-link">Partager</a>
       
       
       
@@ -641,7 +828,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://laxiflora.github.io/2022/07/04/ML-2021-2-2-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%B8%80/" data-id="cl5b3pzoa00061sve4c4d3bu8" data-title="ML_2021_2-2 類神經網路訓練不起來怎麼辦(一)" class="article-share-link">Share</a>
+      <a data-url="https://laxiflora.github.io/2022/07/04/ML-2021-2-2-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%B8%80/" data-id="cl5e50svx0009tgvedml44chr" data-title="ML_2021_2-2 類神經網路訓練不起來怎麼辦(一)" class="article-share-link">Partager</a>
       
       
       
@@ -721,7 +908,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://laxiflora.github.io/2022/07/04/ML-2021-2-1-%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E4%BB%BB%E5%8B%99%E6%94%BB%E7%95%A5/" data-id="cl5b3pzo800051sve0lab4hon" data-title="ML_2021_2-1 機器學習任務攻略" class="article-share-link">Share</a>
+      <a data-url="https://laxiflora.github.io/2022/07/04/ML-2021-2-1-%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E4%BB%BB%E5%8B%99%E6%94%BB%E7%95%A5/" data-id="cl5e50svw0006tgve5kvr0y2q" data-title="ML_2021_2-1 機器學習任務攻略" class="article-share-link">Partager</a>
       
       
       
@@ -803,7 +990,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://laxiflora.github.io/2022/07/04/ML-2022-1-1-%E6%AD%A3%E8%AA%B2%E5%85%A7%E5%AE%B9%E4%BB%8B%E7%B4%B9/" data-id="cl5b3pzoh000e1svec74ihm87" data-title="ML_2022_1-1 正課內容介紹" class="article-share-link">Share</a>
+      <a data-url="https://laxiflora.github.io/2022/07/04/ML-2022-1-1-%E6%AD%A3%E8%AA%B2%E5%85%A7%E5%AE%B9%E4%BB%8B%E7%B4%B9/" data-id="cl5e50sw3000ftgve5h2p4g7g" data-title="ML_2022_1-1 正課內容介紹" class="article-share-link">Partager</a>
       
       
       
@@ -963,137 +1150,10 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://laxiflora.github.io/2022/07/04/ML-2021-1-1-%E7%9B%A3%E7%9D%A3%E5%BC%8F%E5%AD%B8%E7%BF%92%E6%A6%82%E8%AB%96/" data-id="cl5b3pznz00041sve1e1dcg8r" data-title="ML_2021_1-1 監督式學習概論" class="article-share-link">Share</a>
+      <a data-url="https://laxiflora.github.io/2022/07/04/ML-2021-1-1-%E7%9B%A3%E7%9D%A3%E5%BC%8F%E5%AD%B8%E7%BF%92%E6%A6%82%E8%AB%96/" data-id="cl5e50svs0004tgve0ii36ooe" data-title="ML_2021_1-1 監督式學習概論" class="article-share-link">Partager</a>
       
       
       
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-李宏毅-機器學習-首頁" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2022/07/04/%E6%9D%8E%E5%AE%8F%E6%AF%85-%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92-%E9%A6%96%E9%A0%81/" class="article-date">
-  <time class="dt-published" datetime="2022-07-04T14:13:53.000Z" itemprop="datePublished">2022-07-04</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2022/07/04/%E6%9D%8E%E5%AE%8F%E6%AF%85-%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92-%E9%A6%96%E9%A0%81/">李宏毅_機器學習_首頁</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <h1 id="機器學習總編首頁"><a href="#機器學習總編首頁" class="headerlink" title="機器學習總編首頁"></a>機器學習總編首頁</h1><p>台大李弘毅老師的課</p>
-<ul>
-<li>課程影片： <a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=Ye018rCVvOo&list=PLJV_el3uVTsMhtt7_Y6sgTHGHp1Vb2P2J">2021預習影片</a>  <a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=7XZR0-4uS5s&list=PLJV_el3uVTsPM2mM-OQzJXziCGJa8nJL8">2022正課影片</a></li>
-<li><a target="_blank" rel="noopener" href="https://speech.ee.ntu.edu.tw/~hylee/ml/2022-spring.php">課程網頁</a></li>
-</ul>
-<h1 id="2021年預習筆記"><a href="#2021年預習筆記" class="headerlink" title="2021年預習筆記"></a>2021年預習筆記</h1><p><a href="/2022/07/04/ML-2021-1-1-%E7%9B%A3%E7%9D%A3%E5%BC%8F%E5%AD%B8%E7%BF%92%E6%A6%82%E8%AB%96/">1-1 監督式學習概論</a></p>
-<ul>
-<li>介紹甚麼是機器學習，以及機器學習的任務</li>
-<li>以預測李宏毅老師的頻道觀看人數為例，介紹監督式學習的運作流程<blockquote>
-<p>關鍵字：<br>Linear model、Piecewise Linear Curve、sigmoid介紹、ReLU介紹、theta、Batch、Epoch</p>
-</blockquote>
-</li>
-</ul>
-<hr>
-<p><a href="/2022/07/04/ML-2021-2-1-%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E4%BB%BB%E5%8B%99%E6%94%BB%E7%95%A5/">2-1 機器學習任務攻略</a></p>
-<ul>
-<li>機器學習上可能碰到的疑難雜症介紹，以及如何改善</li>
-<li>區分命中率問題到底是overfitting、model bias issue還是Optimization issue，甚至是data mismatch</li>
-<li>當一個模型單次測試test data成績很好，就保證是模型很好嗎？ 如何更確保模型真的很好呢？<blockquote>
-<p>關鍵字：<br>Overfitting , model bias issue , Optimization issue之分辨、N-fold Cross Validation、data mismatch</p>
-</blockquote>
-</li>
-</ul>
-<hr>
-<p><a href="/2022/07/04/ML-2021-2-2-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%B8%80/">2-2 類神經網路訓練不起來怎麼辦(一)</a></p>
-<ul>
-<li>續2-1的大綱，專注在討論optimizer失靈的解決方法與成因分辨</li>
-<li>提供一個應用線性代數的例子：如何讓一個卡在鞍點的$\theta$逃離鞍點 (但計算曠日廢時)<ul>
-<li>loss function &#x3D; MSE , optimizer &#x3D; 梯度下降法</li>
-</ul>
-</li>
-<li>絕大多數的模型其實若卡在critical point，都是卡在鞍點而非局部最小值<blockquote>
-<p>關鍵字：<br>Optimization issue、critical point、saddle point、local minima、<del>三體III：死神永生</del></p>
-</blockquote>
-</li>
-</ul>
-<hr>
-<p><a href="/2022/07/05/ML-2021-2-3-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%BA%8C/">2-3 類神經網路訓練不起來怎麼辦(二)</a></p>
-<ul>
-<li>續2021版1-1的內容，我們這次探討batch size對於training與testing有甚麼影響</li>
-<li>big batch size好還是small batch size好？ 要看hyper para怎麼調以及對於訓練速度的需求</li>
-<li>額外介紹另一個對抗saddle point或local minima的技術 : momentum(慣性)<blockquote>
-<p>關鍵字：<br>batch size、momentum</p>
-</blockquote>
-</li>
-</ul>
-<hr>
-<p><a href="/2022/07/06/ML-2021-2-4-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%B8%89/">2-4 類神經網路訓練不起來怎麼辦(三)</a></p>
-<ul>
-<li>這次討論Optimizer中，關於Learning rate的問題</li>
-<li>一個模型的跑動，常常碰到單一learning rate所會碰到的困境，所以我們需要可以隨著單次訓練中各種情況變動的learning rate</li>
-<li>提供兩種改變learning rate的作法以及相關參數計算</li>
-<li>簡單介紹這些手法被現今哪些熱門優化器使用<blockquote>
-<p>關鍵字:<br>Learning rate($\eta$)、Adaptive learning rate、Adam-learning rate、RMSProp、Warm up(learning rate)、learning rate decay</p>
-</blockquote>
-</li>
-</ul>
-<hr>
-<p><a href="/2022/07/06/ML-2021-2-5-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E5%9B%9B/">2-5 類神經網路訓練不起來怎麼辦(四)</a></p>
-<ul>
-<li>簡短介紹當碰到分類問題的時候，最後一層激發函數該選哪個函數</li>
-<li>介紹了one-hot vector作為新的輸出型態，以及基本原因</li>
-<li>介紹分類模型的常用loss function，以及用optimizer的角度看兩種loss function的差距</li>
-<li>因為是簡短版，內附有<del>冗長版</del> 完整版連結<blockquote>
-<p>關鍵字:<br>one-hot vector、Softmax、cross entropy</p>
-</blockquote>
-</li>
-</ul>
-<hr>
-<p><a href="/2022/07/07/ML-2021-2-6-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%BA%94/">2-6 類神經網路訓練不起來怎麼辦(五)</a></p>
-<ul>
-<li>簡短介紹Batch Normalization的技術</li>
-<li>這是另一種直接改變error surface的技術(相對於動態lr)</li>
-<li>關於batch normalization為何能夠讓模型訓練更好仍是個謎<blockquote>
-<p>關鍵字：<br>Feature Normalization、Batch Normalization</p>
-</blockquote>
-</li>
-</ul>
-<hr>
-<h1 id="2022年正課筆記"><a href="#2022年正課筆記" class="headerlink" title="2022年正課筆記"></a>2022年正課筆記</h1><p><a href="/2022/07/04/ML-2022-1-1-%E6%AD%A3%E8%AA%B2%E5%85%A7%E5%AE%B9%E4%BB%8B%E7%B4%B9/">1-1 正課內容介紹</a></p>
-<ul>
-<li>介紹各講的重點核心</li>
-<li>$X-y$中的X對應的是第幾講，2021年的編號也同樣，是按造課程網頁的syllabus排的</li>
-</ul>
-<hr>
-<p><a href="/2022/07/04/ML-2022-2-1-%E5%86%8D%E6%8E%A2%E5%AF%B6%E5%8F%AF%E5%A4%A2%E3%80%81%E6%95%B8%E7%A2%BC%E5%AF%B6%E8%B2%9D%E5%88%86%E9%A1%9E%E5%99%A8/">2-1 再探寶可夢、數碼寶貝分類器</a></p>
-<hr>
-<h1 id="作業區-有寫的部分orz"><a href="#作業區-有寫的部分orz" class="headerlink" title="作業區(有寫的部分orz)"></a>作業區(有寫的部分orz)</h1>
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://laxiflora.github.io/2022/07/04/%E6%9D%8E%E5%AE%8F%E6%AF%85-%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92-%E9%A6%96%E9%A0%81/" data-id="cl5b3pzor000j1svednnmdeae" data-title="李宏毅_機器學習_首頁" class="article-share-link">Share</a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%9D%8E%E5%AE%8F%E6%AF%85%E7%B3%BB%E5%88%97/" rel="tag">李宏毅系列</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92/" rel="tag">機器學習</a></li></ul>
-
     </footer>
   </div>
   
@@ -1106,7 +1166,7 @@
 
   <nav id="page-nav">
     
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/">Next &raquo;</a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/">Suivant &raquo;</a>
   </nav>
 
 </section>
@@ -1118,7 +1178,7 @@
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Tags</h3>
+    <h3 class="widget-title">Mot-clés</h3>
     <div class="widget">
       <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/" rel="tag">C++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/" rel="tag">Hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Pytorch/" rel="tag">Pytorch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9D%8E%E5%AE%8F%E6%AF%85%E7%B3%BB%E5%88%97/" rel="tag">李宏毅系列</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92/" rel="tag">機器學習</a></li></ul>
     </div>
@@ -1128,7 +1188,7 @@
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Tag Cloud</h3>
+    <h3 class="widget-title">Nuage de mot-clés</h3>
     <div class="widget tagcloud">
       <a href="/tags/C/" style="font-size: 10px;">C++</a> <a href="/tags/Hexo/" style="font-size: 20px;">Hexo</a> <a href="/tags/Pytorch/" style="font-size: 10px;">Pytorch</a> <a href="/tags/%E6%9D%8E%E5%AE%8F%E6%AF%85%E7%B3%BB%E5%88%97/" style="font-size: 10px;">李宏毅系列</a> <a href="/tags/%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92/" style="font-size: 20px;">機器學習</a>
     </div>
@@ -1147,9 +1207,13 @@
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Recent Posts</h3>
+    <h3 class="widget-title">Articles récents</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2022/07/09/ML-2021-3-1-%E5%8D%B7%E7%A9%8D%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF/">ML_2021_3-1 卷積神經網路</a>
+          </li>
         
           <li>
             <a href="/2022/07/07/ML-2021-2-6-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%BA%94/">ML_2021_2-6 類神經網路訓練不起來怎麼辦(五)</a>
@@ -1167,10 +1231,6 @@
             <a href="/2022/07/05/ML-2021-2-3-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%BA%8C/">ML_2021_2-3 類神經網路訓練不起來怎麼辦(二)</a>
           </li>
         
-          <li>
-            <a href="/2022/07/04/ML-2022-2-1-%E5%86%8D%E6%8E%A2%E5%AF%B6%E5%8F%AF%E5%A4%A2%E3%80%81%E6%95%B8%E7%A2%BC%E5%AF%B6%E8%B2%9D%E5%88%86%E9%A1%9E%E5%99%A8/">ML_2022_2-1 再探寶可夢、數碼寶貝分類器</a>
-          </li>
-        
       </ul>
     </div>
   </div>
@@ -1185,7 +1245,7 @@
     <div id="footer-info" class="inner">
       
       &copy; 2022 劉宇承<br>
-      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+      Propulsé par <a href="https://hexo.io/" target="_blank">Hexo</a>
     </div>
   </div>
 </footer>
