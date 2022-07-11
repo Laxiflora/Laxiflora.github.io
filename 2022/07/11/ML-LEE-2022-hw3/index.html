@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>ML_LEE_2022_hw3 | laxiflora的小天地</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="作業題目 可進行的目標Data augmentation (training) 搜尋torchvision.transform，docs  有用的文章：Pytorch提供之torchvision data augmentation技巧  transform.randomRotate   ,   resize等等  最後必須要toTensor，model只吃pytorch的tensor不吃PIL l">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ML_LEE_2022_hw3">
+<meta property="og:url" content="https://laxiflora.github.io/2022/07/11/ML-LEE-2022-hw3/index.html">
+<meta property="og:site_name" content="laxiflora的小天地">
+<meta property="og:description" content="作業題目 可進行的目標Data augmentation (training) 搜尋torchvision.transform，docs  有用的文章：Pytorch提供之torchvision data augmentation技巧  transform.randomRotate   ,   resize等等  最後必須要toTensor，model只吃pytorch的tensor不吃PIL l">
+<meta property="og:locale">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220711_1.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220711_2.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220711_3.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220712_4.png">
+<meta property="article:published_time" content="2022-07-11T13:24:56.000Z">
+<meta property="article:modified_time" content="2022-07-11T16:46:40.582Z">
+<meta property="article:author" content="劉宇承">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://laxiflora.github.io/images/20220711_1.png">
+  
+    <link rel="alternate" href="/atom.xml" title="laxiflora的小天地" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">laxiflora的小天地</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">前進軟體工程師的練功之路</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Suche"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Suche"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://laxiflora.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-ML-LEE-2022-hw3" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2022/07/11/ML-LEE-2022-hw3/" class="article-date">
+  <time class="dt-published" datetime="2022-07-11T13:24:56.000Z" itemprop="datePublished">2022-07-11</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      ML_LEE_2022_hw3
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p><a target="_blank" rel="noopener" href="https://www.kaggle.com/c/ml2022spring-hw3b">作業題目</a></p>
+<h1 id="可進行的目標"><a href="#可進行的目標" class="headerlink" title="可進行的目標"></a>可進行的目標</h1><h2 id="Data-augmentation-training"><a href="#Data-augmentation-training" class="headerlink" title="Data augmentation (training)"></a>Data augmentation (training)</h2><ul>
+<li><p>搜尋torchvision.transform，<a target="_blank" rel="noopener" href="https://pytorch.org/vision/stable/transforms.html">docs</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://chih-sheng-huang821.medium.com/03-pytorch-dataaug-a712a7a7f55e">有用的文章：Pytorch提供之torchvision data augmentation技巧</a></p>
+</li>
+<li><p>transform.randomRotate   ,   resize等等</p>
+</li>
+<li><p>最後必須要toTensor，model只吃pytorch的tensor不吃PIL library的</p>
+</li>
+</ul>
+<h2 id="Adv-Data-augmentation-mixed-up-training"><a href="#Adv-Data-augmentation-mixed-up-training" class="headerlink" title="Adv. Data augmentation - mixed up (training)"></a>Adv. Data augmentation - mixed up (training)</h2><ul>
+<li><p>mixup (把兩個影像混再一起，變成多重label)</p>
+</li>
+<li><p>cross entropy loss function需要重寫</p>
+</li>
+</ul>
+<h2 id="Module-selection-搜尋torchvision-models"><a href="#Module-selection-搜尋torchvision-models" class="headerlink" title="Module selection (搜尋torchvision.models)"></a>Module selection (搜尋torchvision.models)</h2><ul>
+<li><p>AlexNet</p>
+</li>
+<li><p>VGG系列</p>
+</li>
+<li><p>ResNet</p>
+</li>
+<li><p>SqueezeNet</p>
+</li>
+</ul>
+<h2 id="Cross-validation"><a href="#Cross-validation" class="headerlink" title="Cross validation"></a>Cross validation</h2><ul>
+<li><p>每次訓練更換dataset</p>
+</li>
+<li><p>ensemble</p>
+</li>
+</ul>
+<p><img src="/../images/20220711_1.png" alt="upload successful"></p>
+<hr>
+<p>以下是我對這作業除了Base sample code以外所做的變化，針對上述目標，有做的我才會列出來</p>
+<h1 id="First-Approach"><a href="#First-Approach" class="headerlink" title="First Approach"></a>First Approach</h1><p>Note: 因為這次作業放在kaggle上寫&amp;跑，而kaggle設計在結束比賽之前不能公開notebook，所以不能內嵌frame&#x3D; &#x3D;，下面只能先直接貼上code代替</p>
+<!--<iframe src="https://codepen.io/gretema/embed/eYOjPJx?height=265&theme-id=default&default-tab=html,result" width="100%" height="300" frameborder="0" loading="lazy" allowfullscreen></iframe> -->
+<h2 id="Data-argumentation"><a href="#Data-argumentation" class="headerlink" title="Data argumentation"></a>Data argumentation</h2><ul>
+<li>改動trains transform，新增兩個處理，一個是讓照片有0.6的可能水平翻轉，另一個則是把它做normalization<ul>
+<li>針對個別batch算出mean,std做normalization的方法我沒找到，目前直接套網路上常用的3 channel RGB圖之平均值當參數 (mean &#x3D; [0.5,0.5,0.5] std &#x3D; [0.1, 0.1, 0.1])<br>    - 這樣做觸犯1個問題，我的normalization是單一標準對所有data做，還是對每個batch單獨這樣做？在這個case沒差，不過這是因為數字寫死，normalization做的實在有夠醜&#x3D; &#x3D;<br>    - 觸犯另一個問題是，我的layer之間有沒有再進行一次normalization呢？有待釐清<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">mean = [0.5, 0.5, 0.5]</span><br><span class="line">std = [0.1, 0.1, 0.1]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">train_tfm = transforms.Compose([</span><br><span class="line">    # Resize the image into a fixed shape (height = width = 128)</span><br><span class="line">    transforms.Resize((128, 128)),</span><br><span class="line">    # You may add some transforms here.</span><br><span class="line">    transforms.RandomHorizontalFlip(p=0.6),</span><br><span class="line">    # ToTensor() should be the last one of the transforms.</span><br><span class="line">    transforms.ToTensor(),</span><br><span class="line">    transforms.Normalize(mean,std),</span><br><span class="line">])</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+</ul>
+<h2 id="Module-selection"><a href="#Module-selection" class="headerlink" title="Module selection"></a>Module selection</h2><ul>
+<li>這裡我直接選用VGG11取代原本的自訂模型Classifier</li>
+</ul>
+<h2 id="Result"><a href="#Result" class="headerlink" title="Result"></a>Result</h2><ul>
+<li>跑了至少100 epoch，結果training acc達到0.97，validate acc卻只有0.1x而且不再有更好結果，明顯的overfitting &#x3D; &#x3D;</li>
+<li>可能要考慮加入cross validation</li>
+<li>可能是data augmentation太弱？</li>
+<li>可能是VGG11模型太強(彈性過高)</li>
+<li>我耍笨不小心把訓練的過程輸出洗掉了，沒有圖片QQ</li>
+</ul>
+<hr>
+<h1 id="Second-Approach"><a href="#Second-Approach" class="headerlink" title="Second Approach"></a>Second Approach</h1><h2 id="Module-Selection"><a href="#Module-Selection" class="headerlink" title="Module Selection"></a>Module Selection</h2><ul>
+<li>單純的把VGG11模型改回Classification</li>
+</ul>
+<h2 id="Result-1"><a href="#Result-1" class="headerlink" title="Result"></a>Result</h2><ul>
+<li>看起來好像沒什麼變化，看來不是VGG模型導致overfitting</li>
+<li>可能是normalization的部分出問題了，接下來嘗試把normalization改掉，用VGG train看看<ul>
+<li>如果這樣成功的話，只能說應該是normalization把數字改成詭異的形狀了，算是一種人為mismatch吧<br><img src="/../images/20220711_2.png"></li>
+</ul>
+</li>
+</ul>
+<hr>
+<h1 id="Third-Approach"><a href="#Third-Approach" class="headerlink" title="Third Approach"></a>Third Approach</h1><h2 id="Transform"><a href="#Transform" class="headerlink" title="Transform"></a>Transform</h2><ul>
+<li>移除normalization</li>
+</ul>
+<h2 id="Result-2"><a href="#Result-2" class="headerlink" title="Result"></a>Result</h2><ul>
+<li><p>acc爆增回正常範圍了，看來真的是normalization的鍋qwq<br><img src="/../images/20220711_3.png"></p>
+</li>
+<li><p>上面這是最高紀錄，valid acc 有70%，位於epoch 32，我後來一直跑到epoch 52都沒看到更好的分數，就先卡掉了(看起來進medium概率近乎於零&#x3D; &#x3D;)<br><img src="/../images/20220712_4.png"></p>
+</li>
+<li><p>不過雖然70%比起之前的acc是大躍進，距離medium仍有一段距離，training acc也到達瓶頸，看起來是需要提高data augmentation的時候了</p>
+</li>
+</ul>
+<h1 id="Forth-Approach"><a href="#Forth-Approach" class="headerlink" title="Forth Approach"></a>Forth Approach</h1><ul>
+<li>偷偷參考了一下<a target="_blank" rel="noopener" href="https://github.com/Joshuaoneheart/ML2022_all_A_plus/blob/main/hw3.md">學長</a>的筆記，發現新招數「AutoAugmentation」，適用在Transform內</li>
+<li>這招的原理來自於<a target="_blank" rel="noopener" href="https://arxiv.org/pdf/1805.09501.pdf">這篇論文</a>，可以從data裡面學到如何排Transform Augment</li>
+<li>同時也從學長的筆記學到，因為code裡面有用BatchNorm2d (batch Normalization)，所以batchSize大一點會比較有利<ul>
+<li>這好像就是元兇嗎orz，多做一次norm<br>    - 不過我只有在助教寫的Classification有看到norm，因為用的是VGG11，所以不確定是否仍然有用norm(沒看源碼XD)</li>
+</ul>
+</li>
+</ul>
+<h2 id="Transform-1"><a href="#Transform-1" class="headerlink" title="Transform"></a>Transform</h2><ul>
+<li>新增<code>transforms.AutoAugment()</code></li>
+<li>新增<code>transforms.RandomRotation(degrees = 32)  //rotate+-32度</code></li>
+</ul>
+<h2 id="BatchSize"><a href="#BatchSize" class="headerlink" title="BatchSize"></a>BatchSize</h2><ul>
+<li>修改為96</li>
+</ul>
+<h2 id="Result-3"><a href="#Result-3" class="headerlink" title="Result"></a>Result</h2><hr>
+<h1 id="心得"><a href="#心得" class="headerlink" title="心得"></a>心得</h1><p>這次作業是CNN的範例題，這次的圖像辨識題真的讓人思考到了如何去優化他，助教提供的sample code省去了start from scratch的痛苦，讓我們能專注在實作理論的部分</p>
+<p>其實很多的技術(Batch normalization、crossEntropy+softmax、data Batch等等)都已經被函數包進去一次做好了，正常的時候是不會發現到他們的存在，這或許也間接印證了他們是十分有效提高命中率的方法吧。而真的需要實作的part其實不多，比較難的是要去翻出他們的document一一認識他們的結構並理解功能，這才是最難的部分</p>
+<p>助教的sample code寫得蠻精美的，甚至有看出在自訂結構其實有保留空間讓學生自行切分training set跟valid set(可能是用於做cross validation用的)，考量到讓學生改進而保留空間，真的厲害！除了實作理論與閱讀結構以外，最重要的估計就是看懂這個訓練過程的資料結構了吧~</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://laxiflora.github.io/2022/07/11/ML-LEE-2022-hw3/" data-id="cl5gzb2qw000hf8ve8a2x532m" data-title="ML_LEE_2022_hw3" class="article-share-link">Teilen</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2022/07/09/ML-2021-3-1-%E5%8D%B7%E7%A9%8D%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Älter</strong>
+      <div class="article-nav-title">ML_2021_3-1 卷積神經網路</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/" rel="tag">C++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/" rel="tag">Hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Pytorch/" rel="tag">Pytorch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9D%8E%E5%AE%8F%E6%AF%85%E7%B3%BB%E5%88%97/" rel="tag">李宏毅系列</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92/" rel="tag">機器學習</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/C/" style="font-size: 10px;">C++</a> <a href="/tags/Hexo/" style="font-size: 20px;">Hexo</a> <a href="/tags/Pytorch/" style="font-size: 10px;">Pytorch</a> <a href="/tags/%E6%9D%8E%E5%AE%8F%E6%AF%85%E7%B3%BB%E5%88%97/" style="font-size: 10px;">李宏毅系列</a> <a href="/tags/%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92/" style="font-size: 20px;">機器學習</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archiv</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">July 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">June 2022</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">letzter Beitrag</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2022/07/11/ML-LEE-2022-hw3/">ML_LEE_2022_hw3</a>
+          </li>
+        
+          <li>
+            <a href="/2022/07/09/ML-2021-3-1-%E5%8D%B7%E7%A9%8D%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF/">ML_2021_3-1 卷積神經網路</a>
+          </li>
+        
+          <li>
+            <a href="/2022/07/07/ML-2021-2-6-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%BA%94/">ML_2021_2-6 類神經網路訓練不起來怎麼辦(五)</a>
+          </li>
+        
+          <li>
+            <a href="/2022/07/06/ML-2021-2-5-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E5%9B%9B/">ML_2021_2-5 類神經網路訓練不起來怎麼辦(四)</a>
+          </li>
+        
+          <li>
+            <a href="/2022/07/06/ML-2021-2-4-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%B8%89/">ML_2021_2-4 類神經網路訓練不起來怎麼辦(三)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2022 劉宇承<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+<!-- <script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script> -->
+</body>
+</html>

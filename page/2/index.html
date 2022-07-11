@@ -75,6 +75,166 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-ML-2021-1-1-監督式學習概論" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2022/07/04/ML-2021-1-1-%E7%9B%A3%E7%9D%A3%E5%BC%8F%E5%AD%B8%E7%BF%92%E6%A6%82%E8%AB%96/" class="article-date">
+  <time class="dt-published" datetime="2022-07-04T14:15:57.000Z" itemprop="datePublished">2022-07-04</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2022/07/04/ML-2021-1-1-%E7%9B%A3%E7%9D%A3%E5%BC%8F%E5%AD%B8%E7%BF%92%E6%A6%82%E8%AB%96/">ML_2021_1-1 監督式學習概論</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="前言：什麼是機器學習"><a href="#前言：什麼是機器學習" class="headerlink" title="前言：什麼是機器學習"></a>前言：什麼是機器學習</h1><p>機器學習，就是用機器的力量幫忙找出一個合適的函數</p>
+<ul>
+<li>函數的輸入可以是vector、matrix、sequence</li>
+<li>輸出可以是數值(regression)、類別(classification)、文章、圖片<br>深度學習，就是用神經網路的方法來製造函數</li>
+</ul>
+<h1 id="預測頻道觀看人數"><a href="#預測頻道觀看人數" class="headerlink" title="預測頻道觀看人數"></a>預測頻道觀看人數</h1><h2 id="基本原理"><a href="#基本原理" class="headerlink" title="基本原理"></a>基本原理</h2><ul>
+<li>loss function的輸入是weight跟bias，輸出是這組參數有多好」</li>
+<li>Optimization : 找出最好的一組參數(w*,b*)使loss function最小<ul>
+<li>常用gradient descent<ul>
+<li>隨機決定w_0</li>
+<li>把L對w做偏微分，若斜率&gt;0則提高w，反之降低w(變動量&#x3D;η，屬於hyperparameters)</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<details>
+<summary> step1: 製作一個學習函數 </summary>
+
+<h2 id="純粹Linear-Model"><a href="#純粹Linear-Model" class="headerlink" title="純粹Linear Model"></a>純粹Linear Model</h2><ol>
+<li><p>先隨便設一個函數<br>  $$f &#x3D; w_0 x_1$$<br>  其中$x_1$是昨天的觀看人數</p>
+</li>
+<li><p>根據loss function的結果嘗試把$w$、$b$優化，使得$f &#x3D; w_0 x_1 + b$有最小損失函數(這裡優化方法採梯度下降)</p>
+</li>
+<li><p>跑測試結果發現$w$很接近1 (看似很合理，因為昨天的頻道觀看人數與今天的頻道觀看人數差距應該不多)，其實預測都是前一天的結果平移而已，命中率有限 -&gt; 試試看一次看多幾天，變成以周為單位</p>
+</li>
+<li><p>修改函數<br>  $$f_1 \leftarrow y &#x3D; b+ \sum_{j&#x3D;1}^7 w_j x_j$$<br>  表示預測一天的觀看人數，需要前面七天觀看人數作為參考</p>
+</li>
+<li><p>命中率有效提高了（這是linear model）</p>
+</li>
+</ol>
+<h2 id="Piecewise-Linear-Curve"><a href="#Piecewise-Linear-Curve" class="headerlink" title="Piecewise Linear Curve"></a>Piecewise Linear Curve</h2><ul>
+<li>linear model過於簡單，x與y之間的關係是直線(w改動斜率，b改動原點)</li>
+<li>利用一系列的線性函數相加，使加總後的函數有彎折</li>
+<li>Piecewise Linear Curve &#x3D; constant + sum of a set of 藍線 (下圖紅線就是我們想求的「預測模型」函數f )<br>  <img src="/../images/20220701_1.png"></li>
+<li>假設有無窮多個藍色function，就可以塑造出任意形狀的紅色function，如上圖所示</li>
+</ul>
+<h3 id="當特徵-x3D-1"><a href="#當特徵-x3D-1" class="headerlink" title="當特徵&#x3D;1"></a>當特徵&#x3D;1</h3><ul>
+<li>如何寫出藍線式子?<ul>
+<li>藍線函數令為 $f_{blue1} \leftarrow y &#x3D; c_i sigmoid(b_i+w_ix_1)$</li>
+<li>使用sigmoid，把藍線變成曲型來逼近原型</li>
+<li>原型稱為hard sigmoid</li>
+<li>讓藍線凸在對的地方-&gt;修改w,b,c</li>
+</ul>
+</li>
+<li>綜合前面的內容，我們就可以求得單一feature下的紅色function(而這樣理論上可以逼近任何連續函數)：<br>  $$f_{red1} \leftarrow y &#x3D; b + \sum_{i}c_i sigmoid(b_i + w_ix_1)$$</li>
+<li>其中b也可以根據不同藍色function有所不同，把b丟入$\sum$即可</li>
+</ul>
+<h3 id="當特徵-gt-1"><a href="#當特徵-gt-1" class="headerlink" title="當特徵&gt;1"></a>當特徵&gt;1</h3><ul>
+<li><p>當然，我們也可以進一步推廣，增加feature的量(目前只有一個，$x_1$的某特徵乘上各藍線的$w_i$)</p>
+</li>
+<li><p>解法就是修改藍線函數變成$f_{blue2} \leftarrow y &#x3D; c_i sigmoid(b_i + \sum_{j} w_{ij}x_j)$<br>  <img src="/../images/20220701_2.png" alt="upload successful"></p>
+</li>
+<li><p>同理把藍色函數相加再補上常數，紅線函數則可令為<br>$$f_{red2} \leftarrow y &#x3D; b + \sum_{i}c_i sigmoid(b_i + \sum_jw_{ij}x_j) $$</p>
+</li>
+<li><p>$w_{ij}$表示第i個sigmoid函數(aka第i條藍線)中，對於第$x_j$個特徵的權重</p>
+<details>
+<summary> 用線性代數的方式來理解 </summary>
+
+<ul>
+<li>繼續剛剛特徵&gt;1的討論</li>
+<li>令$r_i &#x3D; b_i + \sum_{j}w_{ij}x_j$ (換句話說r就是sigmoid函數內的運算結果)，則可以把這個等式簡化為一個矩陣相乘<br>函數的示意圖如下:<br><img src="/../images/20220701_4.png" alt="upload successful"></li>
+<li>而$r_i$做sigmoid()以後就會得到$a_i$</li>
+<li>又稱$a &#x3D; \sigma(r)$</li>
+<li>最後把$a_i$乘上各自的$c_i$後，加總得到剛剛的$f_{red2}$ (c在相乘時是$c^T$矩陣)</li>
+<li>$b、c^T、b_i、W、x$五個向量append起來以後統稱為$\theta$</li>
+</ul>
+<p><img src="/../images/20220701_5.png" alt="upload successful"></p>
+</details></li>
+</ul>
+  </details>
+
+  <details>
+  <summary> step2: 定義訓練資料的損失函數 </summary>
+
+<ul>
+<li>Loss is a function of parameters $L(\theta)$ ($\theta$就是step1中的那個)</li>
+<li>就是x丟進去，測量y-hat跟y的差別多大  </details></li>
+</ul>
+  <details>
+  <summary> step3: 最佳化模型 </summary>
+
+<ul>
+<li>假設最佳化的參數向量是$\theta^*$</li>
+<li>則$\theta^* &#x3D; arg$ $min_{\theta}L$</li>
+<li>首先，隨機選一個$\theta^0$作為初始值</li>
+<li>Gradient descent作法<br>  $$<br>  g^T &#x3D;<br>  \begin{bmatrix}<br> \frac{\partial L}{\partial \theta_1}\<br> \frac{\partial L}{\partial \theta_2}\<br> \frac{\partial L}{\partial \theta_3}\<br> \ldots<br>  \end{bmatrix} |_{\theta &#x3D; \theta_0}<br>  $$<ul>
+<li>註：打不出1xn向量&#x3D; &#x3D;</li>
+</ul>
+</li>
+<li>則稱 g &#x3D; $\nabla L(\theta^0)$</li>
+</ul>
+<p>  求出g向量以後，就可以把它拿來更新參數列:<br>  <br><img src="/../images/pasted-0.png"></p>
+<ul>
+<li>亦即 $ \theta_1 \leftarrow \theta_0 - \eta g $</li>
+</ul>
+<h2 id="Note"><a href="#Note" class="headerlink" title="Note"></a>Note</h2><ol>
+<li>實務上通常做gradient不是所有資料都加入去更新，而是先把資料切成batch分別計算出$L^i$</li>
+</ol>
+<p><img src="/../images/20220702_1.png" alt="upload successful"></p>
+<ul>
+<li>一次的更新$\theta$是一次update，一次看完所有batch算一次epoch<ul>
+<li>所以一個epoch會有好幾次update</li>
+</ul>
+</li>
+</ul>
+<ol start="2">
+<li>Hard sigmoid也可以用兩個ReLU做出來</li>
+</ol>
+<p><img src="/../images/20220702_2.png" alt="upload successful"></p>
+<ul>
+<li>當然因為是要用兩個ReLU做出來，所以相應的紅線函數就要改<br>$$<br> f_{red_{ReLU}} \leftarrow y &#x3D; \sum_{i}c_i max(0,b_i + \sum_j w_{ij}x_j)<br>$$</li>
+<li>這種做法比sigmoid好(下周講解)</li>
+<li>ReLU跟sigmoid同為activation function  </details>
+
+<details></li>
+</ul>
+<p>  <summary> step4: 繼續修改模型 </summary></p>
+<p>  - 同樣的求a過程，我們可以做好幾次</p>
+<p><img src="/../images/20220702_3.png" alt="upload successful"><br>    注意，圖中的W’、W、b’、b互不相同</p>
+<p>  - 要做幾層同屬hyper parameter<br>  </details><br>  名詞解釋<br>  <br><img src="/../images/20220702_4.png" alt="upload successful"></p>
+<!-- Preclass結束-->
+</details>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://laxiflora.github.io/2022/07/04/ML-2021-1-1-%E7%9B%A3%E7%9D%A3%E5%BC%8F%E5%AD%B8%E7%BF%92%E6%A6%82%E8%AB%96/" data-id="cl5gzb2qe0002f8vebiv79snf" data-title="ML_2021_1-1 監督式學習概論" class="article-share-link">Teilen</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-李宏毅-機器學習-首頁" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2022/07/04/%E6%9D%8E%E5%AE%8F%E6%AF%85-%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92-%E9%A6%96%E9%A0%81/" class="article-date">
@@ -198,7 +358,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://laxiflora.github.io/2022/07/04/%E6%9D%8E%E5%AE%8F%E6%AF%85-%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92-%E9%A6%96%E9%A0%81/" data-id="cl5e53vfa000imsve6fmfhcvj" data-title="李宏毅_機器學習_首頁" class="article-share-link">Teilen</a>
+      <a data-url="https://laxiflora.github.io/2022/07/04/%E6%9D%8E%E5%AE%8F%E6%AF%85-%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92-%E9%A6%96%E9%A0%81/" data-id="cl5gzb2qy000jf8ve98m02vnb" data-title="李宏毅_機器學習_首頁" class="article-share-link">Teilen</a>
       
       
       
@@ -267,7 +427,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://laxiflora.github.io/2022/07/02/pytorch%E5%85%A5%E9%96%80/" data-id="cl5e53vf9000hmsve3lnd067b" data-title="pytorch入門" class="article-share-link">Teilen</a>
+      <a data-url="https://laxiflora.github.io/2022/07/02/pytorch%E5%85%A5%E9%96%80/" data-id="cl5gzb2qx000if8vearcyewau" data-title="pytorch入門" class="article-share-link">Teilen</a>
       
       
       
@@ -382,7 +542,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://laxiflora.github.io/2022/06/28/Hexo%E4%BD%BF%E7%94%A8%E6%8A%80%E5%B7%A7/" data-id="cl5e53vdx0000msve4chy63px" data-title="Hexo使用技巧" class="article-share-link">Teilen</a>
+      <a data-url="https://laxiflora.github.io/2022/06/28/Hexo%E4%BD%BF%E7%94%A8%E6%8A%80%E5%B7%A7/" data-id="cl5gzb2qj0005f8vedxlk1w1a" data-title="Hexo使用技巧" class="article-share-link">Teilen</a>
       
       
       
@@ -486,7 +646,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://laxiflora.github.io/2022/06/22/C++%20%E5%B8%B8%E8%A6%8BSTL%E5%AE%B9%E5%99%A8%E6%A6%82%E8%BF%B0/" data-id="cl5e53ves0005msvea7hyhrnx" data-title="C++ 常見STL容器概述" class="article-share-link">Teilen</a>
+      <a data-url="https://laxiflora.github.io/2022/06/22/C++%20%E5%B8%B8%E8%A6%8BSTL%E5%AE%B9%E5%99%A8%E6%A6%82%E8%BF%B0/" data-id="cl5gzb2q90001f8ve3tb8785j" data-title="C++ 常見STL容器概述" class="article-share-link">Teilen</a>
       
       
       
@@ -559,7 +719,7 @@ hexo就會幫你建立一個新的網誌，並且會在 <em>source&#x2F;_posts</
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://laxiflora.github.io/2022/06/21/%E5%A6%82%E4%BD%95%E7%94%A8hexo%E5%9C%A8github%20page%E4%B8%8A%E9%83%A8%E7%BD%B2%E5%B1%AC%E6%96%BC%E8%87%AA%E5%B7%B1%E7%9A%84%E7%AC%AC%E4%B8%80%E5%80%8B%E7%B6%B2%E7%AB%99/" data-id="cl5e53vfd000kmsvebycjbj7n" data-title="如何用hexo在github page上部署屬於自己的第一個網站" class="article-share-link">Teilen</a>
+      <a data-url="https://laxiflora.github.io/2022/06/21/%E5%A6%82%E4%BD%95%E7%94%A8hexo%E5%9C%A8github%20page%E4%B8%8A%E9%83%A8%E7%BD%B2%E5%B1%AC%E6%96%BC%E8%87%AA%E5%B7%B1%E7%9A%84%E7%AC%AC%E4%B8%80%E5%80%8B%E7%B6%B2%E7%AB%99/" data-id="cl5gzb2qz000lf8ve7kry5561" data-title="如何用hexo在github page上部署屬於自己的第一個網站" class="article-share-link">Teilen</a>
       
       
       
@@ -623,6 +783,10 @@ hexo就會幫你建立一個新的網誌，並且會在 <em>source&#x2F;_posts</
       <ul>
         
           <li>
+            <a href="/2022/07/11/ML-LEE-2022-hw3/">ML_LEE_2022_hw3</a>
+          </li>
+        
+          <li>
             <a href="/2022/07/09/ML-2021-3-1-%E5%8D%B7%E7%A9%8D%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF/">ML_2021_3-1 卷積神經網路</a>
           </li>
         
@@ -636,10 +800,6 @@ hexo就會幫你建立一個新的網誌，並且會在 <em>source&#x2F;_posts</
         
           <li>
             <a href="/2022/07/06/ML-2021-2-4-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%B8%89/">ML_2021_2-4 類神經網路訓練不起來怎麼辦(三)</a>
-          </li>
-        
-          <li>
-            <a href="/2022/07/05/ML-2021-2-3-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%BA%8C/">ML_2021_2-3 類神經網路訓練不起來怎麼辦(二)</a>
           </li>
         
       </ul>

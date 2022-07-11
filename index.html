@@ -75,6 +75,140 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-ML-LEE-2022-hw3" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2022/07/11/ML-LEE-2022-hw3/" class="article-date">
+  <time class="dt-published" datetime="2022-07-11T13:24:56.000Z" itemprop="datePublished">2022-07-11</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2022/07/11/ML-LEE-2022-hw3/">ML_LEE_2022_hw3</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p><a target="_blank" rel="noopener" href="https://www.kaggle.com/c/ml2022spring-hw3b">作業題目</a></p>
+<h1 id="可進行的目標"><a href="#可進行的目標" class="headerlink" title="可進行的目標"></a>可進行的目標</h1><h2 id="Data-augmentation-training"><a href="#Data-augmentation-training" class="headerlink" title="Data augmentation (training)"></a>Data augmentation (training)</h2><ul>
+<li><p>搜尋torchvision.transform，<a target="_blank" rel="noopener" href="https://pytorch.org/vision/stable/transforms.html">docs</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://chih-sheng-huang821.medium.com/03-pytorch-dataaug-a712a7a7f55e">有用的文章：Pytorch提供之torchvision data augmentation技巧</a></p>
+</li>
+<li><p>transform.randomRotate   ,   resize等等</p>
+</li>
+<li><p>最後必須要toTensor，model只吃pytorch的tensor不吃PIL library的</p>
+</li>
+</ul>
+<h2 id="Adv-Data-augmentation-mixed-up-training"><a href="#Adv-Data-augmentation-mixed-up-training" class="headerlink" title="Adv. Data augmentation - mixed up (training)"></a>Adv. Data augmentation - mixed up (training)</h2><ul>
+<li><p>mixup (把兩個影像混再一起，變成多重label)</p>
+</li>
+<li><p>cross entropy loss function需要重寫</p>
+</li>
+</ul>
+<h2 id="Module-selection-搜尋torchvision-models"><a href="#Module-selection-搜尋torchvision-models" class="headerlink" title="Module selection (搜尋torchvision.models)"></a>Module selection (搜尋torchvision.models)</h2><ul>
+<li><p>AlexNet</p>
+</li>
+<li><p>VGG系列</p>
+</li>
+<li><p>ResNet</p>
+</li>
+<li><p>SqueezeNet</p>
+</li>
+</ul>
+<h2 id="Cross-validation"><a href="#Cross-validation" class="headerlink" title="Cross validation"></a>Cross validation</h2><ul>
+<li><p>每次訓練更換dataset</p>
+</li>
+<li><p>ensemble</p>
+</li>
+</ul>
+<p><img src="/../images/20220711_1.png" alt="upload successful"></p>
+<hr>
+<p>以下是我對這作業除了Base sample code以外所做的變化，針對上述目標，有做的我才會列出來</p>
+<h1 id="First-Approach"><a href="#First-Approach" class="headerlink" title="First Approach"></a>First Approach</h1><p>Note: 因為這次作業放在kaggle上寫&amp;跑，而kaggle設計在結束比賽之前不能公開notebook，所以不能內嵌frame&#x3D; &#x3D;，下面只能先直接貼上code代替</p>
+<!--<iframe src="https://codepen.io/gretema/embed/eYOjPJx?height=265&theme-id=default&default-tab=html,result" width="100%" height="300" frameborder="0" loading="lazy" allowfullscreen></iframe> -->
+<h2 id="Data-argumentation"><a href="#Data-argumentation" class="headerlink" title="Data argumentation"></a>Data argumentation</h2><ul>
+<li>改動trains transform，新增兩個處理，一個是讓照片有0.6的可能水平翻轉，另一個則是把它做normalization<ul>
+<li>針對個別batch算出mean,std做normalization的方法我沒找到，目前直接套網路上常用的3 channel RGB圖之平均值當參數 (mean &#x3D; [0.5,0.5,0.5] std &#x3D; [0.1, 0.1, 0.1])<br>    - 這樣做觸犯1個問題，我的normalization是單一標準對所有data做，還是對每個batch單獨這樣做？在這個case沒差，不過這是因為數字寫死，normalization做的實在有夠醜&#x3D; &#x3D;<br>    - 觸犯另一個問題是，我的layer之間有沒有再進行一次normalization呢？有待釐清<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">mean = [0.5, 0.5, 0.5]</span><br><span class="line">std = [0.1, 0.1, 0.1]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">train_tfm = transforms.Compose([</span><br><span class="line">    # Resize the image into a fixed shape (height = width = 128)</span><br><span class="line">    transforms.Resize((128, 128)),</span><br><span class="line">    # You may add some transforms here.</span><br><span class="line">    transforms.RandomHorizontalFlip(p=0.6),</span><br><span class="line">    # ToTensor() should be the last one of the transforms.</span><br><span class="line">    transforms.ToTensor(),</span><br><span class="line">    transforms.Normalize(mean,std),</span><br><span class="line">])</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+</ul>
+<h2 id="Module-selection"><a href="#Module-selection" class="headerlink" title="Module selection"></a>Module selection</h2><ul>
+<li>這裡我直接選用VGG11取代原本的自訂模型Classifier</li>
+</ul>
+<h2 id="Result"><a href="#Result" class="headerlink" title="Result"></a>Result</h2><ul>
+<li>跑了至少100 epoch，結果training acc達到0.97，validate acc卻只有0.1x而且不再有更好結果，明顯的overfitting &#x3D; &#x3D;</li>
+<li>可能要考慮加入cross validation</li>
+<li>可能是data augmentation太弱？</li>
+<li>可能是VGG11模型太強(彈性過高)</li>
+<li>我耍笨不小心把訓練的過程輸出洗掉了，沒有圖片QQ</li>
+</ul>
+<hr>
+<h1 id="Second-Approach"><a href="#Second-Approach" class="headerlink" title="Second Approach"></a>Second Approach</h1><h2 id="Module-Selection"><a href="#Module-Selection" class="headerlink" title="Module Selection"></a>Module Selection</h2><ul>
+<li>單純的把VGG11模型改回Classification</li>
+</ul>
+<h2 id="Result-1"><a href="#Result-1" class="headerlink" title="Result"></a>Result</h2><ul>
+<li>看起來好像沒什麼變化，看來不是VGG模型導致overfitting</li>
+<li>可能是normalization的部分出問題了，接下來嘗試把normalization改掉，用VGG train看看<ul>
+<li>如果這樣成功的話，只能說應該是normalization把數字改成詭異的形狀了，算是一種人為mismatch吧<br><img src="/../images/20220711_2.png"></li>
+</ul>
+</li>
+</ul>
+<hr>
+<h1 id="Third-Approach"><a href="#Third-Approach" class="headerlink" title="Third Approach"></a>Third Approach</h1><h2 id="Transform"><a href="#Transform" class="headerlink" title="Transform"></a>Transform</h2><ul>
+<li>移除normalization</li>
+</ul>
+<h2 id="Result-2"><a href="#Result-2" class="headerlink" title="Result"></a>Result</h2><ul>
+<li><p>acc爆增回正常範圍了，看來真的是normalization的鍋qwq<br><img src="/../images/20220711_3.png"></p>
+</li>
+<li><p>上面這是最高紀錄，valid acc 有70%，位於epoch 32，我後來一直跑到epoch 52都沒看到更好的分數，就先卡掉了(看起來進medium概率近乎於零&#x3D; &#x3D;)<br><img src="/../images/20220712_4.png"></p>
+</li>
+<li><p>不過雖然70%比起之前的acc是大躍進，距離medium仍有一段距離，training acc也到達瓶頸，看起來是需要提高data augmentation的時候了</p>
+</li>
+</ul>
+<h1 id="Forth-Approach"><a href="#Forth-Approach" class="headerlink" title="Forth Approach"></a>Forth Approach</h1><ul>
+<li>偷偷參考了一下<a target="_blank" rel="noopener" href="https://github.com/Joshuaoneheart/ML2022_all_A_plus/blob/main/hw3.md">學長</a>的筆記，發現新招數「AutoAugmentation」，適用在Transform內</li>
+<li>這招的原理來自於<a target="_blank" rel="noopener" href="https://arxiv.org/pdf/1805.09501.pdf">這篇論文</a>，可以從data裡面學到如何排Transform Augment</li>
+<li>同時也從學長的筆記學到，因為code裡面有用BatchNorm2d (batch Normalization)，所以batchSize大一點會比較有利<ul>
+<li>這好像就是元兇嗎orz，多做一次norm<br>    - 不過我只有在助教寫的Classification有看到norm，因為用的是VGG11，所以不確定是否仍然有用norm(沒看源碼XD)</li>
+</ul>
+</li>
+</ul>
+<h2 id="Transform-1"><a href="#Transform-1" class="headerlink" title="Transform"></a>Transform</h2><ul>
+<li>新增<code>transforms.AutoAugment()</code></li>
+<li>新增<code>transforms.RandomRotation(degrees = 32)  //rotate+-32度</code></li>
+</ul>
+<h2 id="BatchSize"><a href="#BatchSize" class="headerlink" title="BatchSize"></a>BatchSize</h2><ul>
+<li>修改為96</li>
+</ul>
+<h2 id="Result-3"><a href="#Result-3" class="headerlink" title="Result"></a>Result</h2><hr>
+<h1 id="心得"><a href="#心得" class="headerlink" title="心得"></a>心得</h1><p>這次作業是CNN的範例題，這次的圖像辨識題真的讓人思考到了如何去優化他，助教提供的sample code省去了start from scratch的痛苦，讓我們能專注在實作理論的部分</p>
+<p>其實很多的技術(Batch normalization、crossEntropy+softmax、data Batch等等)都已經被函數包進去一次做好了，正常的時候是不會發現到他們的存在，這或許也間接印證了他們是十分有效提高命中率的方法吧。而真的需要實作的part其實不多，比較難的是要去翻出他們的document一一認識他們的結構並理解功能，這才是最難的部分</p>
+<p>助教的sample code寫得蠻精美的，甚至有看出在自訂結構其實有保留空間讓學生自行切分training set跟valid set(可能是用於做cross validation用的)，考量到讓學生改進而保留空間，真的厲害！除了實作理論與閱讀結構以外，最重要的估計就是看懂這個訓練過程的資料結構了吧~</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://laxiflora.github.io/2022/07/11/ML-LEE-2022-hw3/" data-id="cl5gzb2qw000hf8ve8a2x532m" data-title="ML_LEE_2022_hw3" class="article-share-link">Teilen</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-ML-2021-3-1-卷積神經網路" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2022/07/09/ML-2021-3-1-%E5%8D%B7%E7%A9%8D%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF/" class="article-date">
@@ -250,7 +384,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://laxiflora.github.io/2022/07/09/ML-2021-3-1-%E5%8D%B7%E7%A9%8D%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF/" data-id="cl5e53vf7000emsvefjyx85nk" data-title="ML_2021_3-1 卷積神經網路" class="article-share-link">Teilen</a>
+      <a data-url="https://laxiflora.github.io/2022/07/09/ML-2021-3-1-%E5%8D%B7%E7%A9%8D%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF/" data-id="cl5gzb2qu000ef8ve10wt55wq" data-title="ML_2021_3-1 卷積神經網路" class="article-share-link">Teilen</a>
       
       
       
@@ -363,7 +497,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://laxiflora.github.io/2022/07/07/ML-2021-2-6-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%BA%94/" data-id="cl5e53vf8000fmsve3i7sddfr" data-title="ML_2021_2-6 類神經網路訓練不起來怎麼辦(五)" class="article-share-link">Teilen</a>
+      <a data-url="https://laxiflora.github.io/2022/07/07/ML-2021-2-6-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%BA%94/" data-id="cl5gzb2qt000df8vecrns8rhn" data-title="ML_2021_2-6 類神經網路訓練不起來怎麼辦(五)" class="article-share-link">Teilen</a>
       
       
       
@@ -450,7 +584,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://laxiflora.github.io/2022/07/06/ML-2021-2-5-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E5%9B%9B/" data-id="cl5e53vf5000dmsvehrag8hec" data-title="ML_2021_2-5 類神經網路訓練不起來怎麼辦(四)" class="article-share-link">Teilen</a>
+      <a data-url="https://laxiflora.github.io/2022/07/06/ML-2021-2-5-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E5%9B%9B/" data-id="cl5gzb2qr000cf8ve044u67f4" data-title="ML_2021_2-5 類神經網路訓練不起來怎麼辦(四)" class="article-share-link">Teilen</a>
       
       
       
@@ -596,7 +730,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://laxiflora.github.io/2022/07/06/ML-2021-2-4-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%B8%89/" data-id="cl5e53vf00009msve44zodqxb" data-title="ML_2021_2-4 類神經網路訓練不起來怎麼辦(三)" class="article-share-link">Teilen</a>
+      <a data-url="https://laxiflora.github.io/2022/07/06/ML-2021-2-4-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%B8%89/" data-id="cl5gzb2qn0009f8ve9m3n47nn" data-title="ML_2021_2-4 類神經網路訓練不起來怎麼辦(三)" class="article-share-link">Teilen</a>
       
       
       
@@ -707,7 +841,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://laxiflora.github.io/2022/07/05/ML-2021-2-3-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%BA%8C/" data-id="cl5e53vf2000amsveajd758e6" data-title="ML_2021_2-3 類神經網路訓練不起來怎麼辦(二)" class="article-share-link">Teilen</a>
+      <a data-url="https://laxiflora.github.io/2022/07/05/ML-2021-2-3-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%BA%8C/" data-id="cl5gzb2qo000af8ve51ar1cbk" data-title="ML_2021_2-3 類神經網路訓練不起來怎麼辦(二)" class="article-share-link">Teilen</a>
       
       
       
@@ -745,7 +879,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://laxiflora.github.io/2022/07/04/ML-2022-2-1-%E5%86%8D%E6%8E%A2%E5%AF%B6%E5%8F%AF%E5%A4%A2%E3%80%81%E6%95%B8%E7%A2%BC%E5%AF%B6%E8%B2%9D%E5%88%86%E9%A1%9E%E5%99%A8/" data-id="cl5e53vf9000gmsvehwso5zh6" data-title="ML_2022_2-1 再探寶可夢、數碼寶貝分類器" class="article-share-link">Teilen</a>
+      <a data-url="https://laxiflora.github.io/2022/07/04/ML-2022-2-1-%E5%86%8D%E6%8E%A2%E5%AF%B6%E5%8F%AF%E5%A4%A2%E3%80%81%E6%95%B8%E7%A2%BC%E5%AF%B6%E8%B2%9D%E5%88%86%E9%A1%9E%E5%99%A8/" data-id="cl5gzb2qv000gf8ve75bteabv" data-title="ML_2022_2-1 再探寶可夢、數碼寶貝分類器" class="article-share-link">Teilen</a>
       
       
       
@@ -828,7 +962,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://laxiflora.github.io/2022/07/04/ML-2021-2-2-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%B8%80/" data-id="cl5e53vex0008msve21krfd6f" data-title="ML_2021_2-2 類神經網路訓練不起來怎麼辦(一)" class="article-share-link">Teilen</a>
+      <a data-url="https://laxiflora.github.io/2022/07/04/ML-2021-2-2-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%B8%80/" data-id="cl5gzb2qk0006f8vebxlkg6vn" data-title="ML_2021_2-2 類神經網路訓練不起來怎麼辦(一)" class="article-share-link">Teilen</a>
       
       
       
@@ -908,7 +1042,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://laxiflora.github.io/2022/07/04/ML-2021-2-1-%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E4%BB%BB%E5%8B%99%E6%94%BB%E7%95%A5/" data-id="cl5e53veu0006msve4sbt4fd0" data-title="ML_2021_2-1 機器學習任務攻略" class="article-share-link">Teilen</a>
+      <a data-url="https://laxiflora.github.io/2022/07/04/ML-2021-2-1-%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E4%BB%BB%E5%8B%99%E6%94%BB%E7%95%A5/" data-id="cl5gzb2qi0004f8vecrhbbmd4" data-title="ML_2021_2-1 機器學習任務攻略" class="article-share-link">Teilen</a>
       
       
       
@@ -990,167 +1124,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://laxiflora.github.io/2022/07/04/ML-2022-1-1-%E6%AD%A3%E8%AA%B2%E5%85%A7%E5%AE%B9%E4%BB%8B%E7%B4%B9/" data-id="cl5e53vf3000cmsve1v23fv0v" data-title="ML_2022_1-1 正課內容介紹" class="article-share-link">Teilen</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-ML-2021-1-1-監督式學習概論" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2022/07/04/ML-2021-1-1-%E7%9B%A3%E7%9D%A3%E5%BC%8F%E5%AD%B8%E7%BF%92%E6%A6%82%E8%AB%96/" class="article-date">
-  <time class="dt-published" datetime="2022-07-04T14:15:57.000Z" itemprop="datePublished">2022-07-04</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2022/07/04/ML-2021-1-1-%E7%9B%A3%E7%9D%A3%E5%BC%8F%E5%AD%B8%E7%BF%92%E6%A6%82%E8%AB%96/">ML_2021_1-1 監督式學習概論</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <h1 id="前言：什麼是機器學習"><a href="#前言：什麼是機器學習" class="headerlink" title="前言：什麼是機器學習"></a>前言：什麼是機器學習</h1><p>機器學習，就是用機器的力量幫忙找出一個合適的函數</p>
-<ul>
-<li>函數的輸入可以是vector、matrix、sequence</li>
-<li>輸出可以是數值(regression)、類別(classification)、文章、圖片<br>深度學習，就是用神經網路的方法來製造函數</li>
-</ul>
-<h1 id="預測頻道觀看人數"><a href="#預測頻道觀看人數" class="headerlink" title="預測頻道觀看人數"></a>預測頻道觀看人數</h1><h2 id="基本原理"><a href="#基本原理" class="headerlink" title="基本原理"></a>基本原理</h2><ul>
-<li>loss function的輸入是weight跟bias，輸出是這組參數有多好」</li>
-<li>Optimization : 找出最好的一組參數(w*,b*)使loss function最小<ul>
-<li>常用gradient descent<ul>
-<li>隨機決定w_0</li>
-<li>把L對w做偏微分，若斜率&gt;0則提高w，反之降低w(變動量&#x3D;η，屬於hyperparameters)</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<details>
-<summary> step1: 製作一個學習函數 </summary>
-
-<h2 id="純粹Linear-Model"><a href="#純粹Linear-Model" class="headerlink" title="純粹Linear Model"></a>純粹Linear Model</h2><ol>
-<li><p>先隨便設一個函數<br>  $$f &#x3D; w_0 x_1$$<br>  其中$x_1$是昨天的觀看人數</p>
-</li>
-<li><p>根據loss function的結果嘗試把$w$、$b$優化，使得$f &#x3D; w_0 x_1 + b$有最小損失函數(這裡優化方法採梯度下降)</p>
-</li>
-<li><p>跑測試結果發現$w$很接近1 (看似很合理，因為昨天的頻道觀看人數與今天的頻道觀看人數差距應該不多)，其實預測都是前一天的結果平移而已，命中率有限 -&gt; 試試看一次看多幾天，變成以周為單位</p>
-</li>
-<li><p>修改函數<br>  $$f_1 \leftarrow y &#x3D; b+ \sum_{j&#x3D;1}^7 w_j x_j$$<br>  表示預測一天的觀看人數，需要前面七天觀看人數作為參考</p>
-</li>
-<li><p>命中率有效提高了（這是linear model）</p>
-</li>
-</ol>
-<h2 id="Piecewise-Linear-Curve"><a href="#Piecewise-Linear-Curve" class="headerlink" title="Piecewise Linear Curve"></a>Piecewise Linear Curve</h2><ul>
-<li>linear model過於簡單，x與y之間的關係是直線(w改動斜率，b改動原點)</li>
-<li>利用一系列的線性函數相加，使加總後的函數有彎折</li>
-<li>Piecewise Linear Curve &#x3D; constant + sum of a set of 藍線 (下圖紅線就是我們想求的「預測模型」函數f )<br>  <img src="/../images/20220701_1.png"></li>
-<li>假設有無窮多個藍色function，就可以塑造出任意形狀的紅色function，如上圖所示</li>
-</ul>
-<h3 id="當特徵-x3D-1"><a href="#當特徵-x3D-1" class="headerlink" title="當特徵&#x3D;1"></a>當特徵&#x3D;1</h3><ul>
-<li>如何寫出藍線式子?<ul>
-<li>藍線函數令為 $f_{blue1} \leftarrow y &#x3D; c_i sigmoid(b_i+w_ix_1)$</li>
-<li>使用sigmoid，把藍線變成曲型來逼近原型</li>
-<li>原型稱為hard sigmoid</li>
-<li>讓藍線凸在對的地方-&gt;修改w,b,c</li>
-</ul>
-</li>
-<li>綜合前面的內容，我們就可以求得單一feature下的紅色function(而這樣理論上可以逼近任何連續函數)：<br>  $$f_{red1} \leftarrow y &#x3D; b + \sum_{i}c_i sigmoid(b_i + w_ix_1)$$</li>
-<li>其中b也可以根據不同藍色function有所不同，把b丟入$\sum$即可</li>
-</ul>
-<h3 id="當特徵-gt-1"><a href="#當特徵-gt-1" class="headerlink" title="當特徵&gt;1"></a>當特徵&gt;1</h3><ul>
-<li><p>當然，我們也可以進一步推廣，增加feature的量(目前只有一個，$x_1$的某特徵乘上各藍線的$w_i$)</p>
-</li>
-<li><p>解法就是修改藍線函數變成$f_{blue2} \leftarrow y &#x3D; c_i sigmoid(b_i + \sum_{j} w_{ij}x_j)$<br>  <img src="/../images/20220701_2.png" alt="upload successful"></p>
-</li>
-<li><p>同理把藍色函數相加再補上常數，紅線函數則可令為<br>$$f_{red2} \leftarrow y &#x3D; b + \sum_{i}c_i sigmoid(b_i + \sum_jw_{ij}x_j) $$</p>
-</li>
-<li><p>$w_{ij}$表示第i個sigmoid函數(aka第i條藍線)中，對於第$x_j$個特徵的權重</p>
-<details>
-<summary> 用線性代數的方式來理解 </summary>
-
-<ul>
-<li>繼續剛剛特徵&gt;1的討論</li>
-<li>令$r_i &#x3D; b_i + \sum_{j}w_{ij}x_j$ (換句話說r就是sigmoid函數內的運算結果)，則可以把這個等式簡化為一個矩陣相乘<br>函數的示意圖如下:<br><img src="/../images/20220701_4.png" alt="upload successful"></li>
-<li>而$r_i$做sigmoid()以後就會得到$a_i$</li>
-<li>又稱$a &#x3D; \sigma(r)$</li>
-<li>最後把$a_i$乘上各自的$c_i$後，加總得到剛剛的$f_{red2}$ (c在相乘時是$c^T$矩陣)</li>
-<li>$b、c^T、b_i、W、x$五個向量append起來以後統稱為$\theta$</li>
-</ul>
-<p><img src="/../images/20220701_5.png" alt="upload successful"></p>
-</details></li>
-</ul>
-  </details>
-
-  <details>
-  <summary> step2: 定義訓練資料的損失函數 </summary>
-
-<ul>
-<li>Loss is a function of parameters $L(\theta)$ ($\theta$就是step1中的那個)</li>
-<li>就是x丟進去，測量y-hat跟y的差別多大  </details></li>
-</ul>
-  <details>
-  <summary> step3: 最佳化模型 </summary>
-
-<ul>
-<li>假設最佳化的參數向量是$\theta^*$</li>
-<li>則$\theta^* &#x3D; arg$ $min_{\theta}L$</li>
-<li>首先，隨機選一個$\theta^0$作為初始值</li>
-<li>Gradient descent作法<br>  $$<br>  g^T &#x3D;<br>  \begin{bmatrix}<br> \frac{\partial L}{\partial \theta_1}\<br> \frac{\partial L}{\partial \theta_2}\<br> \frac{\partial L}{\partial \theta_3}\<br> \ldots<br>  \end{bmatrix} |_{\theta &#x3D; \theta_0}<br>  $$<ul>
-<li>註：打不出1xn向量&#x3D; &#x3D;</li>
-</ul>
-</li>
-<li>則稱 g &#x3D; $\nabla L(\theta^0)$</li>
-</ul>
-<p>  求出g向量以後，就可以把它拿來更新參數列:<br>  <br><img src="/../images/pasted-0.png"></p>
-<ul>
-<li>亦即 $ \theta_1 \leftarrow \theta_0 - \eta g $</li>
-</ul>
-<h2 id="Note"><a href="#Note" class="headerlink" title="Note"></a>Note</h2><ol>
-<li>實務上通常做gradient不是所有資料都加入去更新，而是先把資料切成batch分別計算出$L^i$</li>
-</ol>
-<p><img src="/../images/20220702_1.png" alt="upload successful"></p>
-<ul>
-<li>一次的更新$\theta$是一次update，一次看完所有batch算一次epoch<ul>
-<li>所以一個epoch會有好幾次update</li>
-</ul>
-</li>
-</ul>
-<ol start="2">
-<li>Hard sigmoid也可以用兩個ReLU做出來</li>
-</ol>
-<p><img src="/../images/20220702_2.png" alt="upload successful"></p>
-<ul>
-<li>當然因為是要用兩個ReLU做出來，所以相應的紅線函數就要改<br>$$<br> f_{red_{ReLU}} \leftarrow y &#x3D; \sum_{i}c_i max(0,b_i + \sum_j w_{ij}x_j)<br>$$</li>
-<li>這種做法比sigmoid好(下周講解)</li>
-<li>ReLU跟sigmoid同為activation function  </details>
-
-<details></li>
-</ul>
-<p>  <summary> step4: 繼續修改模型 </summary></p>
-<p>  - 同樣的求a過程，我們可以做好幾次</p>
-<p><img src="/../images/20220702_3.png" alt="upload successful"><br>    注意，圖中的W’、W、b’、b互不相同</p>
-<p>  - 要做幾層同屬hyper parameter<br>  </details><br>  名詞解釋<br>  <br><img src="/../images/20220702_4.png" alt="upload successful"></p>
-<!-- Preclass結束-->
-</details>
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://laxiflora.github.io/2022/07/04/ML-2021-1-1-%E7%9B%A3%E7%9D%A3%E5%BC%8F%E5%AD%B8%E7%BF%92%E6%A6%82%E8%AB%96/" data-id="cl5e53veq0003msvegq6y3ukj" data-title="ML_2021_1-1 監督式學習概論" class="article-share-link">Teilen</a>
+      <a data-url="https://laxiflora.github.io/2022/07/04/ML-2022-1-1-%E6%AD%A3%E8%AA%B2%E5%85%A7%E5%AE%B9%E4%BB%8B%E7%B4%B9/" data-id="cl5gzb2qv000ff8vef6kohvy4" data-title="ML_2022_1-1 正課內容介紹" class="article-share-link">Teilen</a>
       
       
       
@@ -1212,6 +1186,10 @@
       <ul>
         
           <li>
+            <a href="/2022/07/11/ML-LEE-2022-hw3/">ML_LEE_2022_hw3</a>
+          </li>
+        
+          <li>
             <a href="/2022/07/09/ML-2021-3-1-%E5%8D%B7%E7%A9%8D%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF/">ML_2021_3-1 卷積神經網路</a>
           </li>
         
@@ -1225,10 +1203,6 @@
         
           <li>
             <a href="/2022/07/06/ML-2021-2-4-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%B8%89/">ML_2021_2-4 類神經網路訓練不起來怎麼辦(三)</a>
-          </li>
-        
-          <li>
-            <a href="/2022/07/05/ML-2021-2-3-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%BA%8C/">ML_2021_2-3 類神經網路訓練不起來怎麼辦(二)</a>
           </li>
         
       </ul>
