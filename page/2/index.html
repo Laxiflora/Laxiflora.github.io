@@ -61,12 +61,12 @@
       </nav>
       <nav id="sub-nav">
         
-          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="Flux RSS"></a>
         
-        <a id="nav-search-btn" class="nav-icon" title="Suche"></a>
+        <a id="nav-search-btn" class="nav-icon" title="Rechercher"></a>
       </nav>
       <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Suche"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://laxiflora.github.io"></form>
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Rechercher"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://laxiflora.github.io"></form>
       </div>
     </div>
   </div>
@@ -74,6 +74,546 @@
 
       <div class="outer">
         <section id="main">
+  
+    <article id="post-ML-2021-2-4-類神經網路訓練不起來怎麼辦-三" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2022/07/06/ML-2021-2-4-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%B8%89/" class="article-date">
+  <time class="dt-published" datetime="2022-07-06T06:04:41.000Z" itemprop="datePublished">2022-07-06</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2022/07/06/ML-2021-2-4-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%B8%89/">ML_2021_2-4 類神經網路訓練不起來怎麼辦(三)</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <ul>
+<li>Critical point 不一定是在訓練模型時會碰到的最大問題</li>
+</ul>
+<h1 id="Adaptive-Learning-Rate"><a href="#Adaptive-Learning-Rate" class="headerlink" title="Adaptive Learning Rate"></a>Adaptive Learning Rate</h1><ul>
+<li>我們都認為training loss卡住了之後，是因為parameters卡在critical point</li>
+<li>其實有可能是loss function在兩個谷間碰撞，可能是兩組parameters之間剛好loss差不多</li>
+<li>考慮一個情境，高爾夫球一直在球洞兩邊滾來滾去，就是滾不到終點<br><img src="/../images/pasted-3.png"></li>
+<li>多數training其實還沒走到critical point就已經停止 (所以真正要注意的點不是critical point)</li>
+</ul>
+<h2 id="非卡在critical-point的Example"><a href="#非卡在critical-point的Example" class="headerlink" title="非卡在critical point的Example"></a>非卡在critical point的Example</h2><ul>
+<li><p>給定一個convex error surface，如下圖<br><img src="/../images/20220706_2.png" alt="upload successful"></p>
+</li>
+<li><p>當learning rate太大，會容易在等高線密集的地方邁步過大，如下圖<br><img src="/../images/20220706_3.png" alt="upload successful"></p>
+</li>
+<li><p>或是當learning rate太小，容易卡在低谷幾乎動不了(要挪到X需要好幾百萬次更新)，如下圖<br><img src="/../images/image.png" alt="upload successful"></p>
+</li>
+</ul>
+<p>$\rightarrow$ 單一learning rate通常不能貫徹模型訓練的整個過程</p>
+<h2 id="如何設定learning-rate-Adagrad-Approach"><a href="#如何設定learning-rate-Adagrad-Approach" class="headerlink" title="如何設定learning rate? - Adagrad Approach"></a>如何設定learning rate? - Adagrad Approach</h2><ul>
+<li><p>從上個例子可知，當某方向上等高線密集時，我們需要learning rate 小，反之則要大</p>
+</li>
+<li><p>為了讓$\eta$能自動變動，要調整公式</p>
+</li>
+<li><p>下圖為梯度下降法的原始公式<br><img src="/../images/20220706_4.png" alt="upload successful"></p>
+</li>
+<li><p>方便起見，這裡只用一個參數</p>
+</li>
+<li><p>更動以後的算式如下</p>
+</li>
+</ul>
+<p>$$<br>\theta^{t+1}_i \leftarrow \theta^t_i - \frac{\eta}{\sigma^t_i} g^t_i<br>$$</p>
+<ul>
+<li>我們讓$\sigma^t_i$加入等式，這樣就可以讓learning rate變成一個parameter dependent的hyper parameter</li>
+</ul>
+<h3 id="如何計算sigma"><a href="#如何計算sigma" class="headerlink" title="如何計算sigma?"></a>如何計算sigma?</h3><p>$$<br>\theta^{1}_i \leftarrow \theta^0_i - \frac{\eta}{\sigma^0_i} g^0_i<br>$$<br>其中$\sigma^0_i &#x3D; \sqrt{(g^0_i)^2} &#x3D; \vert g^0_i \vert$<br>接下來<br>$$<br>\theta^{2}_i \leftarrow \theta^1_i - \frac{\eta}{\sigma^0_i} g^1_i<br>$$<br>其中$\sigma^1_i &#x3D; \sqrt{\frac{1}{2}[(g^0_i)^2+(g^1_i)^2]}$</p>
+<p>…<br>一路推廣，可以得到</p>
+<p>$$<br>\theta^{t+1}_i \leftarrow \theta^t_i - \frac{\eta}{\sigma^t_i} g^t_i<br>$$</p>
+<p>其中</p>
+<p>$$<br>\sigma^t_i &#x3D; \sqrt{\frac{1}{t+1}\sum_{j&#x3D;0}^{t}(g_i^j)^2}<br>$$</p>
+<ul>
+<li>目前這個技巧應用在Adagrad</li>
+</ul>
+<h3 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h3><ul>
+<li>當gradient小(平坦)，算出來的$\sigma$就小，learning rate大</li>
+<li>當gradient大(陡峭)，算出來的$\sigma$就大，learning rate小<br><img src="/../images/pasted-4.png"></li>
+</ul>
+<h3 id="這樣會有甚麼問題"><a href="#這樣會有甚麼問題" class="headerlink" title="這樣會有甚麼問題"></a>這樣會有甚麼問題</h3><ul>
+<li>剛才的假設是同一個參數，他的gradient大小就固定一個值(?)</li>
+<li>就算是同一個參數，他需要的learning rate也會隨時間而改變</li>
+<li>我們期待就算是同一個參數在同一個方向，learning rate也會有所改變<br>舉例，我們討論橫軸</li>
+</ul>
+<p><img src="/../images/20220706_5.png" alt="upload successful"></p>
+<hr>
+<h2 id="如何設定learning-rate-RMSProp-Approach"><a href="#如何設定learning-rate-RMSProp-Approach" class="headerlink" title="如何設定learning rate? - RMSProp Approach"></a>如何設定learning rate? - RMSProp Approach</h2><ul>
+<li>一個沒有論文的方法orz</li>
+<li>方法如下圖<br><img src="/../images/pasted-5.png"></li>
+<li>主要改變了紅圈圈起來的部分，捨棄了用前面所有的gradient求MSE決定$\sigma$的方法，RMSProp只採計上一個$\sigma$值以及這次的gradient之MSE和</li>
+<li>多了一個hyper parameter $alpha$，調整對上一個$\sigma$的學習率高低</li>
+<li>其實上一個$\sigma$就包含了前面所有的gradient之MSE，只是權重會隨著疊代越來越小</li>
+</ul>
+<p>learning rate變動範例圖<br><img src="/../images/20220706_7.png"></p>
+<h2 id="回到一開始的範例"><a href="#回到一開始的範例" class="headerlink" title="回到一開始的範例"></a>回到一開始的範例</h2><ul>
+<li>[回到這個範例](# 非卡在critical point的Example)，我們來看看各approach的效果</li>
+</ul>
+<h4 id="Adaptive-learning-rate"><a href="#Adaptive-learning-rate" class="headerlink" title="Adaptive learning rate"></a>Adaptive learning rate</h4><p><img src="/../images/pasted-6.png" alt="filename already exists, renamed"></p>
+<ul>
+<li>為啥爆炸了?<ul>
+<li>根據公式，我們把前面幾次的gradient都列入計算，因為在橫線的部分步伐很大，所以當走到步伐該縮小的時候，會爆衝<br>    - 但也因為公式，爆衝一陣子以後learning rate會逐漸縮小，然後回歸正軌，等待一陣子以後learning rate上升再度爆炸</li>
+</ul>
+</li>
+</ul>
+<h5 id="解法：learning-rate-decay"><a href="#解法：learning-rate-decay" class="headerlink" title="解法：learning rate decay"></a>解法：learning rate decay</h5><ul>
+<li>隨著訓練的進行，我們一定越來越接近終點</li>
+<li>可以隨著時間降低learning rate，開始微調</li>
+</ul>
+<h5 id="解法2：Warm-up"><a href="#解法2：Warm-up" class="headerlink" title="解法2：Warm up"></a>解法2：Warm up</h5><p><img src="/../images/20220706_10.png"></p>
+<ul>
+<li>算是一種黑科技</li>
+<li>先變大learning rate，再縮小(?)</li>
+<li>在訓練bert的時候常常用到，但他在很久以前就出現在<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1512.03385">論文</a>過了</li>
+<li>在transformer中也出現過，見下圖<br><img src="/../images/20220706_11.png"></li>
+<li>一種可能的解釋是，因為$\sigma$是統計的數據，在訓練初期的時候容易失準，故初期讓learning rate小，等到$\sigma$精準一點以後，再讓learning rate變高</li>
+<li>相關paper : <a target="_blank" rel="noopener" href="https://arxiv.org/abs/1908.03265">RAdam</a></li>
+</ul>
+<h2 id="Summary-of-Optimization"><a href="#Summary-of-Optimization" class="headerlink" title="Summary of Optimization"></a>Summary of Optimization</h2><p><img src="/../images/20220706_12.png"></p>
+<ul>
+<li>雖然Momentum跟$\sigma$都使用過去的資料，但不會因此抵銷<ul>
+<li>Momentum是把所有gradient加起來，故有考慮方向與正負號</li>
+<li>$\sigma$只考慮MSE</li>
+</ul>
+</li>
+</ul>
+<h2 id="下次預告"><a href="#下次預告" class="headerlink" title="下次預告"></a>下次預告</h2><ul>
+<li>當訓練過程遭遇大山，要如何闢路繞過去？</li>
+<li>有沒有可能直接炸掉大山，改變error surface呢?<br>$\rightarrow$ Batch normalization<br>PS. 課程跳到2-6哦</li>
+</ul>
+<hr>
+<h1 id="Note"><a href="#Note" class="headerlink" title="Note"></a>Note</h1><ul>
+<li><p>現今最常見的Optimizer:Adam其實就是RMSProp + Momentum</p>
+</li>
+<li><p>Adam的細節自行參考</p>
+</li>
+<li><p>arxiv論文年代看法</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1512.03385%E7%82%BA%E4%BE%8B">https://arxiv.org/abs/1512.03385為例</a><br>    - 15代表2015年出版<br>    - 12代表12月</li>
+</ul>
+</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://laxiflora.github.io/2022/07/06/ML-2021-2-4-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%B8%89/" data-id="cl5zfyy03000cs4vedsm9cwi9" data-title="ML_2021_2-4 類神經網路訓練不起來怎麼辦(三)" class="article-share-link">Partager</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-ML-2021-2-3-類神經網路訓練不起來怎麼辦-二" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2022/07/05/ML-2021-2-3-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%BA%8C/" class="article-date">
+  <time class="dt-published" datetime="2022-07-05T13:59:49.000Z" itemprop="datePublished">2022-07-05</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2022/07/05/ML-2021-2-3-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%BA%8C/">ML_2021_2-3 類神經網路訓練不起來怎麼辦(二)</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><ul>
+<li>之前課程(Ref. 2021版1-1)說到，在實際train data時我們不是實際把所有Data算出來對L微分求loss，而是把Data先分組切成batch，而所有batch看過一遍，才叫1 epoch</li>
+<li>我們可以設定shuffle，就是每個不同的epoch，data都會重新分組</li>
+</ul>
+<h1 id="Batch-size對模型之影響"><a href="#Batch-size對模型之影響" class="headerlink" title="Batch size對模型之影響"></a>Batch size對模型之影響</h1><ul>
+<li>首先比較兩個case：<br><img src="/../images/20220705_2.png"></li>
+<li>左邊沒有用batch，而右邊batch size &#x3D; 1</li>
+<li>左邊表示每次必須看完所有data，參數才能更新一次；右邊則相反，每看完一個data就更新一次參數</li>
+<li>一個是重攻擊長CD，一個是輕攻擊短CD (?)</li>
+</ul>
+<h2 id="大batch優缺"><a href="#大batch優缺" class="headerlink" title="大batch優缺"></a>大batch優缺</h2><h5 id="優點"><a href="#優點" class="headerlink" title="優點"></a>優點</h5><ul>
+<li>威力大(更新幅度大)且每步都很穩</li>
+</ul>
+<h5 id="缺點"><a href="#缺點" class="headerlink" title="缺點"></a>缺點</h5><ul>
+<li>超級慢<br>(小batch優缺則顛倒)</li>
+</ul>
+<h2 id="small-batch-or-big-batch"><a href="#small-batch-or-big-batch" class="headerlink" title="small batch or big batch?"></a>small batch or big batch?</h2><ul>
+<li>兩邊看似各自相對，但我們還沒考慮平行運算</li>
+<li>若考慮多核心，其實大batch不會比較慢</li>
+<li>以下圖為例，用tesla V100 GPU，batch size到1000都很合適(梯度法)<br><img src="/../images/20220705_1.png"></li>
+<li>因為高batch不一定更花時間，所以其實在平行運算下，大batch的每epoch速度甚至還比小epoch還快</li>
+<li>不過，就算是平行運算下，大batch一定比較好嗎?<ul>
+<li>與直覺相反的是，noisy大有時候反而可以促進訓練能力(如下圖)</li>
+</ul>
+</li>
+</ul>
+<p><img src="/../images/20220705_3.png" alt="upload successful"></p>
+<ul>
+<li>相同model(同bias)下，smaller batch size有更高的performance</li>
+<li>問題來源於optimizer fails(Ref. 2021版2-2關於如何判定問題是哪種)</li>
+</ul>
+<h2 id="為何small-batch-size可以有更好的結果？"><a href="#為何small-batch-size可以有更好的結果？" class="headerlink" title="為何small batch size可以有更好的結果？"></a>為何small batch size可以有更好的結果？</h2><ul>
+<li>一說是Noisy update is better for training<br>見下圖</li>
+</ul>
+<p><img src="/../images/pasted-1.png"><br>small batch下，或許$L^1$卡住了，但是因為$L^2$跟$L^1$有不小的差距，所以剛好可以讓參數更新然後把參數撞開critical point</p>
+<h3 id="small-batch-still-better-for-testing-data"><a href="#small-batch-still-better-for-testing-data" class="headerlink" title="small batch still better for testing data?"></a>small batch still better for testing data?</h3><ul>
+<li>我們知道了small batch在training set表現更好，那testing data是否也是如此呢?</li>
+<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1609.04836">根據這篇論文</a>，可以知道small batch在測試資料也有好表現</li>
+</ul>
+<p><img src="/../images/20220705_4.png" alt="upload successful"></p>
+<ul>
+<li>就算能把big batch model的準確率練到跟small batch model差不多(調hyper parameter)，在測試時也會有差距顯現 $\rightarrow$ big batch有overfitting問題<br>目前普遍認為的原因如下：<ul>
+<li>就算是卡在local minima，也有分好壞</li>
+<li>周圍平坦的local minima較好</li>
+<li>而論文認為大batch size傾向會讓我們走向尖銳的minima point<ul>
+<li>一種說法是，小batch size更動頻繁走向豐富，容易走出周圍很高的minima point(對於逃離critical point能力較高)，而停在平坦的minima point (Ref. 2021版2-2 鞍點)</li>
+</ul>
+<p>	</p>
+</li>
+<li>因為testing 跟 training的loss function，肯定會有所小偏差，如下圖<br><img src="/../images/20220705_6.png" alt="upload successful"></li>
+</ul>
+</li>
+</ul>
+<h2 id="Summary：Batch-comparasion"><a href="#Summary：Batch-comparasion" class="headerlink" title="Summary：Batch comparasion"></a>Summary：Batch comparasion</h2><p><img src="/../images/20220705_7.png" alt="upload successful"></p>
+<ul>
+<li>因此，batch size最終成為了一個hyper parameter</li>
+</ul>
+<h2 id="魚與熊掌兼得的辦法"><a href="#魚與熊掌兼得的辦法" class="headerlink" title="魚與熊掌兼得的辦法?"></a>魚與熊掌兼得的辦法?</h2><ul>
+<li>看ref啃論文  &#x3D; &#x3D;</li>
+</ul>
+<hr>
+<h1 id="另一個對抗saddle-point或minima的技術-momentum"><a href="#另一個對抗saddle-point或minima的技術-momentum" class="headerlink" title="另一個對抗saddle point或minima的技術 : momentum"></a>另一個對抗saddle point或minima的技術 : momentum</h1><ul>
+<li>當small gradient的時候，我們走到一個鞍點或局部最小點之後就會停下來</li>
+<li>但我們可以用物理式來思考，球由高處滾下來到最低點碰到上坡，不一定會停下來，因為有動能</li>
+</ul>
+<h2 id="Review-原本的梯度下降"><a href="#Review-原本的梯度下降" class="headerlink" title="Review : 原本的梯度下降"></a>Review : 原本的梯度下降</h2><p><img src="/../images/pasted-2.png"></p>
+<h2 id="梯度下降-momentum"><a href="#梯度下降-momentum" class="headerlink" title="梯度下降+momentum"></a>梯度下降+momentum</h2><ul>
+<li>簡單來說，就是加入慣性，額外參考上一次的移動軌跡</li>
+</ul>
+<p><img src="/../images/20220706_8.png" alt="upload successful"></p>
+<ul>
+<li>多了一個hyper parameter $\lambda$<br><img src="/../images/20220706_9.png" alt="upload successful"></li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://laxiflora.github.io/2022/07/05/ML-2021-2-3-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%BA%8C/" data-id="cl5zfyxzy0005s4vecpjf04h3" data-title="ML_2021_2-3 類神經網路訓練不起來怎麼辦(二)" class="article-share-link">Partager</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-ML-2022-2-1-再探寶可夢、數碼寶貝分類器" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2022/07/04/ML-2022-2-1-%E5%86%8D%E6%8E%A2%E5%AF%B6%E5%8F%AF%E5%A4%A2%E3%80%81%E6%95%B8%E7%A2%BC%E5%AF%B6%E8%B2%9D%E5%88%86%E9%A1%9E%E5%99%A8/" class="article-date">
+  <time class="dt-published" datetime="2022-07-04T14:24:04.000Z" itemprop="datePublished">2022-07-04</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2022/07/04/ML-2022-2-1-%E5%86%8D%E6%8E%A2%E5%AF%B6%E5%8F%AF%E5%A4%A2%E3%80%81%E6%95%B8%E7%A2%BC%E5%AF%B6%E8%B2%9D%E5%88%86%E9%A1%9E%E5%99%A8/">ML_2022_2-1 再探寶可夢、數碼寶貝分類器</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://laxiflora.github.io/2022/07/04/ML-2022-2-1-%E5%86%8D%E6%8E%A2%E5%AF%B6%E5%8F%AF%E5%A4%A2%E3%80%81%E6%95%B8%E7%A2%BC%E5%AF%B6%E8%B2%9D%E5%88%86%E9%A1%9E%E5%99%A8/" data-id="cl5zfyy09000ss4ve79pd7u3f" data-title="ML_2022_2-1 再探寶可夢、數碼寶貝分類器" class="article-share-link">Partager</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-ML-2021-2-2-類神經網路訓練不起來怎麼辦-一" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2022/07/04/ML-2021-2-2-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%B8%80/" class="article-date">
+  <time class="dt-published" datetime="2022-07-04T14:22:35.000Z" itemprop="datePublished">2022-07-04</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2022/07/04/ML-2021-2-2-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%B8%80/">ML_2021_2-2 類神經網路訓練不起來怎麼辦(一)</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <ul>
+<li>這裡只討論optimazion失靈的時候，如何把梯度下降做得更好</li>
+</ul>
+<h2 id="為何opti會失敗（grad）？"><a href="#為何opti會失敗（grad）？" class="headerlink" title="為何opti會失敗（grad）？"></a>為何opti會失敗（grad）？</h2><ul>
+<li>gradient decent&#x3D;0，使參數無法再更新</li>
+<li>點卡在local minima or saddle point(稱為卡在critical point)</li>
+</ul>
+<h3 id="分辨critical-point是saddle-point-or-local-minima"><a href="#分辨critical-point是saddle-point-or-local-minima" class="headerlink" title="分辨critical point是saddle point or local minima"></a>分辨critical point是saddle point or local minima</h3><ul>
+<li>雖然我們無法知道loss function長怎樣，但可以用泰勒展開式逼近</li>
+<li>給定一組參數$\theta’$</li>
+<li>則使用tayler series approximation<br>  原式為<br>  $$<br>  f(x) &#x3D; f(a) + \frac{f’(a)}{1!}(x-a) + \frac{f’’(a)}{2!}(x-a)^2 + ….<br>  $$<br>  我們取到2次微分，代入$x &#x3D; \theta及a &#x3D; \theta’$得到<br>  $$<br>  L(\theta) \sim L(\theta’)^Tg + \frac{1}{2}(\theta - \theta’)^TH(\theta - \theta’)<br>  ,其中 g &#x3D; \nabla L(\theta’)(請參考上週)<br>  $$<br><img src="/../images/20220704_1.png"></li>
+<li>其實g就是$L(\theta’)$對$\theta_i$的一階微分，Hessian是$L(\theta’)$對$\theta_{ij}$做二次微分</li>
+<li>因為critical point的時候g &#x3D; 0，所以我們要考慮H(也就是2次微分的部分)來分辨是哪種問題，2次微分可以看出地貌<br>把Hessian部分拉出來討論<br><img src="/../images/20220704_3.png"><br>要如何確認滿足哪個原因呢?<ul>
+<li>線性代數：正定、負定、均非 (看H的eigen value)</li>
+</ul>
+</li>
+</ul>
+<h3 id="範例說明"><a href="#範例說明" class="headerlink" title="範例說明"></a>範例說明</h3><ul>
+<li><p>給定一個模型$y &#x3D; w_1w_2x$，資料僅有一筆，$f(1)$時其label &#x3D; 1，且w1w2之間不具有任何激發函數，loss function採用MSE</p>
+</li>
+<li><p>則x&#x3D;1時透過爆搜我們可以得出下面的error surface(偷偷看正解圖)<br><img src="/../images/20220704_2.png"></p>
+</li>
+<li><p>其中鞍點的四周都是高牆，無法離開</p>
+</li>
+<li><p>局部最小點則是在範圍內找不到更低的點</p>
+</li>
+<li><p>但假設我們不知道這個error surface，我們可以應用上面的方法來測定他是哪個問題，根據MSE公式我們得出<br>$$<br>L &#x3D; (\hat{y}-w_1w_2x)^2 &#x3D; (1-w_1w_2)^2<br>$$<br>對他們做微分可以得到(注意chain rule)<br>$$<br>g &#x3D; \frac{\partial L}{\partial w_1} &#x3D; 2(1-w_1w_2)(-w_2)<br>$$<br>$$<br>g &#x3D; \frac{\partial L}{\partial w_2} &#x3D; 2(1-w_1w_2)(-w_1)<br>$$<br>代入g&#x3D;0，可以發現當$w_1 &#x3D; w_2 &#x3D; 0$，有critical point<br>接下來要確認他們是哪個問題，就繼續再做微分:<br><img src="/../images/20220704_5.png"><br>代入剛剛的$w_1 &#x3D; w_2 &#x3D; 0$得到<br>$$<br>H &#x3D;  <br>\left[<br>\begin{matrix}<br>     0 &amp;&amp; -2 \\\ -2 &amp;&amp; 0<br>\end{matrix}<br>\right] \tag{3}<br>$$<br>抓H的eigen values來知道他是哪個point</p>
+</li>
+</ul>
+<h2 id="case-saddle-point"><a href="#case-saddle-point" class="headerlink" title="case: saddle point"></a>case: saddle point</h2><ul>
+<li>我們可以藉由H來得到參數該移動的方向<br>令$\lambda$是H的一個eigen value, u為$\lambda$的其中一個eigen vector<br>則<br>$$<br>v^THv &#x3D; u^THu &#x3D; u^T(\lambda u) &#x3D; \lambda \vert \vert u \vert \vert^2<br>$$<br>若今天$\lambda &lt; 0$則必定$u^THu&lt;0$，回顧剛剛的式子<br>$$<br>L(\theta) \sim L(\theta’)^Tg + \frac{1}{2}(\theta - \theta’)^TH(\theta - \theta’)<br>$$<br>可以知道$L(\theta)必定&gt;L(\theta’)$<br><img src="/../images/20220704_6.png"><br>我們只要將$\theta’沿著u的方向更新u得到\theta$，就可以再次降低loss</li>
+</ul>
+<h3 id="範例說明-1"><a href="#範例說明-1" class="headerlink" title="範例說明"></a>範例說明</h3><ul>
+<li>延續剛剛的例子，我們知道$H的\lambda_1 &#x3D; 2, \lambda_2 &#x3D;-2$，屬於saddle point(非正定與負定)</li>
+<li>取$\lambda_2 &#x3D; -2 , u &#x3D; (1,1)$，則把$\theta &#x3D; (0,0)+(1,1)$，就可以逃出saddle point</li>
+<li>實務上不易使用，因為要做出2次微分且還需要用到找出該矩陣的eigen value，計算量過大 (還有別招可以用)</li>
+</ul>
+<h2 id="Saddle-point-vs-Local-Minima"><a href="#Saddle-point-vs-Local-Minima" class="headerlink" title="Saddle point vs. Local Minima"></a>Saddle point vs. Local Minima</h2><ul>
+<li>在三維的密閉石棺中，在更高維度未必是密閉的</li>
+<li>在低維度的local minima中，是否只是高維中的saddle point? </li>
+<li>當參數超級多，是否極度有可能local minima其實只是saddle point? (假說)</li>
+<li>在實作中，絕大多數的模型，critical point所在點中，幾乎找不到所有eigen value均&gt;0的範例，表示我們幾乎不可能找到完全的local minima</li>
+<li>定義一個數值”Minimum ratio &#x3D; $\frac{正\lambda數}{\lambda數}$”，表示你的critical point有多像local minima</li>
+<li>所以我們可以知道，通常一個模型train到loss卡住，極高可能是卡在一個saddle point</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://laxiflora.github.io/2022/07/04/ML-2021-2-2-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%B8%80/" data-id="cl5zfyy000008s4ve5evm06pg" data-title="ML_2021_2-2 類神經網路訓練不起來怎麼辦(一)" class="article-share-link">Partager</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-ML-2021-2-1-機器學習任務攻略" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2022/07/04/ML-2021-2-1-%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E4%BB%BB%E5%8B%99%E6%94%BB%E7%95%A5/" class="article-date">
+  <time class="dt-published" datetime="2022-07-04T14:20:49.000Z" itemprop="datePublished">2022-07-04</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2022/07/04/ML-2021-2-1-%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E4%BB%BB%E5%8B%99%E6%94%BB%E7%95%A5/">ML_2021_2-1 機器學習任務攻略</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="機器學習任務攻略"><a href="#機器學習任務攻略" class="headerlink" title="機器學習任務攻略"></a>機器學習任務攻略</h2><p><img src="/../images/202200703_7.png"><br>  - 當有一個模型的表現不佳，有時候不一定是overfitting的問題<br>  - 問題來源可能有數種<br>    - Model Bias：模型本身的彈性不足，值域過小導致找不到最佳解<br>    - Optimization Issue：模型的彈性是夠的，也就是$f^*(x)$存在，只是因為optimizer不給力，始終無法把$\theta$帶到loss更小的地方</p>
+<h2 id="如何分辨是model-bias-issue-or-Optimization-issue"><a href="#如何分辨是model-bias-issue-or-Optimization-issue" class="headerlink" title="如何分辨是model bias issue or Optimization issue?"></a>如何分辨是model bias issue or Optimization issue?</h2><p>  - 以下圖為例<br><img src="/../images/20220703_1.png"></p>
+<ul>
+<li>通常我們會認為這是模型overfitting了，才會導致層數增加反倒命中率下降</li>
+<li>overfitting固然有可能，但它不是唯一的可能性，我們應該要從訓練資料的loss下手<br><img src="/../images/20220703_2.png"></li>
+<li>可以發現就算是訓練資料，56層的loss也是大於20層的，故排除overfitting的可能</li>
+<li>至於模型彈性這個可能也可以排除，因為56層的複雜度&gt;20層，故56層的loss只可能比20層還小，若是顛倒的話表示應該不是模型彈性問題，而是optimizer的鍋</li>
+</ul>
+<hr>
+<ul>
+<li>若是發現類似優化器的問題，可以試試看先跑一些比較淺層的model或是簡易的model(如linear regression)，先觀察得出來的結果</li>
+<li>再跑深度的model，比較他們的結果，若深度的結果沒比較好，可以考慮換optimizer<br>原因樹狀圖(?<br><img src="/../images/20220703_3.png"></li>
+</ul>
+<h2 id="Overfitting的成因"><a href="#Overfitting的成因" class="headerlink" title="Overfitting的成因"></a>Overfitting的成因</h2><p><img src="/../images/20220703_4.png"></p>
+<ol>
+<li>若訓練資料不足，模型彈性過高也可能導致overfitting(增加training data最有效)<ul>
+<li>data augmentation也是一種方法(ex.圖片翻轉作為新資料)</li>
+</ul>
+</li>
+<li>降低模型的彈性也可以降低這個可能</li>
+<li>採用一些技巧<ul>
+<li>Early stopping</li>
+<li>Regularization</li>
+<li>Dropout</li>
+<li>Less features</li>
+</ul>
+</li>
+</ol>
+<h2 id="衡量模型"><a href="#衡量模型" class="headerlink" title="衡量模型"></a>衡量模型</h2><ul>
+<li>或許某個model在所有model裡面test成績最突出，但它未必會真的是最好的模型(運氣問題)<br><img src="/../images/20220703_5.png"></li>
+<li>極端範例，一個模型剛好隨機出了最好的結果</li>
+<li>所以testing set有分public跟private，避免一直上傳模型賭出最好成績</li>
+</ul>
+<h3 id="N-fold-Cross-Validation"><a href="#N-fold-Cross-Validation" class="headerlink" title="N-fold Cross Validation"></a>N-fold Cross Validation</h3><ul>
+<li>把train set切成3份，2份是training data，1份是val data</li>
+<li>交叉身分去訓練n次</li>
+</ul>
+<p><img src="/../images/20220703_6.png" alt="upload successful"></p>
+<h4 id="data-mismatch"><a href="#data-mismatch" class="headerlink" title="data mismatch"></a>data mismatch</h4><ul>
+<li>training data 跟 testing data有不同分布</li>
+<li>ex. 機器學習2020年觀看人數預測2021年觀看人數，很高可能會mismatch</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://laxiflora.github.io/2022/07/04/ML-2021-2-1-%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E4%BB%BB%E5%8B%99%E6%94%BB%E7%95%A5/" data-id="cl5zfyy010009s4veh4dve3jo" data-title="ML_2021_2-1 機器學習任務攻略" class="article-share-link">Partager</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-ML-2022-1-1-正課內容介紹" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2022/07/04/ML-2022-1-1-%E6%AD%A3%E8%AA%B2%E5%85%A7%E5%AE%B9%E4%BB%8B%E7%B4%B9/" class="article-date">
+  <time class="dt-published" datetime="2022-07-04T14:19:15.000Z" itemprop="datePublished">2022-07-04</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2022/07/04/ML-2022-1-1-%E6%AD%A3%E8%AA%B2%E5%85%A7%E5%AE%B9%E4%BB%8B%E7%B4%B9/">ML_2022_1-1 正課內容介紹</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="正課內容介紹"><a href="#正課內容介紹" class="headerlink" title="正課內容介紹"></a>正課內容介紹</h1><h3 id="Supervised-Learning"><a href="#Supervised-Learning" class="headerlink" title="Supervised Learning"></a>Supervised Learning</h3><h3 id="Self-supervised-Learning"><a href="#Self-supervised-Learning" class="headerlink" title="Self-supervised Learning"></a>Self-supervised Learning</h3><ul>
+<li>在訓練之前先做基本功(Pre-Train)</li>
+<li>訓練集就不需要label了</li>
+<li>比如在網路上先爬相關資料</li>
+<li>以分類圖片為例，實際分類圖片的過程稱為(Downstream)</li>
+<li>Pre-trained model(又稱Foundation Model)就好像OS，Downstream就像APP<ul>
+<li>最出名的模型就是BERT</li>
+</ul>
+</li>
+</ul>
+<h3 id="Lec6-GAN"><a href="#Lec6-GAN" class="headerlink" title="Lec6 : GAN"></a>Lec6 : GAN</h3><ul>
+<li>一般函數需要大量成對的X與Y來讓他們配對</li>
+<li>現今只需要大量的X，就可自行產生Y</li>
+</ul>
+<h3 id="Lac12-Reinforcement-Learning"><a href="#Lac12-Reinforcement-Learning" class="headerlink" title="Lac12 : Reinforcement Learning"></a>Lac12 : Reinforcement Learning</h3><ul>
+<li>當資料很難以標註時使用 (ex.學會下圍棋)</li>
+</ul>
+<h2 id="進階課題"><a href="#進階課題" class="headerlink" title="進階課題"></a>進階課題</h2><h3 id="Lac8-Anomaly-Detection"><a href="#Lac8-Anomaly-Detection" class="headerlink" title="Lac8 : Anomaly Detection"></a>Lac8 : Anomaly Detection</h3><ul>
+<li>過擬合等問題</li>
+</ul>
+<h3 id="Lac9-Explainable-AI-可解釋性AI"><a href="#Lac9-Explainable-AI-可解釋性AI" class="headerlink" title="Lac9 : Explainable AI (可解釋性AI)"></a>Lac9 : Explainable AI (可解釋性AI)</h3><ul>
+<li>不只是知道答案，還要讓機器知道為甚麼</li>
+<li>EX.PNG與JPG輸入的問題ww</li>
+</ul>
+<h3 id="Lac10-Model-Attack"><a href="#Lac10-Model-Attack" class="headerlink" title="Lac10 : Model Attack"></a>Lac10 : Model Attack</h3><ul>
+<li>在圖片加入一點點雜訊，讓圖片難以識別</li>
+<li>介紹攻擊技術與防禦可能性</li>
+</ul>
+<h3 id="Lac11-Domain-Adaptation"><a href="#Lac11-Domain-Adaptation" class="headerlink" title="Lac11 : Domain Adaptation"></a>Lac11 : Domain Adaptation</h3><ul>
+<li>當訓練資料與測試資料的分布不相似</li>
+<li>EX. 手寫數字辨識，黑白與彩色的差別</li>
+</ul>
+<h3 id="Lac13-Network-Compression-模型壓縮"><a href="#Lac13-Network-Compression-模型壓縮" class="headerlink" title="Lac13 : Network Compression(模型壓縮)"></a>Lac13 : Network Compression(模型壓縮)</h3><ul>
+<li>在嵌入式、小硬體跑ML</li>
+</ul>
+<h3 id="Lac14-Life-long-Learning"><a href="#Lac14-Life-long-Learning" class="headerlink" title="Lac14 : Life-long Learning"></a>Lac14 : Life-long Learning</h3><ul>
+<li>機器能像人一樣一直學習所有技術</li>
+<li>挑戰有哪些</li>
+</ul>
+<h3 id="Lac15-Meta-Learning-學習如何學習"><a href="#Lac15-Meta-Learning-學習如何學習" class="headerlink" title="Lac15 : Meta Learning(學習如何學習)"></a>Lac15 : Meta Learning(學習如何學習)</h3><ul>
+<li>以往都是人設計學習演算法給機器</li>
+<li>讓機器從大量學習任務裡面發明更好的演算法</li>
+<li>Few-shot Learning通常與他相關</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://laxiflora.github.io/2022/07/04/ML-2022-1-1-%E6%AD%A3%E8%AA%B2%E5%85%A7%E5%AE%B9%E4%BB%8B%E7%B4%B9/" data-id="cl5zfyy09000us4ve9suz1k80" data-title="ML_2022_1-1 正課內容介紹" class="article-share-link">Partager</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
   
     <article id="post-ML-2021-1-1-監督式學習概論" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
@@ -223,7 +763,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://laxiflora.github.io/2022/07/04/ML-2021-1-1-%E7%9B%A3%E7%9D%A3%E5%BC%8F%E5%AD%B8%E7%BF%92%E6%A6%82%E8%AB%96/" data-id="cl5gzb2qe0002f8vebiv79snf" data-title="ML_2021_1-1 監督式學習概論" class="article-share-link">Teilen</a>
+      <a data-url="https://laxiflora.github.io/2022/07/04/ML-2021-1-1-%E7%9B%A3%E7%9D%A3%E5%BC%8F%E5%AD%B8%E7%BF%92%E6%A6%82%E8%AB%96/" data-id="cl5zfyxzu0002s4ve7ap051ic" data-title="ML_2021_1-1 監督式學習概論" class="article-share-link">Partager</a>
       
       
       
@@ -346,6 +886,49 @@
 </li>
 </ul>
 <hr>
+<h3 id="Ch4：Sequence-as-input"><a href="#Ch4：Sequence-as-input" class="headerlink" title="Ch4：Sequence as input"></a>Ch4：Sequence as input</h3><p><a href="/2022/07/13/ML-2021-4-1-%E8%87%AA%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%A9%9F%E5%88%B6%EF%BC%88%E4%B8%8A%EF%BC%89/">4-1 自注意力機制（上）</a></p>
+<ul>
+<li>介紹在碰到輸入的時候不只是一個向量，甚至可能輸入的向量數量會變動，該怎麼處理</li>
+<li>簡單介紹輸入為sequence的常見問題以及不同輸出的類別</li>
+<li>介紹如果輸入的sequence，不同vector之間互相影響該怎麽處理</li>
+<li>本課程著重在討論sequence中每個vector都會有獨立一個label輸出的情況<blockquote>
+<p>關鍵字：<br>Sequence、word embedding、window(語音處理)、self-attention、transformer(提到)、seq2seq（提到）</p>
+</blockquote>
+</li>
+</ul>
+<hr>
+<p><a href="/2022/07/13/ML-2021-4-2-%E8%87%AA%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%A9%9F%E5%88%B6%EF%BC%88%E4%B8%8B%EF%BC%89/">4-2 自注意力機制（下）</a></p>
+<ul>
+<li>常用(上週討論的)self-attention計算方法，其實就是很多的矩陣相乘</li>
+<li>當一個vector出現在sequence的不同位置也需要考量，該怎麼處理 -&gt; Positional encoding</li>
+<li>因為attention matrix之空間大小是$\theta(n^2)$，所以當sequence很大(ex.音訊)時，該怎麼處理 -&gt; Truncated self-attention</li>
+<li>self-attention可否用於影像呢？ 如果這樣使用的話，self-attention跟CNN差別在哪？誰優誰劣呢</li>
+<li>Self-attention與RNN之間的差別在哪</li>
+<li>self-attention如何使用在graph中呢？GNN是什麼呢（refrence）</li>
+<li>Reference各種transformer的變形(survey paper)<br>PS. 這塊領域目前很新，論文大多產自2019&#x2F;2020年<blockquote>
+<p>關鍵字：<br>Transformer(self-attention塊)、positional encoding、truncation self-attention、v.s CNN、v.s RNN、GNN</p>
+</blockquote>
+</li>
+</ul>
+<hr>
+<h3 id="Ch5：Sequence-2-Sequence"><a href="#Ch5：Sequence-2-Sequence" class="headerlink" title="Ch5：Sequence 2 Sequence"></a>Ch5：Sequence 2 Sequence</h3><ul>
+<li>算是Ch4中的一種特例輸入</li>
+<li>5-1就是2-6，介紹batch norm</li>
+</ul>
+<hr>
+<p><a href="/2022/07/23/ML-2021-5-2-Transformer%EF%BC%88%E4%B8%8A%EF%BC%89/">5-2 Transformer(上)</a></p>
+<ul>
+<li>首先講解seq2seq類模型所可以解決的問題與應用，接下來講解seq2seq的其中一種模型「transformer」</li>
+<li>介紹transformer的大架構圖，以及transformer encoder的分解步驟</li>
+<li>除了原始的transformer encoder模型圖以外，還有reference其他種transform encoder的架構</li>
+<li>BERT其實就是transformer的encoder<blockquote>
+<p>關鍵字:<br>Transformer(總覽 &amp; encoder)、seq2seq類應用</p>
+</blockquote>
+</li>
+</ul>
+<hr>
+<p><a href="/2022/07/24/ML-2021-5-3-Transformer%EF%BC%88%E4%B8%8B%EF%BC%89/">5-3 Transformer（下）</a></p>
+<hr>
 <h1 id="2022年正課筆記"><a href="#2022年正課筆記" class="headerlink" title="2022年正課筆記"></a>2022年正課筆記</h1><p><a href="/2022/07/04/ML-2022-1-1-%E6%AD%A3%E8%AA%B2%E5%85%A7%E5%AE%B9%E4%BB%8B%E7%B4%B9/">1-1 正課內容介紹</a></p>
 <ul>
 <li>介紹各講的重點核心</li>
@@ -354,11 +937,14 @@
 <hr>
 <p><a href="/2022/07/04/ML-2022-2-1-%E5%86%8D%E6%8E%A2%E5%AF%B6%E5%8F%AF%E5%A4%A2%E3%80%81%E6%95%B8%E7%A2%BC%E5%AF%B6%E8%B2%9D%E5%88%86%E9%A1%9E%E5%99%A8/">2-1 再探寶可夢、數碼寶貝分類器</a></p>
 <hr>
-<h1 id="作業區-有寫的部分orz"><a href="#作業區-有寫的部分orz" class="headerlink" title="作業區(有寫的部分orz)"></a>作業區(有寫的部分orz)</h1>
+<h1 id="作業區-有寫的部分orz"><a href="#作業區-有寫的部分orz" class="headerlink" title="作業區(有寫的部分orz)"></a>作業區(有寫的部分orz)</h1><p><a href="/2022/07/11/ML-LEE-2022-hw3/">作業3 - 圖像辨識，使用CNN</a></p>
+<hr>
+<p><a href="/2022/07/23/ML-LEE-2022-hw4/">作業4 - 語音辨識，使用Transformer</a></p>
+
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://laxiflora.github.io/2022/07/04/%E6%9D%8E%E5%AE%8F%E6%AF%85-%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92-%E9%A6%96%E9%A0%81/" data-id="cl5gzb2qy000jf8ve98m02vnb" data-title="李宏毅_機器學習_首頁" class="article-share-link">Teilen</a>
+      <a data-url="https://laxiflora.github.io/2022/07/04/%E6%9D%8E%E5%AE%8F%E6%AF%85-%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92-%E9%A6%96%E9%A0%81/" data-id="cl5zfyy0d000xs4vebejq7s37" data-title="李宏毅_機器學習_首頁" class="article-share-link">Partager</a>
       
       
       
@@ -427,7 +1013,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://laxiflora.github.io/2022/07/02/pytorch%E5%85%A5%E9%96%80/" data-id="cl5gzb2qx000if8vearcyewau" data-title="pytorch入門" class="article-share-link">Teilen</a>
+      <a data-url="https://laxiflora.github.io/2022/07/02/pytorch%E5%85%A5%E9%96%80/" data-id="cl5zfyy0b000ws4vecciacbln" data-title="pytorch入門" class="article-share-link">Partager</a>
       
       
       
@@ -542,184 +1128,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://laxiflora.github.io/2022/06/28/Hexo%E4%BD%BF%E7%94%A8%E6%8A%80%E5%B7%A7/" data-id="cl5gzb2qj0005f8vedxlk1w1a" data-title="Hexo使用技巧" class="article-share-link">Teilen</a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Hexo/" rel="tag">Hexo</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-C++ 常見STL容器概述" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2022/06/22/C++%20%E5%B8%B8%E8%A6%8BSTL%E5%AE%B9%E5%99%A8%E6%A6%82%E8%BF%B0/" class="article-date">
-  <time class="dt-published" datetime="2022-06-22T09:51:30.000Z" itemprop="datePublished">2022-06-22</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2022/06/22/C++%20%E5%B8%B8%E8%A6%8BSTL%E5%AE%B9%E5%99%A8%E6%A6%82%E8%BF%B0/">C++ 常見STL容器概述</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>在C++中，我們常常會使用Container來存儲資料，而Container分為三種</p>
-<ul>
-<li>Sequence Container</li>
-<li>Associative Container</li>
-<li>Container Adapters<br><br>在這裡簡單介紹一下他們的特性，暫不包括method以及使用範例的部分</li>
-</ul>
-<h2 id="Sequence-Container"><a href="#Sequence-Container" class="headerlink" title="Sequence Container"></a>Sequence Container</h2><ul>
-<li>這類的容器資料是有序存放的</li>
-<li>常用範例如Vector、Deque、List</li>
-</ul>
-<h3 id="Vector-常用"><a href="#Vector-常用" class="headerlink" title="Vector(常用)"></a>Vector(常用)</h3><ul>
-<li>類似一個動態大小的陣列</li>
-<li>支援隨機存取</li>
-<li>保證記憶體空間連續 (可善用Spatial Locality)</li>
-<li>雙頭皆可加入元素，且加入與刪除的複雜度其平攤成本均為O(1)</li>
-<li>相比於Deque，insertion in rear在速度上更有利</li>
-<li>一般建議除非很清楚知道使用其他結構的原因，不然建議使用Vector</li>
-</ul>
-<h3 id="Deque"><a href="#Deque" class="headerlink" title="Deque"></a>Deque</h3><ul>
-<li>又名double-ended queue</li>
-<li>跟vector很像，但是不保證記憶體空間連續</li>
-<li>相比於Vector，insertion in front在速度上更有利</li>
-</ul>
-<h3 id="List"><a href="#List" class="headerlink" title="List"></a>List</h3><ul>
-<li>以doubled link list實作</li>
-<li><a target="_blank" rel="noopener" href="https://imgur.com/a/Jc894yi?third_party=1#_=_">對於任意位置的插入與刪除均為O(1)</a></li>
-<li>若是要存取中間的元素，仍然需要整個遍歷過一遍</li>
-</ul>
-<h2 id="Associative-Container"><a href="#Associative-Container" class="headerlink" title="Associative Container"></a>Associative Container</h2><ul>
-<li>這類容器中的元素無序存放，但通常元素之間有對應關係</li>
-<li>常用範例如Set、Multiset、Map、Multimap</li>
-</ul>
-<h3 id="Set"><a href="#Set" class="headerlink" title="Set"></a>Set</h3><ul>
-<li>如數學集合定義，集合內同樣的元素只允許存在1個，若是重複加入同樣元素則會被忽略</li>
-</ul>
-<h3 id="Multiset"><a href="#Multiset" class="headerlink" title="Multiset"></a>Multiset</h3><ul>
-<li>這類集合允許重複的元素存在於集合中，這個結構會追蹤各個元素有幾個</li>
-</ul>
-<h3 id="Map"><a href="#Map" class="headerlink" title="Map"></a>Map</h3><ul>
-<li>又名Associative Array</li>
-<li>有點像Python的基本字典，一次插入是一對key-value</li>
-</ul>
-<h3 id="Multimap"><a href="#Multimap" class="headerlink" title="Multimap"></a>Multimap</h3><ul>
-<li>有點像python裡面的字典，不過每組value都是一個list(multiple values for the same key)</li>
-<li>當用一個key搜尋的時候，得到一個包含所有值的container</li>
-</ul>
-<h2 id="Container-Adapters"><a href="#Container-Adapters" class="headerlink" title="Container Adapters"></a>Container Adapters</h2><ul>
-<li>一種介面，用於放在一個Container之上，用於限制他的方法</li>
-<li>比如我們會用Stack adapters型態宣告Deque Container，限制Deque的功能，讓他表現得像Stack</li>
-<li>常見範例如Stack、Queue、Priority_queue</li>
-</ul>
-<h3 id="Stack"><a href="#Stack" class="headerlink" title="Stack"></a>Stack</h3><ul>
-<li>LIFO access</li>
-<li>通常架在Deque上</li>
-</ul>
-<h3 id="Queue"><a href="#Queue" class="headerlink" title="Queue"></a>Queue</h3><ul>
-<li>FIFO access</li>
-<li>通常架在Deque上</li>
-</ul>
-<h3 id="Priority-queue"><a href="#Priority-queue" class="headerlink" title="Priority_queue"></a>Priority_queue</h3><ul>
-<li>插入的元素按照所決定的優先順序(優先取最低值)排列，其餘表現同queue</li>
-<li>內部通常是用heap實作，所以通常架在vector上面</li>
-</ul>
-<p>以上是比較常用的一些STL容器以及相關介紹，更多的內容(物件的方法、複雜度等等)可以到<a target="_blank" rel="noopener" href="https://cplusplus.com/reference/stl/">這裡</a>翻閱</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://laxiflora.github.io/2022/06/22/C++%20%E5%B8%B8%E8%A6%8BSTL%E5%AE%B9%E5%99%A8%E6%A6%82%E8%BF%B0/" data-id="cl5gzb2q90001f8ve3tb8785j" data-title="C++ 常見STL容器概述" class="article-share-link">Teilen</a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/C/" rel="tag">C++</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-如何用hexo在github page上部署屬於自己的第一個網站" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2022/06/21/%E5%A6%82%E4%BD%95%E7%94%A8hexo%E5%9C%A8github%20page%E4%B8%8A%E9%83%A8%E7%BD%B2%E5%B1%AC%E6%96%BC%E8%87%AA%E5%B7%B1%E7%9A%84%E7%AC%AC%E4%B8%80%E5%80%8B%E7%B6%B2%E7%AB%99/" class="article-date">
-  <time class="dt-published" datetime="2022-06-21T09:45:00.000Z" itemprop="datePublished">2022-06-21</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2022/06/21/%E5%A6%82%E4%BD%95%E7%94%A8hexo%E5%9C%A8github%20page%E4%B8%8A%E9%83%A8%E7%BD%B2%E5%B1%AC%E6%96%BC%E8%87%AA%E5%B7%B1%E7%9A%84%E7%AC%AC%E4%B8%80%E5%80%8B%E7%B6%B2%E7%AB%99/">如何用hexo在github page上部署屬於自己的第一個網站</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <h1 id="起頭"><a href="#起頭" class="headerlink" title="起頭"></a>起頭</h1><p>部落格開張的第一篇文章，就決定以部署hexo產生的靜態網頁到github上來開頭了！</p>
-<h1 id="前置需求"><a href="#前置需求" class="headerlink" title="前置需求"></a>前置需求</h1><ul>
-<li>常用的文字編輯器(我是用visual studio code)</li>
-<li><a target="_blank" rel="noopener" href="https://nodejs.org/en/">node.js</a><br><br><br><br><tab>安裝完之後，就可以開啟終端機來安裝hexo了~</li>
-</ul>
-<h1 id="hexo的環境建置"><a href="#hexo的環境建置" class="headerlink" title="hexo的環境建置"></a>hexo的環境建置</h1><h2 id="Step1-安裝hexo"><a href="#Step1-安裝hexo" class="headerlink" title="Step1. 安裝hexo"></a>Step1. 安裝hexo</h2><ul>
-<li>打開終端機以後，輸入以下指令安裝hexo<br></li>
-</ul>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo-cli -g</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>安裝完以後，可以在終端機輸入’hexo -v’，確定一下hexo是否成功安裝並顯示版本。</li>
-</ul>
-<h2 id="Step2-初始化一個Hexo資料夾"><a href="#Step2-初始化一個Hexo資料夾" class="headerlink" title="Step2. 初始化一個Hexo資料夾"></a>Step2. 初始化一個Hexo資料夾</h2><p> 輸入以下指令<br> <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo init &lt;資料夾名稱&gt;</span><br></pre></td></tr></table></figure><br> 則hexo會幫你產生一個資料夾，這個資料夾內就是你的blog根目錄了<br></p>
-<h2 id="Step3-在資料夾安裝必要檔案"><a href="#Step3-在資料夾安裝必要檔案" class="headerlink" title="Step3. 在資料夾安裝必要檔案"></a>Step3. 在資料夾安裝必要檔案</h2><ul>
-<li>目前的資料夾內部還沒有東西，首先先把終端機的目錄切換到剛剛產生的資料夾，接著執行以下指令來安裝所需要的套件:<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install</span><br></pre></td></tr></table></figure>
-至此基本的hexo網頁架構就完成了！你的blog資料夾應該會長得像這樣：<br></li>
-</ul>
-<p><img src="/../images/20220621_1.png"><br><br>之後要針對網頁內容的修改都會到<em>source&#x2F;_posts</em>裡面更改<br></p>
-<h2 id="Step4-建立一個新的網誌"><a href="#Step4-建立一個新的網誌" class="headerlink" title="Step4. 建立一個新的網誌"></a>Step4. 建立一個新的網誌</h2><ul>
-<li>如果想要建立一個新的空白網誌，在終端機輸入<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo new post &quot;你的網誌標題&quot;</span><br></pre></td></tr></table></figure>
-hexo就會幫你建立一個新的網誌，並且會在 <em>source&#x2F;_posts</em> 新增一個md檔，md檔使用markdown語法來撰寫，因此建議對markdown有些基本認識<a target="_blank" rel="noopener" href="https://hackmd.io/@eMP9zQQ0Qt6I8Uqp2Vqy6w/SyiOheL5N/%2FBVqowKshRH246Q7UDyodFA?type=book">[點我來去看新手教學]</a>。在md檔裡面撰寫的內容會直接更新到網頁上<br><br><br></li>
-<li>如果想要測試你的網站的實際模樣，可以輸入<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo server</span><br></pre></td></tr></table></figure>
-或是<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo s</span><br></pre></td></tr></table></figure>
-來讓hexo把網頁部署到localhost，根據終端機顯示的ip用瀏覽器打開就會看到你剛剛的成果囉~<br><br>至此基本的hexo網頁就完成了!<br></li>
-</ul>
-<h1 id="將hexo產生的網頁部署到github-pages"><a href="#將hexo產生的網頁部署到github-pages" class="headerlink" title="將hexo產生的網頁部署到github pages"></a>將hexo產生的網頁部署到github pages</h1><p>先假定大家都已經有一個github帳號了，首先到github先開一個新的Repository，我們會將網頁內容上傳到這裡<br><img src="/../images/20220621_2.png"><br></p>
-<p>接下來回到文字編輯器，打開_config.yml檔案，找到deploy子項，將repo改成你剛剛的repository連結</p>
-<p><img src="/../images/20220621_3.png"><br><br>完成後到終端機輸入</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">hexo cl  //清空hexo的快取，避免有些內容沒有更新到</span><br><span class="line">hexo g //在部署網站前先產生好靜態檔案</span><br><span class="line">hexo d //deploy，把檔案上傳到你設定的deploy目的地，本篇教學是送到git</span><br></pre></td></tr></table></figure>
-<p>或也可以直接輸入</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hexo cl</span><br><span class="line">hexo g -d</span><br></pre></td></tr></table></figure>
-<p>這樣就完成網站部署了，在瀏覽器中輸入<code>https://username.github.io/</code>就可以實際看到你部署好的網頁囉~</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://laxiflora.github.io/2022/06/21/%E5%A6%82%E4%BD%95%E7%94%A8hexo%E5%9C%A8github%20page%E4%B8%8A%E9%83%A8%E7%BD%B2%E5%B1%AC%E6%96%BC%E8%87%AA%E5%B7%B1%E7%9A%84%E7%AC%AC%E4%B8%80%E5%80%8B%E7%B6%B2%E7%AB%99/" data-id="cl5gzb2qz000lf8ve7kry5561" data-title="如何用hexo在github page上部署屬於自己的第一個網站" class="article-share-link">Teilen</a>
+      <a data-url="https://laxiflora.github.io/2022/06/28/Hexo%E4%BD%BF%E7%94%A8%E6%8A%80%E5%B7%A7/" data-id="cl5zfyxzz0006s4ve37wlbj9q" data-title="Hexo使用技巧" class="article-share-link">Partager</a>
       
       
       
@@ -737,7 +1146,7 @@ hexo就會幫你建立一個新的網誌，並且會在 <em>source&#x2F;_posts</
 
   <nav id="page-nav">
     
-    <a class="extend prev" rel="prev" href="/">&laquo; zurück</a><a class="page-number" href="/">1</a><span class="page-number current">2</span>
+    <a class="extend prev" rel="prev" href="/">&laquo; Précédent</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/3/">Suivant &raquo;</a>
   </nav>
 
 </section>
@@ -749,9 +1158,9 @@ hexo就會幫你建立一個新的網誌，並且會在 <em>source&#x2F;_posts</
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Tags</h3>
+    <h3 class="widget-title">Mot-clés</h3>
     <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/" rel="tag">C++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/" rel="tag">Hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Pytorch/" rel="tag">Pytorch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9D%8E%E5%AE%8F%E6%AF%85%E7%B3%BB%E5%88%97/" rel="tag">李宏毅系列</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92/" rel="tag">機器學習</a></li></ul>
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/BERT/" rel="tag">BERT</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/" rel="tag">C++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/" rel="tag">Hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/NLP/" rel="tag">NLP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Pytorch/" rel="tag">Pytorch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Transformer/" rel="tag">Transformer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9D%8E%E5%AE%8F%E6%AF%85%E7%B3%BB%E5%88%97/" rel="tag">李宏毅系列</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92/" rel="tag">機器學習</a></li></ul>
     </div>
   </div>
 
@@ -759,16 +1168,16 @@ hexo就會幫你建立一個新的網誌，並且會在 <em>source&#x2F;_posts</
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Tag Cloud</h3>
+    <h3 class="widget-title">Nuage de mot-clés</h3>
     <div class="widget tagcloud">
-      <a href="/tags/C/" style="font-size: 10px;">C++</a> <a href="/tags/Hexo/" style="font-size: 20px;">Hexo</a> <a href="/tags/Pytorch/" style="font-size: 10px;">Pytorch</a> <a href="/tags/%E6%9D%8E%E5%AE%8F%E6%AF%85%E7%B3%BB%E5%88%97/" style="font-size: 10px;">李宏毅系列</a> <a href="/tags/%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92/" style="font-size: 20px;">機器學習</a>
+      <a href="/tags/BERT/" style="font-size: 10px;">BERT</a> <a href="/tags/C/" style="font-size: 10px;">C++</a> <a href="/tags/Hexo/" style="font-size: 15px;">Hexo</a> <a href="/tags/NLP/" style="font-size: 10px;">NLP</a> <a href="/tags/Pytorch/" style="font-size: 10px;">Pytorch</a> <a href="/tags/Transformer/" style="font-size: 10px;">Transformer</a> <a href="/tags/%E6%9D%8E%E5%AE%8F%E6%AF%85%E7%B3%BB%E5%88%97/" style="font-size: 10px;">李宏毅系列</a> <a href="/tags/%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92/" style="font-size: 20px;">機器學習</a>
     </div>
   </div>
 
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Archiv</h3>
+    <h3 class="widget-title">Archives</h3>
     <div class="widget">
       <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">July 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">June 2022</a></li></ul>
     </div>
@@ -778,28 +1187,28 @@ hexo就會幫你建立一個新的網誌，並且會在 <em>source&#x2F;_posts</
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">letzter Beitrag</h3>
+    <h3 class="widget-title">Articles récents</h3>
     <div class="widget">
       <ul>
         
           <li>
-            <a href="/2022/07/11/ML-LEE-2022-hw3/">ML_LEE_2022_hw3</a>
+            <a href="/2022/07/24/ML-2021-5-3-Transformer%EF%BC%88%E4%B8%8B%EF%BC%89/">ML_2021_5-3 Transformer（下）</a>
           </li>
         
           <li>
-            <a href="/2022/07/09/ML-2021-3-1-%E5%8D%B7%E7%A9%8D%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF/">ML_2021_3-1 卷積神經網路</a>
+            <a href="/2022/07/23/ML-2021-5-2-Transformer%EF%BC%88%E4%B8%8A%EF%BC%89/">ML_2021_5-2 Transformer（上）</a>
           </li>
         
           <li>
-            <a href="/2022/07/07/ML-2021-2-6-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%BA%94/">ML_2021_2-6 類神經網路訓練不起來怎麼辦(五)</a>
+            <a href="/2022/07/23/ML-LEE-2022-hw4/">ML_LEE_2022_hw4</a>
           </li>
         
           <li>
-            <a href="/2022/07/06/ML-2021-2-5-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E5%9B%9B/">ML_2021_2-5 類神經網路訓練不起來怎麼辦(四)</a>
+            <a href="/2022/07/22/Efficient-Transformers-A-Survey%E7%AD%86%E8%A8%98/">Efficient Transformers:A Survey筆記</a>
           </li>
         
           <li>
-            <a href="/2022/07/06/ML-2021-2-4-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%B8%89/">ML_2021_2-4 類神經網路訓練不起來怎麼辦(三)</a>
+            <a href="/2022/07/13/ML-2021-4-2-%E8%87%AA%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%A9%9F%E5%88%B6%EF%BC%88%E4%B8%8B%EF%BC%89/">ML_2021_4-2 自注意力機制（下）</a>
           </li>
         
       </ul>
@@ -816,7 +1225,7 @@ hexo就會幫你建立一個新的網誌，並且會在 <em>source&#x2F;_posts</
     <div id="footer-info" class="inner">
       
       &copy; 2022 劉宇承<br>
-      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+      Propulsé par <a href="https://hexo.io/" target="_blank">Hexo</a>
     </div>
   </div>
 </footer>

@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>ML_2021_4-1 自注意力機制（上） | laxiflora的小天地</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="至今為止，我們network input 都是一個vector 那如果輸入是可變動的一排向量（sequence）呢？  Vector set as input 長度不一的句子就是一個範例 關於word embedding如何得到，可以參考這個影片 現在的文字基本上都是被word embedding過，而句子就是一連串了文字向量 一段聲音訊號也是一個範例（25 millisecond），一個向量稱">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ML_2021_4-1 自注意力機制（上）">
+<meta property="og:url" content="https://laxiflora.github.io/2022/07/13/ML-2021-4-1-%E8%87%AA%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%A9%9F%E5%88%B6%EF%BC%88%E4%B8%8A%EF%BC%89/index.html">
+<meta property="og:site_name" content="laxiflora的小天地">
+<meta property="og:description" content="至今為止，我們network input 都是一個vector 那如果輸入是可變動的一排向量（sequence）呢？  Vector set as input 長度不一的句子就是一個範例 關於word embedding如何得到，可以參考這個影片 現在的文字基本上都是被word embedding過，而句子就是一連串了文字向量 一段聲音訊號也是一個範例（25 millisecond），一個向量稱">
+<meta property="og:locale">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220713_1.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220713_2.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220713_3.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/pasted-17.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220713_5.png">
+<meta property="article:published_time" content="2022-07-13T02:33:00.000Z">
+<meta property="article:modified_time" content="2022-07-22T10:04:24.959Z">
+<meta property="article:author" content="劉宇承">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://laxiflora.github.io/images/20220713_1.png">
+  
+    <link rel="alternate" href="/atom.xml" title="laxiflora的小天地" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">laxiflora的小天地</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">前進軟體工程師的練功之路</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="Flux RSS"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Rechercher"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Rechercher"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://laxiflora.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-ML-2021-4-1-自注意力機制（上）" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2022/07/13/ML-2021-4-1-%E8%87%AA%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%A9%9F%E5%88%B6%EF%BC%88%E4%B8%8A%EF%BC%89/" class="article-date">
+  <time class="dt-published" datetime="2022-07-13T02:33:00.000Z" itemprop="datePublished">2022-07-13</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      ML_2021_4-1 自注意力機制（上）
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <ul>
+<li>至今為止，我們network input 都是一個vector</li>
+<li>那如果輸入是可變動的一排向量（sequence）呢？</li>
+</ul>
+<h2 id="Vector-set-as-input"><a href="#Vector-set-as-input" class="headerlink" title="Vector set as input"></a>Vector set as input</h2><ul>
+<li>長度不一的句子就是一個範例</li>
+<li>關於word embedding如何得到，可以參考<a target="_blank" rel="noopener" href="https://youtu.be/X7PH3NuYW0Q">這個影片</a></li>
+<li>現在的文字基本上都是被word embedding過，而句子就是一連串了文字向量</li>
+<li>一段聲音訊號也是一個範例（25 millisecond），一個向量稱為『frame』</li>
+<li>一個graph也是一連串的向量<ul>
+<li>Drug discovery中一個分子，可以看做一個graph</li>
+<li>社群媒體中，人（節點）可以是一個向量，ex.性別、年齡、工作等等</li>
+</ul>
+</li>
+</ul>
+<h2 id="What-is-the-output"><a href="#What-is-the-output" class="headerlink" title="What is the output?"></a>What is the output?</h2><h3 id="Type-1-本課專注"><a href="#Type-1-本課專注" class="headerlink" title="Type 1 (本課專注)"></a>Type 1 (本課專注)</h3><ul>
+<li>每一個vector都會有一個label</li>
+<li>POS tagging（詞性標注），每一個詞彙都要對應一個詞性</li>
+<li>語音，每一段frame都會有一個Pheonic</li>
+<li>Social network，對每一個人可能會有一種廣告投放方式</li>
+</ul>
+<h3 id="Type-2-hw4"><a href="#Type-2-hw4" class="headerlink" title="Type 2 (hw4)"></a>Type 2 (hw4)</h3><ul>
+<li>一整個sequence輸出一個label</li>
+<li>Sentiment analysis: 機器去判讀一段句字是正面的還是負面</li>
+<li>給定一段音訊，分辨它是哪個人說的</li>
+</ul>
+<h3 id="Type-3"><a href="#Type-3" class="headerlink" title="Type 3"></a>Type 3</h3><ul>
+<li>不知道輸出幾個label</li>
+<li>稱為sequence to sequence(seq2seq)</li>
+</ul>
+<h2 id="Sequence-labeling"><a href="#Sequence-labeling" class="headerlink" title="Sequence labeling"></a>Sequence labeling</h2><ul>
+<li>對於每個向量，要做一個label</li>
+</ul>
+<h3 id="First-approach"><a href="#First-approach" class="headerlink" title="First approach"></a>First approach</h3><ul>
+<li>直接用fully connect network</li>
+<li>問題出現：同樣輸入就會有同樣輸出，但是不能保證兩個vector之間是否有關連</li>
+<li>需要consider the context</li>
+</ul>
+<h3 id="Second-approach"><a href="#Second-approach" class="headerlink" title="Second approach"></a>Second approach</h3><ul>
+<li>直接給fully connected network整個window (hw2就是這樣做的)<br><img src="/../images/20220713_1.png"></li>
+<li>問題：如果今天的任務是得要考慮整個sequence怎辦<ul>
+<li>sequence長度有長有短，window大小要變動，而且運算量非常大又導致overfitting</li>
+</ul>
+</li>
+</ul>
+<h3 id="Third-approach"><a href="#Third-approach" class="headerlink" title="Third approach"></a>Third approach</h3><ul>
+<li>採用Self-attention技術，先把向量加工再個別丟入全連階層<br><img src="/../images/20220713_2.png" alt="upload successful"></li>
+<li>黑框框向量表示考慮過前後文的加工向量</li>
+<li>Self-attention可以有很多層</li>
+<li>經典論文：<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1706.03762">Attention is all you need</a><ul>
+<li>Transformer</li>
+</ul>
+</li>
+<li>Self-attention內部結構如下：<br><img src="/../images/20220713_3.png"></li>
+<li>找出relevant vectors in a sequence，關聯度以$\alpha$表示</li>
+<li>計算$\alpha$比較常見的做法是做內積，兩個向量各自乘一個矩陣($W^q、W^k等$)以後再做內積<ul>
+<li>之後課程先只用這個方法</li>
+</ul>
+</li>
+</ul>
+<h2 id="How-to-apply"><a href="#How-to-apply" class="headerlink" title="How to apply"></a>How to apply</h2><p><img src="/../images/pasted-17.png"></p>
+<ul>
+<li>$q^1$表示輸入向量$a^1$對$W^q$矩陣相乘的結果</li>
+<li>$k^i$則表示內積的另一個算子，表示$a^i * W^k$以後的結果</li>
+<li>softmax不一定是唯一解，只是常見（用他沒有理由）</li>
+<li>得出$\alpha’$以後，繼續根據他抽取sequence中重要的資訊<br><img src="/../images/20220713_5.png"></li>
+<li>最後再把$\alpha’$乘上$W^v$，一個向量得到的分數越高，則越可能會dominate抽取出的結果</li>
+</ul>
+<p><a target="_blank" rel="noopener" href="https://medium.com/ching-i/transformer-attention-is-all-you-need-c7967f38af14">參考文章</a></p>
+<ul>
+<li>q:query，就是輸入的vector，用於與k做內積來判斷相似性</li>
+<li>k:key，指序列中的所有詞向量</li>
+<li>v:value，指實際的序列內容</li>
+<li>q,k內積的過程稱為Dot-product Attention</li>
+<li>兩個vector之間的關聯越大，則 $\alpha$ 越大</li>
+<li>上面步驟講到的都是encoder</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://laxiflora.github.io/2022/07/13/ML-2021-4-1-%E8%87%AA%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%A9%9F%E5%88%B6%EF%BC%88%E4%B8%8A%EF%BC%89/" data-id="cl5zfyy06000js4vedymya1et" data-title="ML_2021_4-1 自注意力機制（上）" class="article-share-link">Partager</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2022/07/13/ML-2021-4-2-%E8%87%AA%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%A9%9F%E5%88%B6%EF%BC%88%E4%B8%8B%EF%BC%89/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Récent</strong>
+      <div class="article-nav-title">
+        
+          ML_2021_4-2 自注意力機制（下）
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2022/07/11/ML-LEE-2022-hw3/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Ancien</strong>
+      <div class="article-nav-title">ML_LEE_2022_hw3</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Mot-clés</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/BERT/" rel="tag">BERT</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/" rel="tag">C++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/" rel="tag">Hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/NLP/" rel="tag">NLP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Pytorch/" rel="tag">Pytorch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Transformer/" rel="tag">Transformer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9D%8E%E5%AE%8F%E6%AF%85%E7%B3%BB%E5%88%97/" rel="tag">李宏毅系列</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92/" rel="tag">機器學習</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Nuage de mot-clés</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/BERT/" style="font-size: 10px;">BERT</a> <a href="/tags/C/" style="font-size: 10px;">C++</a> <a href="/tags/Hexo/" style="font-size: 15px;">Hexo</a> <a href="/tags/NLP/" style="font-size: 10px;">NLP</a> <a href="/tags/Pytorch/" style="font-size: 10px;">Pytorch</a> <a href="/tags/Transformer/" style="font-size: 10px;">Transformer</a> <a href="/tags/%E6%9D%8E%E5%AE%8F%E6%AF%85%E7%B3%BB%E5%88%97/" style="font-size: 10px;">李宏毅系列</a> <a href="/tags/%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92/" style="font-size: 20px;">機器學習</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">July 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">June 2022</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Articles récents</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2022/07/24/ML-2021-5-3-Transformer%EF%BC%88%E4%B8%8B%EF%BC%89/">ML_2021_5-3 Transformer（下）</a>
+          </li>
+        
+          <li>
+            <a href="/2022/07/23/ML-2021-5-2-Transformer%EF%BC%88%E4%B8%8A%EF%BC%89/">ML_2021_5-2 Transformer（上）</a>
+          </li>
+        
+          <li>
+            <a href="/2022/07/23/ML-LEE-2022-hw4/">ML_LEE_2022_hw4</a>
+          </li>
+        
+          <li>
+            <a href="/2022/07/22/Efficient-Transformers-A-Survey%E7%AD%86%E8%A8%98/">Efficient Transformers:A Survey筆記</a>
+          </li>
+        
+          <li>
+            <a href="/2022/07/13/ML-2021-4-2-%E8%87%AA%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%A9%9F%E5%88%B6%EF%BC%88%E4%B8%8B%EF%BC%89/">ML_2021_4-2 自注意力機制（下）</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2022 劉宇承<br>
+      Propulsé par <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+<!-- <script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script> -->
+</body>
+</html>

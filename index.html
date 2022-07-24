@@ -61,12 +61,12 @@
       </nav>
       <nav id="sub-nav">
         
-          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="Flux RSS"></a>
         
-        <a id="nav-search-btn" class="nav-icon" title="Suche"></a>
+        <a id="nav-search-btn" class="nav-icon" title="Rechercher"></a>
       </nav>
       <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Suche"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://laxiflora.github.io"></form>
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Rechercher"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://laxiflora.github.io"></form>
       </div>
     </div>
   </div>
@@ -74,6 +74,583 @@
 
       <div class="outer">
         <section id="main">
+  
+    <article id="post-ML-2021-5-3-Transformer（下）" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2022/07/24/ML-2021-5-3-Transformer%EF%BC%88%E4%B8%8B%EF%BC%89/" class="article-date">
+  <time class="dt-published" datetime="2022-07-24T14:54:31.000Z" itemprop="datePublished">2022-07-24</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2022/07/24/ML-2021-5-3-Transformer%EF%BC%88%E4%B8%8B%EF%BC%89/">ML_2021_5-3 Transformer（下）</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://laxiflora.github.io/2022/07/24/ML-2021-5-3-Transformer%EF%BC%88%E4%B8%8B%EF%BC%89/" data-id="cl5zfyy08000qs4ve0plj9338" data-title="ML_2021_5-3 Transformer（下）" class="article-share-link">Partager</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-ML-2021-5-2-Transformer（上）" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2022/07/23/ML-2021-5-2-Transformer%EF%BC%88%E4%B8%8A%EF%BC%89/" class="article-date">
+  <time class="dt-published" datetime="2022-07-23T12:40:26.000Z" itemprop="datePublished">2022-07-23</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2022/07/23/ML-2021-5-2-Transformer%EF%BC%88%E4%B8%8A%EF%BC%89/">ML_2021_5-2 Transformer（上）</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <ul>
+<li>Transformer與BERT之間關係密切</li>
+<li>Transformer是一種seq2seq的model</li>
+</ul>
+<h1 id="seq2seq簡介"><a href="#seq2seq簡介" class="headerlink" title="seq2seq簡介"></a>seq2seq簡介</h1><ul>
+<li>由模型來決定輸出要多長</li>
+<li>語音辨識、機器翻譯、speech translation就是應用(Hw4做的是分類模型)</li>
+<li>speech translation不一定是speech recognition + machine translation，因為很多語言其實並沒有文字，或不普及(ex.台語:母湯?不行?)</li>
+<li>其實有機會直接輸入台語的聲音資料，直接輸出中文(省略再翻譯的過程)</li>
+</ul>
+<h1 id="seq2seq應用"><a href="#seq2seq應用" class="headerlink" title="seq2seq應用"></a>seq2seq應用</h1><h2 id="台語範例"><a href="#台語範例" class="headerlink" title="台語範例"></a>台語範例</h2><ul>
+<li>直接台語轉中文不是沒有可能</li>
+<li>但是對於倒裝(文法)上的不同會有問題</li>
+</ul>
+<h2 id="Text-to-speech-TTS-synthesis"><a href="#Text-to-speech-TTS-synthesis" class="headerlink" title="Text-to-speech(TTS) synthesis"></a>Text-to-speech(TTS) synthesis</h2><ul>
+<li>相反的，也有可能輸入中文然後合成出台語的聲音訊號作為輸出(範例是分為兩步驟，先把中文翻譯為台語羅馬拼音，之後再把他轉成聲音)<br><img src="/../images/20220724_7.png"></li>
+</ul>
+<h2 id="seq2seq-for-chatbot"><a href="#seq2seq-for-chatbot" class="headerlink" title="seq2seq for chatbot"></a>seq2seq for chatbot</h2><ul>
+<li>Seq2seq也可以用在聊天機器人，輸入是一段文字，輸出則是response<ul>
+<li>學習大量的日常對話(來自影集、連續劇等)</li>
+</ul>
+</li>
+</ul>
+<h2 id="seq2seq-in-NLP"><a href="#seq2seq-in-NLP" class="headerlink" title="seq2seq in NLP"></a>seq2seq in NLP</h2><ul>
+<li>大多數的NLP應用，都可以想成是QA問題，而QA的問題，又可以透過seq2seq model來解決</li>
+<li>不過對於NLP的任務，通常還是會針對任務特性做一個客製化的模型，seq2seq就像是瑞士刀一樣，對大多問題都可用，但不是最佳模型<ul>
+<li>相關模型有另外一個課程: <a target="_blank" rel="noopener" href="https://speech.ee.ntu.edu.tw/~hylee/dlhlp/2020-spring.html"><br>DEEP LEARNING FOR HUMAN LANGUAGE PROCESSING 2020 SPRING</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="seq2seq-in-others"><a href="#seq2seq-in-others" class="headerlink" title="seq2seq in others"></a>seq2seq in others</h2><ul>
+<li>seq2seq也可以在一些輸出看似不像是seq的問題套用</li>
+</ul>
+<h3 id="syntactic-parsing"><a href="#syntactic-parsing" class="headerlink" title="syntactic parsing"></a>syntactic parsing</h3><pre><code>- ex. 文法解析(syntactic parsing)  
+</code></pre>
+<p><img src="/../images/pasted-25.png"><br>    - 把一個樹狀的結構用括號硬解成一個sequence，<a target="_blank" rel="noopener" href="https://arxiv.org/ab/1412.7449">參考</a></p>
+<h3 id="multi-label-classification"><a href="#multi-label-classification" class="headerlink" title="multi-label classification"></a>multi-label classification</h3><ul>
+<li>不同於multi-class，multi-label可以屬於多個class(同時屬於好幾類)</li>
+<li>每個data對應的label個數可能不同，不能直接用分類模型輸出前n名</li>
+<li>硬做seq2seq，輸出sequence就是class</li>
+</ul>
+<h3 id="object-detection"><a href="#object-detection" class="headerlink" title="object detection"></a>object detection</h3><pre><code>- 物件偵測也可以用seq2seq硬做  
+</code></pre>
+<p><img src="/../images/20220724_9.png"><br>    - <a target="_blank" rel="noopener" href="https://arxiv.org/abs/2005.12872">參考連結:End-to-End Object Detection with Transformers</a>
+    </p>
+<h1 id="Seq2seq結構"><a href="#Seq2seq結構" class="headerlink" title="Seq2seq結構"></a>Seq2seq結構</h1><ul>
+<li>避免見樹不見林，先看seq2seq的完整模型架構</li>
+<li>主要分為encoder跟decoder兩大區塊</li>
+<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1409.3215">起源來自: Sequence to Sequence Learning with Neural Networks(2014)</a></li>
+<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1706.03762">現今形狀(transformer): Attention Is All You Need(2017)</a> (下圖)<br><img src="/../images/20220724_10.png"></li>
+<li>Add &amp; Norm &#x3D; residual +layer norm</li>
+<li>圈起來的地方是一個block，此圖範例只有1 block</li>
+</ul>
+<h2 id="encoder"><a href="#encoder" class="headerlink" title="encoder"></a>encoder</h2><ul>
+<li>給定一排向量(input)，輸出一樣長度的向量</li>
+<li>transformer中block用的技巧就是self-attention，好幾個block就是作好幾次self-attention<br><img src="/../images/20220724_11.png" alt="upload successful"></li>
+<li>self-attention詳細的執行過程請參考CH4<ul>
+<li>避免見樹不見林，這裡解釋一下encoder步驟，下方再分開講解每個區塊在幹嘛。encoder就是先把輸入轉成vectors(input embedding)，做完positional encoding以後，連續做好幾個block</li>
+<li>每一個block做:self-attention -&gt; residual connection -&gt; layer norm -&gt; FC</li>
+</ul>
+</li>
+</ul>
+<h3 id="Residual-connection"><a href="#Residual-connection" class="headerlink" title="Residual connection"></a>Residual connection</h3><ul>
+<li>原因暫且不討論，不過這種架構在DL被廣泛應用</li>
+<li>做完self-attention之後在輸入到下一個block之前，需要進行一次的residual connection，就是把self-attention的輸出再加上自己原本的輸入<br><img src="/../images/20220724_12.png"></li>
+</ul>
+<h3 id="Layer-norm"><a href="#Layer-norm" class="headerlink" title="Layer norm"></a>Layer norm</h3><ul>
+<li>原始transformer做完residual以後做<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1607.06450">layer norm</a>，把單一feature的每個dimantion計算標準化</li>
+</ul>
+<blockquote>
+<p>❗️ 與Batch norm的差別：<br>batch norm是把batch內不同筆data的同一個dimantion做標準化(橫向)；<br>而layer norm則是把同一筆data內不同dimantion做標準化(豎向)</p>
+</blockquote>
+<h3 id="Fully-connected-layer"><a href="#Fully-connected-layer" class="headerlink" title="Fully connected layer"></a>Fully connected layer</h3><ul>
+<li>上述做完以後，輸出丟入FC訓練，然後『再做一次residual network以及norm』以後，輸出的結果，是一個block的計算</li>
+</ul>
+<h2 id="其他形狀的encoder"><a href="#其他形狀的encoder" class="headerlink" title="其他形狀的encoder"></a>其他形狀的encoder</h2><ul>
+<li><p>BERT其實就是transformer的encoder</p>
+</li>
+<li><p>encoder的network架構是按照原始論文設計</p>
+<ul>
+<li>還有其他encoder設計<br>    - <a target="_blank" rel="noopener" href="https://arxiv.org/abs/2002.04745">參考1</a>、<a target="_blank" rel="noopener" href="https://arxiv.org/abs/2003.07845">為何Batch norm不如layer norm?</a></li>
+</ul>
+</li>
+<li><p>下章節介紹decoder</p>
+</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://laxiflora.github.io/2022/07/23/ML-2021-5-2-Transformer%EF%BC%88%E4%B8%8A%EF%BC%89/" data-id="cl5zfyy07000ls4ve0s3430bd" data-title="ML_2021_5-2 Transformer（上）" class="article-share-link">Partager</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-ML-LEE-2022-hw4" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2022/07/23/ML-LEE-2022-hw4/" class="article-date">
+  <time class="dt-published" datetime="2022-07-22T17:12:30.000Z" itemprop="datePublished">2022-07-23</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2022/07/23/ML-LEE-2022-hw4/">ML_LEE_2022_hw4</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p><a target="_blank" rel="noopener" href="https://www.kaggle.com/c/ml2022spring-hw4">作業題目</a></p>
+<h1 id="可進行的目標"><a href="#可進行的目標" class="headerlink" title="可進行的目標"></a>可進行的目標</h1><p><img src="/../images/20220723_2.png"></p>
+<ul>
+<li>Medium : 0.70375 (train 1~1.5 hr)</li>
+<li>Strong : 0.77750 (train 3~4 hr)</li>
+<li>Boss : 0.86500 (train 2~2.5 hr )</li>
+</ul>
+<h2 id="調整transformer參數與pred-layer模型"><a href="#調整transformer參數與pred-layer模型" class="headerlink" title="調整transformer參數與pred_layer模型"></a>調整transformer參數與pred_layer模型</h2><ul>
+<li>包括降低multi-head數量、feedforward dropout rate等等</li>
+<li>降低pred-layer的linear connect layer層數 （這個問題複雜度不高，線性聯階層不用到兩層）</li>
+</ul>
+<h2 id="實作conformer"><a href="#實作conformer" class="headerlink" title="實作conformer"></a>實作conformer</h2><ul>
+<li>把原本的 <code>self.encoder_layer</code>改掉，套用conformer模型</li>
+<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2005.08100">conformer來源</a></li>
+<li>記得修改Classifier的forward</li>
+</ul>
+<h2 id="更動transformer-x2F-comformer-encode層數"><a href="#更動transformer-x2F-comformer-encode層數" class="headerlink" title="更動transformer&#x2F;comformer encode層數"></a>更動transformer&#x2F;comformer encode層數</h2><ul>
+<li>原本只有一層(就是<code>self.encoder_layer</code>)，可以改成呼叫<code>self.encoder</code>並修改Classifier的forward</li>
+</ul>
+<hr>
+<h1 id="寫作業歷程"><a href="#寫作業歷程" class="headerlink" title="寫作業歷程"></a>寫作業歷程</h1><h2 id="2022-x2F-7-x2F-22"><a href="#2022-x2F-7-x2F-22" class="headerlink" title="2022&#x2F;7&#x2F;22"></a>2022&#x2F;7&#x2F;22</h2><p>這次作業transformer（self-attention）在NLP與語音辨識領域運用廣泛，是我想要好好學好的章節，不過這次作業給我挫敗感很大…<br>這份作業寫一整天，白天的時候在查<a target="_blank" rel="noopener" href="https://arxiv.org/abs/2005.08100">comformer的paper</a>，但是因為對於transformer的觀念也不甚熟悉，所以照著李宏毅老師給的reference查到了<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/263031249">這篇paper（中文心得版）</a>，在大略的瞭解了transformer家族以後，最後回去看了一下<a target="_blank" rel="noopener" href="https://medium.com/ching-i/transformer-attention-is-all-you-need-c7967f38af14">別人看「Attention is all you need」的心得</a>，對照上課的筆記這才更有了概念</p>
+<p>到了晚上終於要開始著手改code，首先在<a target="_blank" rel="noopener" href="https://pytorch.org/audio/stable/_modules/torchaudio/models/conformer.html#Conformer">torchaudio document</a>查到了他支援的conformer model API，開始套用以後才開始發現他的問題：看似簡單的forward修改其實困難重重！</p>
+<p>首先是最基礎的問題，因為是pytorch菜雞，我甚至連forward的意涵是什麼都不知道，後來查到原來他是__call__會呼叫的函數，通常進行一個step（單位為一batch）的計算，而這份code在訓練時會呼叫model_fn</p>
+<p>model_fn用意在於<br>    - 先做mels與labels的分類<br>    - 把資料放到GPU上<br>    - 呼叫<code>model.forward()</code>以及計算loss<br>    - 最後進行predict以後算出該step之acc</p>
+<p>搞懂了forward以後，開始著手修改forward內部的code使他貼合conformer，但因為這樣所以我也必須去查torchaudio.models.Conformer這個class裡面的forward會怎麼運作（巢狀模型），查到的資料如下：<br><img src="/../images/20220722_1.png"><br>註解寫到lengths with shape(B,)，因此我很直觀的直接打了</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># out: (batch size, length, d_model)</span><br><span class="line">self.encoder(out,(out[0],) ) </span><br></pre></td></tr></table></figure>
+<p>這麼做跳了一個錯誤：他抓不到<code>out[0]</code>的shape，我這才發現他要的是torch.Tensor type，於是我改成</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">self.encoder(out, torch.tensor(out[0],) )</span><br></pre></td></tr></table></figure>
+<p>仔細研究torch.tensor用法以後終於可以正確地塞tensor進去，但是我卻鬼打牆的一直卡在lengths這個參數的shape不對，從錯誤碼發現跟ket_padding_mask有關，幾經波折以後看到<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/353365423">這篇</a>才發現他要吃的參數是(batch size,sequence length)，最後修正成了這樣</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">out = self.encoder(out,torch.tensor([out[0],out[1]]))</span><br></pre></td></tr></table></figure>
+<p>卻碰到了新的錯誤碼：<br><img src="/../images/20220722_2.png"><br>留待明天處理…</p>
+<hr>
+<h2 id="2022-x2F-7-x2F-23"><a href="#2022-x2F-7-x2F-23" class="headerlink" title="2022&#x2F;7&#x2F;23"></a>2022&#x2F;7&#x2F;23</h2><p>果然是昨天腦袋昏到不好思考，把out.size(0)跟out[0].size()搞混，雖說後來修正了，但還是套不進去。對於tensor dim的掌握力太差了…<br><img src="/../images/20220723_1.png"></p>
+<p>後來改用<a target="_blank" rel="noopener" href="https://github.com/lucidrains/conformer">這個conformer</a>來實作，多了很多我不知道幹嘛用的參數，而且看似不能增加layer數orz…，先求能跑吧，感覺達不到strong base line了，參數如下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">self.encoder_layer = ConformerBlock(</span><br><span class="line">    dim = d_model,</span><br><span class="line">    dim_head = 64,</span><br><span class="line">    heads = 2,</span><br><span class="line">    ff_mult = 4,</span><br><span class="line">    conv_expansion_factor = 2,</span><br><span class="line">    conv_kernel_size = 31,</span><br><span class="line">    attn_dropout = 0.,</span><br><span class="line">    ff_dropout = 0.,</span><br><span class="line">    conv_dropout = 0.</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<p>要注意的是他的forward吃的參數是<code>(length, batch size, d_model)</code>，所以permute那行註解要拿掉，這方面沒有統一真的很煩人，最後Classifier forward code如下:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">def forward(self, mels):</span><br><span class="line">	&quot;&quot;&quot;</span><br><span class="line">	args:</span><br><span class="line">		mels: (batch size, length, 40)</span><br><span class="line">	return:</span><br><span class="line">		out: (batch size, n_spks)</span><br><span class="line">	&quot;&quot;&quot;</span><br><span class="line">	# out: (batch size, length, d_model)</span><br><span class="line">	out = self.prenet(mels)</span><br><span class="line">	# out: (length, batch size, d_model)</span><br><span class="line">	out = out.permute(1, 0, 2)</span><br><span class="line">	# The encoder layer expect features in the shape of (length, batch size, d_model).</span><br><span class="line"> #out = self.encoder_layer(out)</span><br><span class="line">  # Do 2 conformer layer</span><br><span class="line">#	out = self.encoder_layer(out)</span><br><span class="line">	out = self.encoder_layer(out)</span><br><span class="line">	# out: (batch size, length, d_model)</span><br><span class="line">	out = out.transpose(0, 1)</span><br><span class="line">	# mean pooling</span><br><span class="line">	stats = out.mean(dim=1)</span><br><span class="line"></span><br><span class="line">	# out: (batch, n_spks)</span><br><span class="line">	out = self.pred_layer(stats)</span><br><span class="line">	return out</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>中間有個<code>out = self.encoder_layer(out)</code>被註解了，我原本是想說既然參數不能設定layer數，那就讓他跑兩次也可以是兩輪，不過我想太美了，因為GPU多線程的關係，讓整個tqdm的log大暴走，正確性也打個問號，搞不好會碰到race condition…，因為這是這個模型設計者沒設計到的部分(或是我菜到沒發現QQ)，所以最後決定讓他就單層去跑</p>
+<hr>
+<h1 id="作業結果"><a href="#作業結果" class="headerlink" title="作業結果"></a>作業結果</h1><p>Train了70000 step (大約1 hr)，跟strong差一點點，但acc還在上升，感覺是練不夠久<br><img src="/../images/20220723_4.png"><br>補了以下的code讓他繼續撿剛剛的模型train</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">if exists(&quot;./model.ckpt&quot;):</span><br><span class="line">	model.load_state_dict(torch.load(&quot;./model.ckpt&quot;))</span><br><span class="line">	print(&quot;Exist model detected, continue training...&quot;)</span><br><span class="line">       if model.training() == False:</span><br><span class="line">		model.train()</span><br></pre></td></tr></table></figure>
+<p>得到命中率&#x3D;79%<br><img src="/../images/20220723_7.png"></p>
+<p>但提交的時候卻出了大問題，測試的結果非常差<br><img src="/../images/20220723_5.png"><br>有查到一篇心得(下圖)也是成績暴跌，推測測試集跟訓練集的分布差很多(不過那篇作者是碰到切割長度的問題，這我沒有改不該有影響才對)，這份作業做到這吧，沒力氣修正了orz，再修也會淪為調參之流，感覺學不到甚麼。<br>結論姑且下在data mismatch，不過模型參數與notebook我會保留在github，將來靈光乍現的時候再來看看</p>
+<p><img src="/../images/20220723_6.png"></p>
+<h1 id="Report"><a href="#Report" class="headerlink" title="Report"></a>Report</h1><p><img src="/../images/pasted-23.png"></p>
+<ol>
+<li><p>因為卡住所以我有多看幾個varient</p>
+<ul>
+<li>linformer : 藉由attention matrix在做sorftmax轉化以後非行滿秩的特性，降低attention matrix的維度，使得transformer的複雜度可以降到線姓<br>    - Sparse Attention (FP&#x2F;LP) : 因為傳統transformer的複雜度過高，所以藉由讓self-attention關注的範圍由全局變成局部性，降低計算時間。FP(fixed patterns)是固定self-attention窗口大小，LP則是把它的大小變成一個可學習的參數</li>
+</ul>
+</li>
+<li><p>因為transformer雖然可以考慮sequence的全局性，但對於自己的重視程度較為有限，而CNN則可以對局部性的特徵著重關注，兩者混合起來可以達到互補提高準確性的效果。</p>
+</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://laxiflora.github.io/2022/07/23/ML-LEE-2022-hw4/" data-id="cl5zfyy0a000vs4veg9nqcmqp" data-title="ML_LEE_2022_hw4" class="article-share-link">Partager</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-Efficient-Transformers-A-Survey筆記" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2022/07/22/Efficient-Transformers-A-Survey%E7%AD%86%E8%A8%98/" class="article-date">
+  <time class="dt-published" datetime="2022-07-22T06:53:52.000Z" itemprop="datePublished">2022-07-22</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2022/07/22/Efficient-Transformers-A-Survey%E7%AD%86%E8%A8%98/">Efficient Transformers:A Survey筆記</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <ul>
+<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2009.06732">論文原文連結</a></li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/263031249">翻譯版連結</a></li>
+</ul>
+<p>本篇論文主要介紹Transformer的各種變體，以及他的優缺點</p>
+<h1 id="What-is-Transformer"><a href="#What-is-Transformer" class="headerlink" title="What is Transformer?"></a>What is Transformer?</h1><ul>
+<li>Transformer採用了Self-attention技術，並屏棄了以往對於序列資料所採用的RNN</li>
+<li>序列資料得以考慮全局性，不再像RNN那樣是序列依賴性</li>
+<li>Transformer可以看作是CNN，只是每一個vector考慮的依賴性是整張圖片（把一個sequence鋪成平面，每一個vector視為一個pixel，vector維數&#x3D;channel）</li>
+</ul>
+<h2 id="Transformer的問題"><a href="#Transformer的問題" class="headerlink" title="Transformer的問題"></a>Transformer的問題</h2><ul>
+<li>目前的計算複雜度過高，是$O(n^2)$，使得transformer難以在輕模型下使用</li>
+<li>目前為了解決transformer過度肥大的問題，出現了許多的變種</li>
+</ul>
+<h2 id="Dense-Transformer"><a href="#Dense-Transformer" class="headerlink" title="Dense Transformer"></a>Dense Transformer</h2><ul>
+<li>transformer的起源</li>
+<li>待補</li>
+</ul>
+<h2 id="Sparse-Attaention"><a href="#Sparse-Attaention" class="headerlink" title="Sparse Attaention"></a>Sparse Attaention</h2><ul>
+<li>這裡開始是為了降低複雜度而延伸的變種</li>
+<li>限制self-attention的參考範圍，使全面參考變成部分參考</li>
+<li></li>
+</ul>
+<h3 id="Fixed-patterns-FP"><a href="#Fixed-patterns-FP" class="headerlink" title="Fixed patterns(FP)"></a>Fixed patterns(FP)</h3><ul>
+<li>參考範圍作為hyper-parameter存在，是訓練前先決定好的固定值</li>
+<li>常見方法有<ul>
+<li>Blockwise pattern : 把輸入序列切成block(batch)，複雜度降為$O(B^2)$，變成$(\frac{N}{B}*B^2)$<ul>
+<li>導致序列不連貫，效果”可能”有限</li>
+</ul>
+</li>
+<li>Strided pattern : 變得真的非常像CNN，採用滑動kernel的的方式，每個vector只attention自己的那塊kernel<ul>
+<li>建立在假設NLP在多數情況下都是具備局部相關的前提下，免去過度參考太遠的vector所浪費的計算</li>
+</ul>
+</li>
+<li>Compressed pattern : 超級無敵像CNN(欸)，用把vector壓成平面的角度會更好思考，其實就是pooling，把幾個token池化，變成一個vector後才做attention，個人認為複雜度會降為$O(\frac{N^2}{kernel_size})$</li>
+</ul>
+</li>
+</ul>
+<h3 id="Learnable-patterns-LP"><a href="#Learnable-patterns-LP" class="headerlink" title="Learnable patterns(LP)"></a>Learnable patterns(LP)</h3><ul>
+<li>相對於ＦＰ，ＬＰ是把參考範圍也作為weight給機器去學習</li>
+<li>比如routing transformer是對token向量進行k-means來將整體序列切成多個子序列</li>
+</ul>
+<h3 id="Memory"><a href="#Memory" class="headerlink" title="Memory"></a>Memory</h3><p>這裡看不太懂，先貼原文</p>
+<p>memory乍一听好像有点让人摸不着头脑，其实想法也很简单。最开始是在19年的set transformer上使用。一般来说做multihead self-attention时，Q&#x3D;K&#x3D;V&#x3D;X（X为输入序列，长度为n），而在set transformer中，作者先单独设置了m个向量（m是超参数），然后这m个向量与X做multihead attention，得到m个临时向量（这些个临时变量我们就称作“temporary memory”），接着把X与这m个临时向量再做一次multihead attention得到输出。这个过程其实就是利用这m个向量将输入序列X的信息先通过attention进行压缩，再通过attention还原，达到抽取输入序列的特征的目的。但是在压缩编码解码的过程中肯定会有信息损失，所以后来的改进方法是引入全局记忆，即设置一些token，它们可以与所有的token进行注意力交互，比如bert的[CLS]，由于这些token的数目远小于序列长度，因此也不会给计算带来负担，而且往往携带了整个输入序列的信息，这就是我们可以在bert上用[CLS]作文本分类任务的原因。</p>
+<h3 id="Low-rank-methods"><a href="#Low-rank-methods" class="headerlink" title="Low rank methods"></a>Low rank methods</h3><ul>
+<li>Attention matrix在經過softmax轉化以後會是不滿秩的(存在linear dependent,rank !&#x3D; N)，所以我們可以把矩陣降維</li>
+<li>k,v向量可以因此映射到kxd維，因為k為hyper-parameter，複雜度可降至 $O(nk)$</li>
+<li>範例：linformer</li>
+<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2006.04768">相關論文</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://laxiflora.github.io/2022/07/22/Efficient-Transformers-A-Survey%E7%AD%86%E8%A8%98/" data-id="cl5zfyxzm0000s4veevh1g3f4" data-title="Efficient Transformers:A Survey筆記" class="article-share-link">Partager</a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/BERT/" rel="tag">BERT</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/NLP/" rel="tag">NLP</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Transformer/" rel="tag">Transformer</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92/" rel="tag">機器學習</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-ML-2021-4-2-自注意力機制（下）" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2022/07/13/ML-2021-4-2-%E8%87%AA%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%A9%9F%E5%88%B6%EF%BC%88%E4%B8%8B%EF%BC%89/" class="article-date">
+  <time class="dt-published" datetime="2022-07-13T08:30:46.000Z" itemprop="datePublished">2022-07-13</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2022/07/13/ML-2021-4-2-%E8%87%AA%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%A9%9F%E5%88%B6%EF%BC%88%E4%B8%8B%EF%BC%89/">ML_2021_4-2 自注意力機制（下）</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <ul>
+<li>延續上篇的內容，b其實可以水平同時計算</li>
+</ul>
+<h2 id="線性代數的角度理解"><a href="#線性代數的角度理解" class="headerlink" title="線性代數的角度理解"></a>線性代數的角度理解</h2><p><img src="/../images/pasted-18.png"></p>
+<p><img src="/../images/pasted-19.png"><br>把它延展到$\alpha_{4,4}$</p>
+<p><img src="/../images/20220713_7.png"></p>
+<ul>
+<li>之後再對A做softmax(或其他激發函數)得到A’</li>
+</ul>
+<p><img src="/../images/20220713_8.png"></p>
+<h3 id="總圖"><a href="#總圖" class="headerlink" title="總圖"></a>總圖</h3><p><img src="/../images/20220713_9.png"></p>
+<ul>
+<li>上圖中只有$W^{q,k,v}$training data訓練</li>
+</ul>
+<h2 id="Multi-head-self-attention"><a href="#Multi-head-self-attention" class="headerlink" title="Multi-head self-attention"></a>Multi-head self-attention</h2><ul>
+<li>可以把q,k,v產生多個<br><img src="/../images/pasted-20.png"></li>
+</ul>
+<h2 id="Positional-encoding"><a href="#Positional-encoding" class="headerlink" title="Positional encoding"></a>Positional encoding</h2><ul>
+<li>每一個vector出現在sequence的不同位置可能會有不同的意義</li>
+<li>前述之計算並無考慮到相對位置，大家算法都一樣，也都有全部平等的計算</li>
+<li>為每一個位置設置一個vector $e^i$，再把這個vector加上$a^i$</li>
+<li>$e^i$可以透過某個function產生，也可能是hand-crafted</li>
+<li>或也可以是learn by data</li>
+<li>仍然是尚待研究的主題</li>
+</ul>
+<h2 id="Self-attention應用"><a href="#Self-attention應用" class="headerlink" title="Self-attention應用"></a>Self-attention應用</h2><ul>
+<li>Bert（NLP）</li>
+<li>transformer</li>
+</ul>
+<h2 id="Truncated-self-attention"><a href="#Truncated-self-attention" class="headerlink" title="Truncated self-attention"></a>Truncated self-attention</h2><ul>
+<li>當sequence很大，我們的attention matrix會非常大</li>
+<li>一次訓練的時候不要看所有sequence，看某一段就好</li>
+</ul>
+<h2 id="Self-attention-for-image"><a href="#Self-attention-for-image" class="headerlink" title="Self-attention for image"></a>Self-attention for image</h2><ul>
+<li>相片也可以看作是一個vector set，ex. 給定一個5x10 pixel的彩色圖片<ul>
+<li>把channel當作一個vector(RGB)</li>
+<li>則一張圖片是一個5x10的vector set</li>
+</ul>
+</li>
+<li>Self-attention GAN</li>
+<li>DETR</li>
+</ul>
+<h3 id="Self-attention-v-s-CNN"><a href="#Self-attention-v-s-CNN" class="headerlink" title="Self-attention v.s CNN"></a>Self-attention v.s CNN</h3><ul>
+<li>CNN會考慮receptive field</li>
+<li>self-attention則是會考慮整張圖（整個vector set的vector）<br><img src="/../images/20220713_10.png"></li>
+<li>self-attention可以說是複雜版、更自由的ＣＮＮ</li>
+<li>receptive field變成可學習、控制的大小(truncated self attention)<ul>
+<li>Ref. CNN章節<br><img src="/../images/20220713_11.png"></li>
+</ul>
+</li>
+<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1911.93584">這篇論文</a>用嚴謹的數學證明CNN $\subset$ self-attention</li>
+<li>Ref.一開始的章節，我們知道更flexible的模型需要更多training data<br><img src="/../images/20220713_12.png"></li>
+</ul>
+<h3 id="Self-attention-v-s-RNN"><a href="#Self-attention-v-s-RNN" class="headerlink" title="Self-attention v.s RNN"></a>Self-attention v.s RNN</h3><ul>
+<li>RNN不再講到，因為self-attention大多可取代</li>
+<li>RNN也是處理input是sequence的情況<ul>
+<li>第一個vector做RNN，輸出丟FC，產生輸出，也加入第二個vector丟入RNN…<br><img src="/../images/pasted-22.png"></li>
+</ul>
+</li>
+<li>RNN不可以平行處理，self-attention可以</li>
+<li>RNN難以考慮全面（左右更好），self-attention則可以（天涯若壁鄰）</li>
+<li>Self-attention加上一些東西以後，其實也能變成RNN(<a target="_blank" rel="noopener" href="https://arxiv.org/abs/2006.16236">ref.</a>)</li>
+</ul>
+<h3 id="Self-attention-for-graph"><a href="#Self-attention-for-graph" class="headerlink" title="Self-attention for graph"></a>Self-attention for graph</h3><ul>
+<li>因為edge，所以我們知道哪兩個節點之間會有關聯性</li>
+<li>Attention matrix可以只計算有相連的部分就好<br><img src="/../images/20220713_14.png"></li>
+<li>這算是一種Graph neural network (GNN)</li>
+</ul>
+<h4 id="GNN-REF"><a href="#GNN-REF" class="headerlink" title="GNN REF."></a>GNN REF.</h4><p><a target="_blank" rel="noopener" href="https://youtu.be/eybCCtNKwzA">影片1</a></p>
+<p><a target="_blank" rel="noopener" href="https://youtu.be/M9ht8vsVEw8">影片2</a></p>
+<h2 id="結論"><a href="#結論" class="headerlink" title="結論"></a>結論</h2><ul>
+<li>Self-attention有很多種變形</li>
+<li>他的缺點是計算量過大(廣義版CNN…汗)</li>
+<li>self-attention最早用於transformer<ul>
+<li>有時候叫transformer其實就是指self-attention</li>
+</ul>
+</li>
+<li>performance跟speed的平衡</li>
+<li>介紹各式各樣的transformers的變形：<a target="_blank" rel="noopener" href="https://arxiv.org/abs/2009.06732">Efficient Transformers: A survey</a><br><img src="/../images/20220713_15.png"></li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://laxiflora.github.io/2022/07/13/ML-2021-4-2-%E8%87%AA%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%A9%9F%E5%88%B6%EF%BC%88%E4%B8%8B%EF%BC%89/" data-id="cl5zfyy05000hs4veh8ac4plz" data-title="ML_2021_4-2 自注意力機制（下）" class="article-share-link">Partager</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-ML-2021-4-1-自注意力機制（上）" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2022/07/13/ML-2021-4-1-%E8%87%AA%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%A9%9F%E5%88%B6%EF%BC%88%E4%B8%8A%EF%BC%89/" class="article-date">
+  <time class="dt-published" datetime="2022-07-13T02:33:00.000Z" itemprop="datePublished">2022-07-13</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2022/07/13/ML-2021-4-1-%E8%87%AA%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%A9%9F%E5%88%B6%EF%BC%88%E4%B8%8A%EF%BC%89/">ML_2021_4-1 自注意力機制（上）</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <ul>
+<li>至今為止，我們network input 都是一個vector</li>
+<li>那如果輸入是可變動的一排向量（sequence）呢？</li>
+</ul>
+<h2 id="Vector-set-as-input"><a href="#Vector-set-as-input" class="headerlink" title="Vector set as input"></a>Vector set as input</h2><ul>
+<li>長度不一的句子就是一個範例</li>
+<li>關於word embedding如何得到，可以參考<a target="_blank" rel="noopener" href="https://youtu.be/X7PH3NuYW0Q">這個影片</a></li>
+<li>現在的文字基本上都是被word embedding過，而句子就是一連串了文字向量</li>
+<li>一段聲音訊號也是一個範例（25 millisecond），一個向量稱為『frame』</li>
+<li>一個graph也是一連串的向量<ul>
+<li>Drug discovery中一個分子，可以看做一個graph</li>
+<li>社群媒體中，人（節點）可以是一個向量，ex.性別、年齡、工作等等</li>
+</ul>
+</li>
+</ul>
+<h2 id="What-is-the-output"><a href="#What-is-the-output" class="headerlink" title="What is the output?"></a>What is the output?</h2><h3 id="Type-1-本課專注"><a href="#Type-1-本課專注" class="headerlink" title="Type 1 (本課專注)"></a>Type 1 (本課專注)</h3><ul>
+<li>每一個vector都會有一個label</li>
+<li>POS tagging（詞性標注），每一個詞彙都要對應一個詞性</li>
+<li>語音，每一段frame都會有一個Pheonic</li>
+<li>Social network，對每一個人可能會有一種廣告投放方式</li>
+</ul>
+<h3 id="Type-2-hw4"><a href="#Type-2-hw4" class="headerlink" title="Type 2 (hw4)"></a>Type 2 (hw4)</h3><ul>
+<li>一整個sequence輸出一個label</li>
+<li>Sentiment analysis: 機器去判讀一段句字是正面的還是負面</li>
+<li>給定一段音訊，分辨它是哪個人說的</li>
+</ul>
+<h3 id="Type-3"><a href="#Type-3" class="headerlink" title="Type 3"></a>Type 3</h3><ul>
+<li>不知道輸出幾個label</li>
+<li>稱為sequence to sequence(seq2seq)</li>
+</ul>
+<h2 id="Sequence-labeling"><a href="#Sequence-labeling" class="headerlink" title="Sequence labeling"></a>Sequence labeling</h2><ul>
+<li>對於每個向量，要做一個label</li>
+</ul>
+<h3 id="First-approach"><a href="#First-approach" class="headerlink" title="First approach"></a>First approach</h3><ul>
+<li>直接用fully connect network</li>
+<li>問題出現：同樣輸入就會有同樣輸出，但是不能保證兩個vector之間是否有關連</li>
+<li>需要consider the context</li>
+</ul>
+<h3 id="Second-approach"><a href="#Second-approach" class="headerlink" title="Second approach"></a>Second approach</h3><ul>
+<li>直接給fully connected network整個window (hw2就是這樣做的)<br><img src="/../images/20220713_1.png"></li>
+<li>問題：如果今天的任務是得要考慮整個sequence怎辦<ul>
+<li>sequence長度有長有短，window大小要變動，而且運算量非常大又導致overfitting</li>
+</ul>
+</li>
+</ul>
+<h3 id="Third-approach"><a href="#Third-approach" class="headerlink" title="Third approach"></a>Third approach</h3><ul>
+<li>採用Self-attention技術，先把向量加工再個別丟入全連階層<br><img src="/../images/20220713_2.png" alt="upload successful"></li>
+<li>黑框框向量表示考慮過前後文的加工向量</li>
+<li>Self-attention可以有很多層</li>
+<li>經典論文：<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1706.03762">Attention is all you need</a><ul>
+<li>Transformer</li>
+</ul>
+</li>
+<li>Self-attention內部結構如下：<br><img src="/../images/20220713_3.png"></li>
+<li>找出relevant vectors in a sequence，關聯度以$\alpha$表示</li>
+<li>計算$\alpha$比較常見的做法是做內積，兩個向量各自乘一個矩陣($W^q、W^k等$)以後再做內積<ul>
+<li>之後課程先只用這個方法</li>
+</ul>
+</li>
+</ul>
+<h2 id="How-to-apply"><a href="#How-to-apply" class="headerlink" title="How to apply"></a>How to apply</h2><p><img src="/../images/pasted-17.png"></p>
+<ul>
+<li>$q^1$表示輸入向量$a^1$對$W^q$矩陣相乘的結果</li>
+<li>$k^i$則表示內積的另一個算子，表示$a^i * W^k$以後的結果</li>
+<li>softmax不一定是唯一解，只是常見（用他沒有理由）</li>
+<li>得出$\alpha’$以後，繼續根據他抽取sequence中重要的資訊<br><img src="/../images/20220713_5.png"></li>
+<li>最後再把$\alpha’$乘上$W^v$，一個向量得到的分數越高，則越可能會dominate抽取出的結果</li>
+</ul>
+<p><a target="_blank" rel="noopener" href="https://medium.com/ching-i/transformer-attention-is-all-you-need-c7967f38af14">參考文章</a></p>
+<ul>
+<li>q:query，就是輸入的vector，用於與k做內積來判斷相似性</li>
+<li>k:key，指序列中的所有詞向量</li>
+<li>v:value，指實際的序列內容</li>
+<li>q,k內積的過程稱為Dot-product Attention</li>
+<li>兩個vector之間的關聯越大，則 $\alpha$ 越大</li>
+<li>上面步驟講到的都是encoder</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://laxiflora.github.io/2022/07/13/ML-2021-4-1-%E8%87%AA%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%A9%9F%E5%88%B6%EF%BC%88%E4%B8%8A%EF%BC%89/" data-id="cl5zfyy06000js4vedymya1et" data-title="ML_2021_4-1 自注意力機制（上）" class="article-share-link">Partager</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
   
     <article id="post-ML-LEE-2022-hw3" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
@@ -189,7 +766,22 @@
 <h2 id="BatchSize"><a href="#BatchSize" class="headerlink" title="BatchSize"></a>BatchSize</h2><ul>
 <li>修改為96</li>
 </ul>
-<h2 id="Result-3"><a href="#Result-3" class="headerlink" title="Result"></a>Result</h2><hr>
+<h2 id="Result-3"><a href="#Result-3" class="headerlink" title="Result"></a>Result</h2><ul>
+<li>這次讓他跑了一整晚，充分認識到kaggel save&amp;run的重要性&#x3D; &#x3D;</li>
+<li>直接掛網頁按run all如果網頁停止回應或是閒置過久就沒了</li>
+<li>這次訓練時間大約10hr，仍然沒有得到最終結果-&gt;網頁爆了<br><img src="/../images/20220712_1.png"></li>
+<li>練到了291 epoch，感覺valid的acc就上不去了… 只能止步medium嗎</li>
+</ul>
+<hr>
+<h1 id="Fifth-Approach"><a href="#Fifth-Approach" class="headerlink" title="Fifth Approach"></a>Fifth Approach</h1><ul>
+<li>最後又重跑了一次training &#x3D; &#x3D;，沒有作任何更動，GPU quota還有18 hr 希望夠用…</li>
+</ul>
+<h2 id="Result-Finale"><a href="#Result-Finale" class="headerlink" title="Result (Finale)"></a>Result (Finale)</h2><p><img src="/../images/20220712_2.png"><br>&#x3D; &#x3D;凸</p>
+<ul>
+<li>最終在epoch 389的時候終止了，最好的epoch在252，其實已經很接近當初的150 patience了</li>
+<li>好在best model parameters有保存下來，接下來就是load model之後直接predict了</li>
+</ul>
+<h2 id="最終成果"><a href="#最終成果" class="headerlink" title="最終成果"></a>最終成果</h2><p><img src="/../images/20220712_3.png"><br><a target="_blank" rel="noopener" href="https://www.kaggle.com/code/laxiflora/ml2022hw3-sample-code-training-predictin">Notebook連結</a></p>
 <h1 id="心得"><a href="#心得" class="headerlink" title="心得"></a>心得</h1><p>這次作業是CNN的範例題，這次的圖像辨識題真的讓人思考到了如何去優化他，助教提供的sample code省去了start from scratch的痛苦，讓我們能專注在實作理論的部分</p>
 <p>其實很多的技術(Batch normalization、crossEntropy+softmax、data Batch等等)都已經被函數包進去一次做好了，正常的時候是不會發現到他們的存在，這或許也間接印證了他們是十分有效提高命中率的方法吧。而真的需要實作的part其實不多，比較難的是要去翻出他們的document一一認識他們的結構並理解功能，這才是最難的部分</p>
 <p>助教的sample code寫得蠻精美的，甚至有看出在自訂結構其實有保留空間讓學生自行切分training set跟valid set(可能是用於做cross validation用的)，考量到讓學生改進而保留空間，真的厲害！除了實作理論與閱讀結構以外，最重要的估計就是看懂這個訓練過程的資料結構了吧~</p>
@@ -197,7 +789,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://laxiflora.github.io/2022/07/11/ML-LEE-2022-hw3/" data-id="cl5gzb2qw000hf8ve8a2x532m" data-title="ML_LEE_2022_hw3" class="article-share-link">Teilen</a>
+      <a data-url="https://laxiflora.github.io/2022/07/11/ML-LEE-2022-hw3/" data-id="cl5zfyy08000os4vecf220xfu" data-title="ML_LEE_2022_hw3" class="article-share-link">Partager</a>
       
       
       
@@ -384,7 +976,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://laxiflora.github.io/2022/07/09/ML-2021-3-1-%E5%8D%B7%E7%A9%8D%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF/" data-id="cl5gzb2qu000ef8ve10wt55wq" data-title="ML_2021_3-1 卷積神經網路" class="article-share-link">Teilen</a>
+      <a data-url="https://laxiflora.github.io/2022/07/09/ML-2021-3-1-%E5%8D%B7%E7%A9%8D%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF/" data-id="cl5zfyy04000fs4ve7i9d8fxc" data-title="ML_2021_3-1 卷積神經網路" class="article-share-link">Partager</a>
       
       
       
@@ -497,7 +1089,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://laxiflora.github.io/2022/07/07/ML-2021-2-6-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%BA%94/" data-id="cl5gzb2qt000df8vecrns8rhn" data-title="ML_2021_2-6 類神經網路訓練不起來怎麼辦(五)" class="article-share-link">Teilen</a>
+      <a data-url="https://laxiflora.github.io/2022/07/07/ML-2021-2-6-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%BA%94/" data-id="cl5zfyy04000es4ve64hu1u0e" data-title="ML_2021_2-6 類神經網路訓練不起來怎麼辦(五)" class="article-share-link">Partager</a>
       
       
       
@@ -584,547 +1176,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://laxiflora.github.io/2022/07/06/ML-2021-2-5-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E5%9B%9B/" data-id="cl5gzb2qr000cf8ve044u67f4" data-title="ML_2021_2-5 類神經網路訓練不起來怎麼辦(四)" class="article-share-link">Teilen</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-ML-2021-2-4-類神經網路訓練不起來怎麼辦-三" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2022/07/06/ML-2021-2-4-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%B8%89/" class="article-date">
-  <time class="dt-published" datetime="2022-07-06T06:04:41.000Z" itemprop="datePublished">2022-07-06</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2022/07/06/ML-2021-2-4-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%B8%89/">ML_2021_2-4 類神經網路訓練不起來怎麼辦(三)</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <ul>
-<li>Critical point 不一定是在訓練模型時會碰到的最大問題</li>
-</ul>
-<h1 id="Adaptive-Learning-Rate"><a href="#Adaptive-Learning-Rate" class="headerlink" title="Adaptive Learning Rate"></a>Adaptive Learning Rate</h1><ul>
-<li>我們都認為training loss卡住了之後，是因為parameters卡在critical point</li>
-<li>其實有可能是loss function在兩個谷間碰撞，可能是兩組parameters之間剛好loss差不多</li>
-<li>考慮一個情境，高爾夫球一直在球洞兩邊滾來滾去，就是滾不到終點<br><img src="/../images/pasted-3.png"></li>
-<li>多數training其實還沒走到critical point就已經停止 (所以真正要注意的點不是critical point)</li>
-</ul>
-<h2 id="非卡在critical-point的Example"><a href="#非卡在critical-point的Example" class="headerlink" title="非卡在critical point的Example"></a>非卡在critical point的Example</h2><ul>
-<li><p>給定一個convex error surface，如下圖<br><img src="/../images/20220706_2.png" alt="upload successful"></p>
-</li>
-<li><p>當learning rate太大，會容易在等高線密集的地方邁步過大，如下圖<br><img src="/../images/20220706_3.png" alt="upload successful"></p>
-</li>
-<li><p>或是當learning rate太小，容易卡在低谷幾乎動不了(要挪到X需要好幾百萬次更新)，如下圖<br><img src="/../images/image.png" alt="upload successful"></p>
-</li>
-</ul>
-<p>$\rightarrow$ 單一learning rate通常不能貫徹模型訓練的整個過程</p>
-<h2 id="如何設定learning-rate-Adagrad-Approach"><a href="#如何設定learning-rate-Adagrad-Approach" class="headerlink" title="如何設定learning rate? - Adagrad Approach"></a>如何設定learning rate? - Adagrad Approach</h2><ul>
-<li><p>從上個例子可知，當某方向上等高線密集時，我們需要learning rate 小，反之則要大</p>
-</li>
-<li><p>為了讓$\eta$能自動變動，要調整公式</p>
-</li>
-<li><p>下圖為梯度下降法的原始公式<br><img src="/../images/20220706_4.png" alt="upload successful"></p>
-</li>
-<li><p>方便起見，這裡只用一個參數</p>
-</li>
-<li><p>更動以後的算式如下</p>
-</li>
-</ul>
-<p>$$<br>\theta^{t+1}_i \leftarrow \theta^t_i - \frac{\eta}{\sigma^t_i} g^t_i<br>$$</p>
-<ul>
-<li>我們讓$\sigma^t_i$加入等式，這樣就可以讓learning rate變成一個parameter dependent的hyper parameter</li>
-</ul>
-<h3 id="如何計算sigma"><a href="#如何計算sigma" class="headerlink" title="如何計算sigma?"></a>如何計算sigma?</h3><p>$$<br>\theta^{1}_i \leftarrow \theta^0_i - \frac{\eta}{\sigma^0_i} g^0_i<br>$$<br>其中$\sigma^0_i &#x3D; \sqrt{(g^0_i)^2} &#x3D; \vert g^0_i \vert$<br>接下來<br>$$<br>\theta^{2}_i \leftarrow \theta^1_i - \frac{\eta}{\sigma^0_i} g^1_i<br>$$<br>其中$\sigma^1_i &#x3D; \sqrt{\frac{1}{2}[(g^0_i)^2+(g^1_i)^2]}$</p>
-<p>…<br>一路推廣，可以得到</p>
-<p>$$<br>\theta^{t+1}_i \leftarrow \theta^t_i - \frac{\eta}{\sigma^t_i} g^t_i<br>$$</p>
-<p>其中</p>
-<p>$$<br>\sigma^t_i &#x3D; \sqrt{\frac{1}{t+1}\sum_{j&#x3D;0}^{t}(g_i^j)^2}<br>$$</p>
-<ul>
-<li>目前這個技巧應用在Adagrad</li>
-</ul>
-<h3 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h3><ul>
-<li>當gradient小(平坦)，算出來的$\sigma$就小，learning rate大</li>
-<li>當gradient大(陡峭)，算出來的$\sigma$就大，learning rate小<br><img src="/../images/pasted-4.png"></li>
-</ul>
-<h3 id="這樣會有甚麼問題"><a href="#這樣會有甚麼問題" class="headerlink" title="這樣會有甚麼問題"></a>這樣會有甚麼問題</h3><ul>
-<li>剛才的假設是同一個參數，他的gradient大小就固定一個值(?)</li>
-<li>就算是同一個參數，他需要的learning rate也會隨時間而改變</li>
-<li>我們期待就算是同一個參數在同一個方向，learning rate也會有所改變<br>舉例，我們討論橫軸</li>
-</ul>
-<p><img src="/../images/20220706_5.png" alt="upload successful"></p>
-<hr>
-<h2 id="如何設定learning-rate-RMSProp-Approach"><a href="#如何設定learning-rate-RMSProp-Approach" class="headerlink" title="如何設定learning rate? - RMSProp Approach"></a>如何設定learning rate? - RMSProp Approach</h2><ul>
-<li>一個沒有論文的方法orz</li>
-<li>方法如下圖<br><img src="/../images/pasted-5.png"></li>
-<li>主要改變了紅圈圈起來的部分，捨棄了用前面所有的gradient求MSE決定$\sigma$的方法，RMSProp只採計上一個$\sigma$值以及這次的gradient之MSE和</li>
-<li>多了一個hyper parameter $alpha$，調整對上一個$\sigma$的學習率高低</li>
-<li>其實上一個$\sigma$就包含了前面所有的gradient之MSE，只是權重會隨著疊代越來越小</li>
-</ul>
-<p>learning rate變動範例圖<br><img src="/../images/20220706_7.png"></p>
-<h2 id="回到一開始的範例"><a href="#回到一開始的範例" class="headerlink" title="回到一開始的範例"></a>回到一開始的範例</h2><ul>
-<li>[回到這個範例](# 非卡在critical point的Example)，我們來看看各approach的效果</li>
-</ul>
-<h4 id="Adaptive-learning-rate"><a href="#Adaptive-learning-rate" class="headerlink" title="Adaptive learning rate"></a>Adaptive learning rate</h4><p><img src="/../images/pasted-6.png" alt="filename already exists, renamed"></p>
-<ul>
-<li>為啥爆炸了?<ul>
-<li>根據公式，我們把前面幾次的gradient都列入計算，因為在橫線的部分步伐很大，所以當走到步伐該縮小的時候，會爆衝<br>    - 但也因為公式，爆衝一陣子以後learning rate會逐漸縮小，然後回歸正軌，等待一陣子以後learning rate上升再度爆炸</li>
-</ul>
-</li>
-</ul>
-<h5 id="解法：learning-rate-decay"><a href="#解法：learning-rate-decay" class="headerlink" title="解法：learning rate decay"></a>解法：learning rate decay</h5><ul>
-<li>隨著訓練的進行，我們一定越來越接近終點</li>
-<li>可以隨著時間降低learning rate，開始微調</li>
-</ul>
-<h5 id="解法2：Warm-up"><a href="#解法2：Warm-up" class="headerlink" title="解法2：Warm up"></a>解法2：Warm up</h5><p><img src="/../images/20220706_10.png"></p>
-<ul>
-<li>算是一種黑科技</li>
-<li>先變大learning rate，再縮小(?)</li>
-<li>在訓練bert的時候常常用到，但他在很久以前就出現在<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1512.03385">論文</a>過了</li>
-<li>在transformer中也出現過，見下圖<br><img src="/../images/20220706_11.png"></li>
-<li>一種可能的解釋是，因為$\sigma$是統計的數據，在訓練初期的時候容易失準，故初期讓learning rate小，等到$\sigma$精準一點以後，再讓learning rate變高</li>
-<li>相關paper : <a target="_blank" rel="noopener" href="https://arxiv.org/abs/1908.03265">RAdam</a></li>
-</ul>
-<h2 id="Summary-of-Optimization"><a href="#Summary-of-Optimization" class="headerlink" title="Summary of Optimization"></a>Summary of Optimization</h2><p><img src="/../images/20220706_12.png"></p>
-<ul>
-<li>雖然Momentum跟$\sigma$都使用過去的資料，但不會因此抵銷<ul>
-<li>Momentum是把所有gradient加起來，故有考慮方向與正負號</li>
-<li>$\sigma$只考慮MSE</li>
-</ul>
-</li>
-</ul>
-<h2 id="下次預告"><a href="#下次預告" class="headerlink" title="下次預告"></a>下次預告</h2><ul>
-<li>當訓練過程遭遇大山，要如何闢路繞過去？</li>
-<li>有沒有可能直接炸掉大山，改變error surface呢?<br>$\rightarrow$ Batch normalization<br>PS. 課程跳到2-6哦</li>
-</ul>
-<hr>
-<h1 id="Note"><a href="#Note" class="headerlink" title="Note"></a>Note</h1><ul>
-<li><p>現今最常見的Optimizer:Adam其實就是RMSProp + Momentum</p>
-</li>
-<li><p>Adam的細節自行參考</p>
-</li>
-<li><p>arxiv論文年代看法</p>
-<ul>
-<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1512.03385%E7%82%BA%E4%BE%8B">https://arxiv.org/abs/1512.03385為例</a><br>    - 15代表2015年出版<br>    - 12代表12月</li>
-</ul>
-</li>
-</ul>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://laxiflora.github.io/2022/07/06/ML-2021-2-4-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%B8%89/" data-id="cl5gzb2qn0009f8ve9m3n47nn" data-title="ML_2021_2-4 類神經網路訓練不起來怎麼辦(三)" class="article-share-link">Teilen</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-ML-2021-2-3-類神經網路訓練不起來怎麼辦-二" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2022/07/05/ML-2021-2-3-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%BA%8C/" class="article-date">
-  <time class="dt-published" datetime="2022-07-05T13:59:49.000Z" itemprop="datePublished">2022-07-05</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2022/07/05/ML-2021-2-3-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%BA%8C/">ML_2021_2-3 類神經網路訓練不起來怎麼辦(二)</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><ul>
-<li>之前課程(Ref. 2021版1-1)說到，在實際train data時我們不是實際把所有Data算出來對L微分求loss，而是把Data先分組切成batch，而所有batch看過一遍，才叫1 epoch</li>
-<li>我們可以設定shuffle，就是每個不同的epoch，data都會重新分組</li>
-</ul>
-<h1 id="Batch-size對模型之影響"><a href="#Batch-size對模型之影響" class="headerlink" title="Batch size對模型之影響"></a>Batch size對模型之影響</h1><ul>
-<li>首先比較兩個case：<br><img src="/../images/20220705_2.png"></li>
-<li>左邊沒有用batch，而右邊batch size &#x3D; 1</li>
-<li>左邊表示每次必須看完所有data，參數才能更新一次；右邊則相反，每看完一個data就更新一次參數</li>
-<li>一個是重攻擊長CD，一個是輕攻擊短CD (?)</li>
-</ul>
-<h2 id="大batch優缺"><a href="#大batch優缺" class="headerlink" title="大batch優缺"></a>大batch優缺</h2><h5 id="優點"><a href="#優點" class="headerlink" title="優點"></a>優點</h5><ul>
-<li>威力大(更新幅度大)且每步都很穩</li>
-</ul>
-<h5 id="缺點"><a href="#缺點" class="headerlink" title="缺點"></a>缺點</h5><ul>
-<li>超級慢<br>(小batch優缺則顛倒)</li>
-</ul>
-<h2 id="small-batch-or-big-batch"><a href="#small-batch-or-big-batch" class="headerlink" title="small batch or big batch?"></a>small batch or big batch?</h2><ul>
-<li>兩邊看似各自相對，但我們還沒考慮平行運算</li>
-<li>若考慮多核心，其實大batch不會比較慢</li>
-<li>以下圖為例，用tesla V100 GPU，batch size到1000都很合適(梯度法)<br><img src="/../images/20220705_1.png"></li>
-<li>因為高batch不一定更花時間，所以其實在平行運算下，大batch的每epoch速度甚至還比小epoch還快</li>
-<li>不過，就算是平行運算下，大batch一定比較好嗎?<ul>
-<li>與直覺相反的是，noisy大有時候反而可以促進訓練能力(如下圖)</li>
-</ul>
-</li>
-</ul>
-<p><img src="/../images/20220705_3.png" alt="upload successful"></p>
-<ul>
-<li>相同model(同bias)下，smaller batch size有更高的performance</li>
-<li>問題來源於optimizer fails(Ref. 2021版2-2關於如何判定問題是哪種)</li>
-</ul>
-<h2 id="為何small-batch-size可以有更好的結果？"><a href="#為何small-batch-size可以有更好的結果？" class="headerlink" title="為何small batch size可以有更好的結果？"></a>為何small batch size可以有更好的結果？</h2><ul>
-<li>一說是Noisy update is better for training<br>見下圖</li>
-</ul>
-<p><img src="/../images/pasted-1.png"><br>small batch下，或許$L^1$卡住了，但是因為$L^2$跟$L^1$有不小的差距，所以剛好可以讓參數更新然後把參數撞開critical point</p>
-<h3 id="small-batch-still-better-for-testing-data"><a href="#small-batch-still-better-for-testing-data" class="headerlink" title="small batch still better for testing data?"></a>small batch still better for testing data?</h3><ul>
-<li>我們知道了small batch在training set表現更好，那testing data是否也是如此呢?</li>
-<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1609.04836">根據這篇論文</a>，可以知道small batch在測試資料也有好表現</li>
-</ul>
-<p><img src="/../images/20220705_4.png" alt="upload successful"></p>
-<ul>
-<li>就算能把big batch model的準確率練到跟small batch model差不多(調hyper parameter)，在測試時也會有差距顯現 $\rightarrow$ big batch有overfitting問題<br>目前普遍認為的原因如下：<ul>
-<li>就算是卡在local minima，也有分好壞</li>
-<li>周圍平坦的local minima較好</li>
-<li>而論文認為大batch size傾向會讓我們走向尖銳的minima point<ul>
-<li>一種說法是，小batch size更動頻繁走向豐富，容易走出周圍很高的minima point(對於逃離critical point能力較高)，而停在平坦的minima point (Ref. 2021版2-2 鞍點)</li>
-</ul>
-<p>	</p>
-</li>
-<li>因為testing 跟 training的loss function，肯定會有所小偏差，如下圖<br><img src="/../images/20220705_6.png" alt="upload successful"></li>
-</ul>
-</li>
-</ul>
-<h2 id="Summary：Batch-comparasion"><a href="#Summary：Batch-comparasion" class="headerlink" title="Summary：Batch comparasion"></a>Summary：Batch comparasion</h2><p><img src="/../images/20220705_7.png" alt="upload successful"></p>
-<ul>
-<li>因此，batch size最終成為了一個hyper parameter</li>
-</ul>
-<h2 id="魚與熊掌兼得的辦法"><a href="#魚與熊掌兼得的辦法" class="headerlink" title="魚與熊掌兼得的辦法?"></a>魚與熊掌兼得的辦法?</h2><ul>
-<li>看ref啃論文  &#x3D; &#x3D;</li>
-</ul>
-<hr>
-<h1 id="另一個對抗saddle-point或minima的技術-momentum"><a href="#另一個對抗saddle-point或minima的技術-momentum" class="headerlink" title="另一個對抗saddle point或minima的技術 : momentum"></a>另一個對抗saddle point或minima的技術 : momentum</h1><ul>
-<li>當small gradient的時候，我們走到一個鞍點或局部最小點之後就會停下來</li>
-<li>但我們可以用物理式來思考，球由高處滾下來到最低點碰到上坡，不一定會停下來，因為有動能</li>
-</ul>
-<h2 id="Review-原本的梯度下降"><a href="#Review-原本的梯度下降" class="headerlink" title="Review : 原本的梯度下降"></a>Review : 原本的梯度下降</h2><p><img src="/../images/pasted-2.png"></p>
-<h2 id="梯度下降-momentum"><a href="#梯度下降-momentum" class="headerlink" title="梯度下降+momentum"></a>梯度下降+momentum</h2><ul>
-<li>簡單來說，就是加入慣性，額外參考上一次的移動軌跡</li>
-</ul>
-<p><img src="/../images/20220706_8.png" alt="upload successful"></p>
-<ul>
-<li>多了一個hyper parameter $\lambda$<br><img src="/../images/20220706_9.png" alt="upload successful"></li>
-</ul>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://laxiflora.github.io/2022/07/05/ML-2021-2-3-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%BA%8C/" data-id="cl5gzb2qo000af8ve51ar1cbk" data-title="ML_2021_2-3 類神經網路訓練不起來怎麼辦(二)" class="article-share-link">Teilen</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-ML-2022-2-1-再探寶可夢、數碼寶貝分類器" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2022/07/04/ML-2022-2-1-%E5%86%8D%E6%8E%A2%E5%AF%B6%E5%8F%AF%E5%A4%A2%E3%80%81%E6%95%B8%E7%A2%BC%E5%AF%B6%E8%B2%9D%E5%88%86%E9%A1%9E%E5%99%A8/" class="article-date">
-  <time class="dt-published" datetime="2022-07-04T14:24:04.000Z" itemprop="datePublished">2022-07-04</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2022/07/04/ML-2022-2-1-%E5%86%8D%E6%8E%A2%E5%AF%B6%E5%8F%AF%E5%A4%A2%E3%80%81%E6%95%B8%E7%A2%BC%E5%AF%B6%E8%B2%9D%E5%88%86%E9%A1%9E%E5%99%A8/">ML_2022_2-1 再探寶可夢、數碼寶貝分類器</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://laxiflora.github.io/2022/07/04/ML-2022-2-1-%E5%86%8D%E6%8E%A2%E5%AF%B6%E5%8F%AF%E5%A4%A2%E3%80%81%E6%95%B8%E7%A2%BC%E5%AF%B6%E8%B2%9D%E5%88%86%E9%A1%9E%E5%99%A8/" data-id="cl5gzb2qv000gf8ve75bteabv" data-title="ML_2022_2-1 再探寶可夢、數碼寶貝分類器" class="article-share-link">Teilen</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-ML-2021-2-2-類神經網路訓練不起來怎麼辦-一" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2022/07/04/ML-2021-2-2-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%B8%80/" class="article-date">
-  <time class="dt-published" datetime="2022-07-04T14:22:35.000Z" itemprop="datePublished">2022-07-04</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2022/07/04/ML-2021-2-2-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%B8%80/">ML_2021_2-2 類神經網路訓練不起來怎麼辦(一)</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <ul>
-<li>這裡只討論optimazion失靈的時候，如何把梯度下降做得更好</li>
-</ul>
-<h2 id="為何opti會失敗（grad）？"><a href="#為何opti會失敗（grad）？" class="headerlink" title="為何opti會失敗（grad）？"></a>為何opti會失敗（grad）？</h2><ul>
-<li>gradient decent&#x3D;0，使參數無法再更新</li>
-<li>點卡在local minima or saddle point(稱為卡在critical point)</li>
-</ul>
-<h3 id="分辨critical-point是saddle-point-or-local-minima"><a href="#分辨critical-point是saddle-point-or-local-minima" class="headerlink" title="分辨critical point是saddle point or local minima"></a>分辨critical point是saddle point or local minima</h3><ul>
-<li>雖然我們無法知道loss function長怎樣，但可以用泰勒展開式逼近</li>
-<li>給定一組參數$\theta’$</li>
-<li>則使用tayler series approximation<br>  原式為<br>  $$<br>  f(x) &#x3D; f(a) + \frac{f’(a)}{1!}(x-a) + \frac{f’’(a)}{2!}(x-a)^2 + ….<br>  $$<br>  我們取到2次微分，代入$x &#x3D; \theta及a &#x3D; \theta’$得到<br>  $$<br>  L(\theta) \sim L(\theta’)^Tg + \frac{1}{2}(\theta - \theta’)^TH(\theta - \theta’)<br>  ,其中 g &#x3D; \nabla L(\theta’)(請參考上週)<br>  $$<br><img src="/../images/20220704_1.png"></li>
-<li>其實g就是$L(\theta’)$對$\theta_i$的一階微分，Hessian是$L(\theta’)$對$\theta_{ij}$做二次微分</li>
-<li>因為critical point的時候g &#x3D; 0，所以我們要考慮H(也就是2次微分的部分)來分辨是哪種問題，2次微分可以看出地貌<br>把Hessian部分拉出來討論<br><img src="/../images/20220704_3.png"><br>要如何確認滿足哪個原因呢?<ul>
-<li>線性代數：正定、負定、均非 (看H的eigen value)</li>
-</ul>
-</li>
-</ul>
-<h3 id="範例說明"><a href="#範例說明" class="headerlink" title="範例說明"></a>範例說明</h3><ul>
-<li><p>給定一個模型$y &#x3D; w_1w_2x$，資料僅有一筆，$f(1)$時其label &#x3D; 1，且w1w2之間不具有任何激發函數，loss function採用MSE</p>
-</li>
-<li><p>則x&#x3D;1時透過爆搜我們可以得出下面的error surface(偷偷看正解圖)<br><img src="/../images/20220704_2.png"></p>
-</li>
-<li><p>其中鞍點的四周都是高牆，無法離開</p>
-</li>
-<li><p>局部最小點則是在範圍內找不到更低的點</p>
-</li>
-<li><p>但假設我們不知道這個error surface，我們可以應用上面的方法來測定他是哪個問題，根據MSE公式我們得出<br>$$<br>L &#x3D; (\hat{y}-w_1w_2x)^2 &#x3D; (1-w_1w_2)^2<br>$$<br>對他們做微分可以得到(注意chain rule)<br>$$<br>g &#x3D; \frac{\partial L}{\partial w_1} &#x3D; 2(1-w_1w_2)(-w_2)<br>$$<br>$$<br>g &#x3D; \frac{\partial L}{\partial w_2} &#x3D; 2(1-w_1w_2)(-w_1)<br>$$<br>代入g&#x3D;0，可以發現當$w_1 &#x3D; w_2 &#x3D; 0$，有critical point<br>接下來要確認他們是哪個問題，就繼續再做微分:<br><img src="/../images/20220704_5.png"><br>代入剛剛的$w_1 &#x3D; w_2 &#x3D; 0$得到<br>$$<br>H &#x3D;  <br>\left[<br>\begin{matrix}<br>     0 &amp;&amp; -2 \\\ -2 &amp;&amp; 0<br>\end{matrix}<br>\right] \tag{3}<br>$$<br>抓H的eigen values來知道他是哪個point</p>
-</li>
-</ul>
-<h2 id="case-saddle-point"><a href="#case-saddle-point" class="headerlink" title="case: saddle point"></a>case: saddle point</h2><ul>
-<li>我們可以藉由H來得到參數該移動的方向<br>令$\lambda$是H的一個eigen value, u為$\lambda$的其中一個eigen vector<br>則<br>$$<br>v^THv &#x3D; u^THu &#x3D; u^T(\lambda u) &#x3D; \lambda \vert \vert u \vert \vert^2<br>$$<br>若今天$\lambda &lt; 0$則必定$u^THu&lt;0$，回顧剛剛的式子<br>$$<br>L(\theta) \sim L(\theta’)^Tg + \frac{1}{2}(\theta - \theta’)^TH(\theta - \theta’)<br>$$<br>可以知道$L(\theta)必定&gt;L(\theta’)$<br><img src="/../images/20220704_6.png"><br>我們只要將$\theta’沿著u的方向更新u得到\theta$，就可以再次降低loss</li>
-</ul>
-<h3 id="範例說明-1"><a href="#範例說明-1" class="headerlink" title="範例說明"></a>範例說明</h3><ul>
-<li>延續剛剛的例子，我們知道$H的\lambda_1 &#x3D; 2, \lambda_2 &#x3D;-2$，屬於saddle point(非正定與負定)</li>
-<li>取$\lambda_2 &#x3D; -2 , u &#x3D; (1,1)$，則把$\theta &#x3D; (0,0)+(1,1)$，就可以逃出saddle point</li>
-<li>實務上不易使用，因為要做出2次微分且還需要用到找出該矩陣的eigen value，計算量過大 (還有別招可以用)</li>
-</ul>
-<h2 id="Saddle-point-vs-Local-Minima"><a href="#Saddle-point-vs-Local-Minima" class="headerlink" title="Saddle point vs. Local Minima"></a>Saddle point vs. Local Minima</h2><ul>
-<li>在三維的密閉石棺中，在更高維度未必是密閉的</li>
-<li>在低維度的local minima中，是否只是高維中的saddle point? </li>
-<li>當參數超級多，是否極度有可能local minima其實只是saddle point? (假說)</li>
-<li>在實作中，絕大多數的模型，critical point所在點中，幾乎找不到所有eigen value均&gt;0的範例，表示我們幾乎不可能找到完全的local minima</li>
-<li>定義一個數值”Minimum ratio &#x3D; $\frac{正\lambda數}{\lambda數}$”，表示你的critical point有多像local minima</li>
-<li>所以我們可以知道，通常一個模型train到loss卡住，極高可能是卡在一個saddle point</li>
-</ul>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://laxiflora.github.io/2022/07/04/ML-2021-2-2-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%B8%80/" data-id="cl5gzb2qk0006f8vebxlkg6vn" data-title="ML_2021_2-2 類神經網路訓練不起來怎麼辦(一)" class="article-share-link">Teilen</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-ML-2021-2-1-機器學習任務攻略" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2022/07/04/ML-2021-2-1-%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E4%BB%BB%E5%8B%99%E6%94%BB%E7%95%A5/" class="article-date">
-  <time class="dt-published" datetime="2022-07-04T14:20:49.000Z" itemprop="datePublished">2022-07-04</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2022/07/04/ML-2021-2-1-%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E4%BB%BB%E5%8B%99%E6%94%BB%E7%95%A5/">ML_2021_2-1 機器學習任務攻略</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <h2 id="機器學習任務攻略"><a href="#機器學習任務攻略" class="headerlink" title="機器學習任務攻略"></a>機器學習任務攻略</h2><p><img src="/../images/202200703_7.png"><br>  - 當有一個模型的表現不佳，有時候不一定是overfitting的問題<br>  - 問題來源可能有數種<br>    - Model Bias：模型本身的彈性不足，值域過小導致找不到最佳解<br>    - Optimization Issue：模型的彈性是夠的，也就是$f^*(x)$存在，只是因為optimizer不給力，始終無法把$\theta$帶到loss更小的地方</p>
-<h2 id="如何分辨是model-bias-issue-or-Optimization-issue"><a href="#如何分辨是model-bias-issue-or-Optimization-issue" class="headerlink" title="如何分辨是model bias issue or Optimization issue?"></a>如何分辨是model bias issue or Optimization issue?</h2><p>  - 以下圖為例<br><img src="/../images/20220703_1.png"></p>
-<ul>
-<li>通常我們會認為這是模型overfitting了，才會導致層數增加反倒命中率下降</li>
-<li>overfitting固然有可能，但它不是唯一的可能性，我們應該要從訓練資料的loss下手<br><img src="/../images/20220703_2.png"></li>
-<li>可以發現就算是訓練資料，56層的loss也是大於20層的，故排除overfitting的可能</li>
-<li>至於模型彈性這個可能也可以排除，因為56層的複雜度&gt;20層，故56層的loss只可能比20層還小，若是顛倒的話表示應該不是模型彈性問題，而是optimizer的鍋</li>
-</ul>
-<hr>
-<ul>
-<li>若是發現類似優化器的問題，可以試試看先跑一些比較淺層的model或是簡易的model(如linear regression)，先觀察得出來的結果</li>
-<li>再跑深度的model，比較他們的結果，若深度的結果沒比較好，可以考慮換optimizer<br>原因樹狀圖(?<br><img src="/../images/20220703_3.png"></li>
-</ul>
-<h2 id="Overfitting的成因"><a href="#Overfitting的成因" class="headerlink" title="Overfitting的成因"></a>Overfitting的成因</h2><p><img src="/../images/20220703_4.png"></p>
-<ol>
-<li>若訓練資料不足，模型彈性過高也可能導致overfitting(增加training data最有效)<ul>
-<li>data augmentation也是一種方法(ex.圖片翻轉作為新資料)</li>
-</ul>
-</li>
-<li>降低模型的彈性也可以降低這個可能</li>
-<li>採用一些技巧<ul>
-<li>Early stopping</li>
-<li>Regularization</li>
-<li>Dropout</li>
-<li>Less features</li>
-</ul>
-</li>
-</ol>
-<h2 id="衡量模型"><a href="#衡量模型" class="headerlink" title="衡量模型"></a>衡量模型</h2><ul>
-<li>或許某個model在所有model裡面test成績最突出，但它未必會真的是最好的模型(運氣問題)<br><img src="/../images/20220703_5.png"></li>
-<li>極端範例，一個模型剛好隨機出了最好的結果</li>
-<li>所以testing set有分public跟private，避免一直上傳模型賭出最好成績</li>
-</ul>
-<h3 id="N-fold-Cross-Validation"><a href="#N-fold-Cross-Validation" class="headerlink" title="N-fold Cross Validation"></a>N-fold Cross Validation</h3><ul>
-<li>把train set切成3份，2份是training data，1份是val data</li>
-<li>交叉身分去訓練n次</li>
-</ul>
-<p><img src="/../images/20220703_6.png" alt="upload successful"></p>
-<h4 id="data-mismatch"><a href="#data-mismatch" class="headerlink" title="data mismatch"></a>data mismatch</h4><ul>
-<li>training data 跟 testing data有不同分布</li>
-<li>ex. 機器學習2020年觀看人數預測2021年觀看人數，很高可能會mismatch</li>
-</ul>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://laxiflora.github.io/2022/07/04/ML-2021-2-1-%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E4%BB%BB%E5%8B%99%E6%94%BB%E7%95%A5/" data-id="cl5gzb2qi0004f8vecrhbbmd4" data-title="ML_2021_2-1 機器學習任務攻略" class="article-share-link">Teilen</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-ML-2022-1-1-正課內容介紹" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2022/07/04/ML-2022-1-1-%E6%AD%A3%E8%AA%B2%E5%85%A7%E5%AE%B9%E4%BB%8B%E7%B4%B9/" class="article-date">
-  <time class="dt-published" datetime="2022-07-04T14:19:15.000Z" itemprop="datePublished">2022-07-04</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2022/07/04/ML-2022-1-1-%E6%AD%A3%E8%AA%B2%E5%85%A7%E5%AE%B9%E4%BB%8B%E7%B4%B9/">ML_2022_1-1 正課內容介紹</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <h1 id="正課內容介紹"><a href="#正課內容介紹" class="headerlink" title="正課內容介紹"></a>正課內容介紹</h1><h3 id="Supervised-Learning"><a href="#Supervised-Learning" class="headerlink" title="Supervised Learning"></a>Supervised Learning</h3><h3 id="Self-supervised-Learning"><a href="#Self-supervised-Learning" class="headerlink" title="Self-supervised Learning"></a>Self-supervised Learning</h3><ul>
-<li>在訓練之前先做基本功(Pre-Train)</li>
-<li>訓練集就不需要label了</li>
-<li>比如在網路上先爬相關資料</li>
-<li>以分類圖片為例，實際分類圖片的過程稱為(Downstream)</li>
-<li>Pre-trained model(又稱Foundation Model)就好像OS，Downstream就像APP<ul>
-<li>最出名的模型就是BERT</li>
-</ul>
-</li>
-</ul>
-<h3 id="Lec6-GAN"><a href="#Lec6-GAN" class="headerlink" title="Lec6 : GAN"></a>Lec6 : GAN</h3><ul>
-<li>一般函數需要大量成對的X與Y來讓他們配對</li>
-<li>現今只需要大量的X，就可自行產生Y</li>
-</ul>
-<h3 id="Lac12-Reinforcement-Learning"><a href="#Lac12-Reinforcement-Learning" class="headerlink" title="Lac12 : Reinforcement Learning"></a>Lac12 : Reinforcement Learning</h3><ul>
-<li>當資料很難以標註時使用 (ex.學會下圍棋)</li>
-</ul>
-<h2 id="進階課題"><a href="#進階課題" class="headerlink" title="進階課題"></a>進階課題</h2><h3 id="Lac8-Anomaly-Detection"><a href="#Lac8-Anomaly-Detection" class="headerlink" title="Lac8 : Anomaly Detection"></a>Lac8 : Anomaly Detection</h3><ul>
-<li>過擬合等問題</li>
-</ul>
-<h3 id="Lac9-Explainable-AI-可解釋性AI"><a href="#Lac9-Explainable-AI-可解釋性AI" class="headerlink" title="Lac9 : Explainable AI (可解釋性AI)"></a>Lac9 : Explainable AI (可解釋性AI)</h3><ul>
-<li>不只是知道答案，還要讓機器知道為甚麼</li>
-<li>EX.PNG與JPG輸入的問題ww</li>
-</ul>
-<h3 id="Lac10-Model-Attack"><a href="#Lac10-Model-Attack" class="headerlink" title="Lac10 : Model Attack"></a>Lac10 : Model Attack</h3><ul>
-<li>在圖片加入一點點雜訊，讓圖片難以識別</li>
-<li>介紹攻擊技術與防禦可能性</li>
-</ul>
-<h3 id="Lac11-Domain-Adaptation"><a href="#Lac11-Domain-Adaptation" class="headerlink" title="Lac11 : Domain Adaptation"></a>Lac11 : Domain Adaptation</h3><ul>
-<li>當訓練資料與測試資料的分布不相似</li>
-<li>EX. 手寫數字辨識，黑白與彩色的差別</li>
-</ul>
-<h3 id="Lac13-Network-Compression-模型壓縮"><a href="#Lac13-Network-Compression-模型壓縮" class="headerlink" title="Lac13 : Network Compression(模型壓縮)"></a>Lac13 : Network Compression(模型壓縮)</h3><ul>
-<li>在嵌入式、小硬體跑ML</li>
-</ul>
-<h3 id="Lac14-Life-long-Learning"><a href="#Lac14-Life-long-Learning" class="headerlink" title="Lac14 : Life-long Learning"></a>Lac14 : Life-long Learning</h3><ul>
-<li>機器能像人一樣一直學習所有技術</li>
-<li>挑戰有哪些</li>
-</ul>
-<h3 id="Lac15-Meta-Learning-學習如何學習"><a href="#Lac15-Meta-Learning-學習如何學習" class="headerlink" title="Lac15 : Meta Learning(學習如何學習)"></a>Lac15 : Meta Learning(學習如何學習)</h3><ul>
-<li>以往都是人設計學習演算法給機器</li>
-<li>讓機器從大量學習任務裡面發明更好的演算法</li>
-<li>Few-shot Learning通常與他相關</li>
-</ul>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://laxiflora.github.io/2022/07/04/ML-2022-1-1-%E6%AD%A3%E8%AA%B2%E5%85%A7%E5%AE%B9%E4%BB%8B%E7%B4%B9/" data-id="cl5gzb2qv000ff8vef6kohvy4" data-title="ML_2022_1-1 正課內容介紹" class="article-share-link">Teilen</a>
+      <a data-url="https://laxiflora.github.io/2022/07/06/ML-2021-2-5-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E5%9B%9B/" data-id="cl5zfyy01000bs4veezf30j6o" data-title="ML_2021_2-5 類神經網路訓練不起來怎麼辦(四)" class="article-share-link">Partager</a>
       
       
       
@@ -1140,7 +1192,7 @@
 
   <nav id="page-nav">
     
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/">weiter &raquo;</a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/2/">Suivant &raquo;</a>
   </nav>
 
 </section>
@@ -1152,9 +1204,9 @@
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Tags</h3>
+    <h3 class="widget-title">Mot-clés</h3>
     <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/" rel="tag">C++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/" rel="tag">Hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Pytorch/" rel="tag">Pytorch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9D%8E%E5%AE%8F%E6%AF%85%E7%B3%BB%E5%88%97/" rel="tag">李宏毅系列</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92/" rel="tag">機器學習</a></li></ul>
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/BERT/" rel="tag">BERT</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/" rel="tag">C++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/" rel="tag">Hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/NLP/" rel="tag">NLP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Pytorch/" rel="tag">Pytorch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Transformer/" rel="tag">Transformer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9D%8E%E5%AE%8F%E6%AF%85%E7%B3%BB%E5%88%97/" rel="tag">李宏毅系列</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92/" rel="tag">機器學習</a></li></ul>
     </div>
   </div>
 
@@ -1162,16 +1214,16 @@
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Tag Cloud</h3>
+    <h3 class="widget-title">Nuage de mot-clés</h3>
     <div class="widget tagcloud">
-      <a href="/tags/C/" style="font-size: 10px;">C++</a> <a href="/tags/Hexo/" style="font-size: 20px;">Hexo</a> <a href="/tags/Pytorch/" style="font-size: 10px;">Pytorch</a> <a href="/tags/%E6%9D%8E%E5%AE%8F%E6%AF%85%E7%B3%BB%E5%88%97/" style="font-size: 10px;">李宏毅系列</a> <a href="/tags/%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92/" style="font-size: 20px;">機器學習</a>
+      <a href="/tags/BERT/" style="font-size: 10px;">BERT</a> <a href="/tags/C/" style="font-size: 10px;">C++</a> <a href="/tags/Hexo/" style="font-size: 15px;">Hexo</a> <a href="/tags/NLP/" style="font-size: 10px;">NLP</a> <a href="/tags/Pytorch/" style="font-size: 10px;">Pytorch</a> <a href="/tags/Transformer/" style="font-size: 10px;">Transformer</a> <a href="/tags/%E6%9D%8E%E5%AE%8F%E6%AF%85%E7%B3%BB%E5%88%97/" style="font-size: 10px;">李宏毅系列</a> <a href="/tags/%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92/" style="font-size: 20px;">機器學習</a>
     </div>
   </div>
 
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Archiv</h3>
+    <h3 class="widget-title">Archives</h3>
     <div class="widget">
       <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">July 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">June 2022</a></li></ul>
     </div>
@@ -1181,28 +1233,28 @@
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">letzter Beitrag</h3>
+    <h3 class="widget-title">Articles récents</h3>
     <div class="widget">
       <ul>
         
           <li>
-            <a href="/2022/07/11/ML-LEE-2022-hw3/">ML_LEE_2022_hw3</a>
+            <a href="/2022/07/24/ML-2021-5-3-Transformer%EF%BC%88%E4%B8%8B%EF%BC%89/">ML_2021_5-3 Transformer（下）</a>
           </li>
         
           <li>
-            <a href="/2022/07/09/ML-2021-3-1-%E5%8D%B7%E7%A9%8D%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF/">ML_2021_3-1 卷積神經網路</a>
+            <a href="/2022/07/23/ML-2021-5-2-Transformer%EF%BC%88%E4%B8%8A%EF%BC%89/">ML_2021_5-2 Transformer（上）</a>
           </li>
         
           <li>
-            <a href="/2022/07/07/ML-2021-2-6-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%BA%94/">ML_2021_2-6 類神經網路訓練不起來怎麼辦(五)</a>
+            <a href="/2022/07/23/ML-LEE-2022-hw4/">ML_LEE_2022_hw4</a>
           </li>
         
           <li>
-            <a href="/2022/07/06/ML-2021-2-5-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E5%9B%9B/">ML_2021_2-5 類神經網路訓練不起來怎麼辦(四)</a>
+            <a href="/2022/07/22/Efficient-Transformers-A-Survey%E7%AD%86%E8%A8%98/">Efficient Transformers:A Survey筆記</a>
           </li>
         
           <li>
-            <a href="/2022/07/06/ML-2021-2-4-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%B8%89/">ML_2021_2-4 類神經網路訓練不起來怎麼辦(三)</a>
+            <a href="/2022/07/13/ML-2021-4-2-%E8%87%AA%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%A9%9F%E5%88%B6%EF%BC%88%E4%B8%8B%EF%BC%89/">ML_2021_4-2 自注意力機制（下）</a>
           </li>
         
       </ul>
@@ -1219,7 +1271,7 @@
     <div id="footer-info" class="inner">
       
       &copy; 2022 劉宇承<br>
-      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+      Propulsé par <a href="https://hexo.io/" target="_blank">Hexo</a>
     </div>
   </div>
 </footer>
