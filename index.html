@@ -63,10 +63,10 @@
         
           <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
         
-        <a id="nav-search-btn" class="nav-icon" title="Suche"></a>
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
       </nav>
       <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Suche"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://laxiflora.github.io"></form>
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://laxiflora.github.io"></form>
       </div>
     </div>
   </div>
@@ -74,6 +74,151 @@
 
       <div class="outer">
         <section id="main">
+  
+    <article id="post-ML-2021-6-2-生成式對抗網路-二-理論介紹與WGAN" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2022/07/28/ML-2021-6-2-%E7%94%9F%E6%88%90%E5%BC%8F%E5%B0%8D%E6%8A%97%E7%B6%B2%E8%B7%AF-%E4%BA%8C-%E7%90%86%E8%AB%96%E4%BB%8B%E7%B4%B9%E8%88%87WGAN/" class="article-date">
+  <time class="dt-published" datetime="2022-07-27T16:53:06.000Z" itemprop="datePublished">2022-07-28</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2022/07/28/ML-2021-6-2-%E7%94%9F%E6%88%90%E5%BC%8F%E5%B0%8D%E6%8A%97%E7%B6%B2%E8%B7%AF-%E4%BA%8C-%E7%90%86%E8%AB%96%E4%BB%8B%E7%B4%B9%E8%88%87WGAN/">ML_2021_6-2 生成式對抗網路(二) - 理論介紹與WGAN</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://laxiflora.github.io/2022/07/28/ML-2021-6-2-%E7%94%9F%E6%88%90%E5%BC%8F%E5%B0%8D%E6%8A%97%E7%B6%B2%E8%B7%AF-%E4%BA%8C-%E7%90%86%E8%AB%96%E4%BB%8B%E7%B4%B9%E8%88%87WGAN/" data-id="cl63ujj3c000phkve800lgki2" data-title="ML_2021_6-2 生成式對抗網路(二) - 理論介紹與WGAN" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-ML-2021-6-1-生成式對抗網路-一-基本概念介紹" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2022/07/27/ML-2021-6-1-%E7%94%9F%E6%88%90%E5%BC%8F%E5%B0%8D%E6%8A%97%E7%B6%B2%E8%B7%AF-%E4%B8%80-%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E4%BB%8B%E7%B4%B9/" class="article-date">
+  <time class="dt-published" datetime="2022-07-27T14:52:40.000Z" itemprop="datePublished">2022-07-27</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2022/07/27/ML-2021-6-1-%E7%94%9F%E6%88%90%E5%BC%8F%E5%B0%8D%E6%8A%97%E7%B6%B2%E8%B7%AF-%E4%B8%80-%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E4%BB%8B%E7%B4%B9/">ML_2021_6-1 生成式對抗網路(一) - 基本概念介紹</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p><img src="/../images/20220727_4.png"></p>
+<ul>
+<li>到目前為止的network都是一個function</li>
+<li>這次則是把network當作generator使用<ul>
+<li>現在的network會加入一個new variable z，現在network就有兩筆輸入了</li>
+</ul>
+</li>
+<li>z由某個simple distribution生成(distribution必須夠簡單 ex. uniform)</li>
+<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1406.2661">初代GAN</a></li>
+</ul>
+<h1 id="Why-需要輸出是一個分布"><a href="#Why-需要輸出是一個分布" class="headerlink" title="Why 需要輸出是一個分布"></a>Why 需要輸出是一個分布</h1><ul>
+<li>以video prediction「小精靈」為例說明<ul>
+<li>給定previous frames，輸出預測下一個frame會出現的畫面</li>
+<li>但是在類似畫面下，有時候小精靈往左轉，有時候他往右轉，導致分裂(機器選擇兩面討好，這樣對兩個case的loss最小)<br>    -&gt; 讓機器的輸出不再單一，而是一個機率性的分佈  <br><img src="/../images/pasted-32.png"></li>
+</ul>
+</li>
+</ul>
+<p>    </p>
+<p>在機器的輸出需要創造性的時候(同一輸入可能有多種輸出)，就會需要distribution<br>    - ex. 繪圖、寫文章、對話</p>
+<h1 id="Generative-Adversarial-Network-GAN"><a href="#Generative-Adversarial-Network-GAN" class="headerlink" title="Generative Adversarial Network(GAN)"></a>Generative Adversarial Network(GAN)</h1><ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/hindupuravinash/the-gan-zoo">有很多種變形</a></li>
+</ul>
+<h2 id="Anime-face-ganeration"><a href="#Anime-face-ganeration" class="headerlink" title="Anime face ganeration"></a>Anime face ganeration</h2><ul>
+<li>先把x輸入拿掉，並假設z輸入是normal distribution</li>
+<li>其實二次元人物的臉(圖片)就只是一個高維向量</li>
+<li>輸入的distribution複雜性其實影響不大，因generator會想辦法把它變複雜</li>
+</ul>
+<h2 id="Discriminator"><a href="#Discriminator" class="headerlink" title="Discriminator"></a>Discriminator</h2><ul>
+<li>在GAN中會有這樣一個神經網路，用於判別輸出的東西是否真實</li>
+<li>輸入是產生的圖片，而輸出則是一種純量[0.1]</li>
+<li>可用CNN、transformer…等都可以</li>
+</ul>
+<h2 id="Basic-Idea-of-GAN"><a href="#Basic-Idea-of-GAN" class="headerlink" title="Basic Idea of GAN"></a>Basic Idea of GAN</h2><p>示意圖:<br><img src="/../images/20220728_6.png"></p>
+<ul>
+<li><p>就像物競天擇的演化一樣，discriminator會去除掉得分低的GAN成品，而GAN成品就會「天擇」成discriminator比較能接受的情況</p>
+</li>
+<li><p>但是discriminator也會進化，讓GAN必須再繼續進行進化</p>
+</li>
+<li><p>discriminator與generator通常互相視為敵人<br>GAN版示意圖(毛圖注意)<br><img src="/../images/20220727_8.png"></p>
+</li>
+</ul>
+<h2 id="Algorithm"><a href="#Algorithm" class="headerlink" title="Algorithm"></a>Algorithm</h2><ol>
+<li><p>Init gen and discriminator</p>
+</li>
+<li><p>固定住Generator (G)，輸入一陀random sampled vector，吐出成品，更新discriminator (D)</p>
+<ul>
+<li>拿一些「ground truth」 (ex. 真正的二次元人物)，互相比較相似度，並且更新D</li>
+<li>對D來說這是一個分類問題，或是regression問題 (正確圖片標1，錯的標0)，總之就是看個人想怎麼做</li>
+</ul>
+</li>
+<li><p>固定D，更新G，G要練習把D的acc升到最高(去欺騙D)</p>
+<ul>
+<li>把兩個neural network接起來，就會變成「輸入是一個向量，而輸出會是一個分數」，所以現在情況等同於maximize score (gradient ascent)<br>    - 當然固定D，所以「評分系統」不可變動</li>
+</ul>
+</li>
+<li><p>LOOP，反覆訓練G、D<br><img src="/../images/pasted-33.png"></p>
+</li>
+</ol>
+<hr>
+<h2 id="現代GAN"><a href="#現代GAN" class="headerlink" title="現代GAN"></a>現代GAN</h2><ul>
+<li><p><a target="_blank" rel="noopener" href="https://www.gwern.net/Faces">StyleGAN</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1710.10196">Progressive GAN</a></p>
+</li>
+<li><p>GAN可以產生沒看過的人臉，做一些內插<br><img src="/../images/20220728_10.png"></p>
+</li>
+<li><p>下一堂講解theory behind GAN</p>
+</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://laxiflora.github.io/2022/07/27/ML-2021-6-1-%E7%94%9F%E6%88%90%E5%BC%8F%E5%B0%8D%E6%8A%97%E7%B6%B2%E8%B7%AF-%E4%B8%80-%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E4%BB%8B%E7%B4%B9/" data-id="cl63ujj3b000ohkve2u479z5f" data-title="ML_2021_6-1 生成式對抗網路(一) - 基本概念介紹" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
   
     <article id="post-ML-2021-5-3-Transformer（下）" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
@@ -265,7 +410,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://laxiflora.github.io/2022/07/24/ML-2021-5-3-Transformer%EF%BC%88%E4%B8%8B%EF%BC%89/" data-id="cl62j1qu7000tu0ve7ahd28g3" data-title="ML_2021_5-3 Transformer（下）" class="article-share-link">Teilen</a>
+      <a data-url="https://laxiflora.github.io/2022/07/24/ML-2021-5-3-Transformer%EF%BC%88%E4%B8%8B%EF%BC%89/" data-id="cl63ujj3b000nhkve0r67g60q" data-title="ML_2021_5-3 Transformer（下）" class="article-share-link">Share</a>
       
       
       
@@ -389,7 +534,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://laxiflora.github.io/2022/07/23/ML-2021-5-2-Transformer%EF%BC%88%E4%B8%8A%EF%BC%89/" data-id="cl62j1qu5000pu0veg0e7fy8m" data-title="ML_2021_5-2 Transformer（上）" class="article-share-link">Teilen</a>
+      <a data-url="https://laxiflora.github.io/2022/07/23/ML-2021-5-2-Transformer%EF%BC%88%E4%B8%8A%EF%BC%89/" data-id="cl63ujj39000khkvee3vk66x7" data-title="ML_2021_5-2 Transformer（上）" class="article-share-link">Share</a>
       
       
       
@@ -481,7 +626,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://laxiflora.github.io/2022/07/23/ML-LEE-2022-hw4/" data-id="cl62j1qua000yu0ve5kok7846" data-title="ML_LEE_2022_hw4" class="article-share-link">Teilen</a>
+      <a data-url="https://laxiflora.github.io/2022/07/23/ML-LEE-2022-hw4/" data-id="cl63ujj3d000vhkve8ufgcfrs" data-title="ML_LEE_2022_hw4" class="article-share-link">Share</a>
       
       
       
@@ -569,7 +714,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://laxiflora.github.io/2022/07/22/Efficient-Transformers-A-Survey%E7%AD%86%E8%A8%98/" data-id="cl62j1qty0006u0veeneu3o48" data-title="Efficient Transformers:A Survey筆記" class="article-share-link">Teilen</a>
+      <a data-url="https://laxiflora.github.io/2022/07/22/Efficient-Transformers-A-Survey%E7%AD%86%E8%A8%98/" data-id="cl63ujj2z0004hkveb5jnbcrr" data-title="Efficient Transformers:A Survey筆記" class="article-share-link">Share</a>
       
       
       
@@ -689,7 +834,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://laxiflora.github.io/2022/07/13/ML-2021-4-2-%E8%87%AA%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%A9%9F%E5%88%B6%EF%BC%88%E4%B8%8B%EF%BC%89/" data-id="cl62j1qu6000qu0ve13ku3bro" data-title="ML_2021_4-2 自注意力機制（下）" class="article-share-link">Teilen</a>
+      <a data-url="https://laxiflora.github.io/2022/07/13/ML-2021-4-2-%E8%87%AA%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%A9%9F%E5%88%B6%EF%BC%88%E4%B8%8B%EF%BC%89/" data-id="cl63ujj3a000lhkveef0hamp2" data-title="ML_2021_4-2 自注意力機制（下）" class="article-share-link">Share</a>
       
       
       
@@ -804,7 +949,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://laxiflora.github.io/2022/07/13/ML-2021-4-1-%E8%87%AA%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%A9%9F%E5%88%B6%EF%BC%88%E4%B8%8A%EF%BC%89/" data-id="cl62j1qu3000iu0ve2yyxa1dk" data-title="ML_2021_4-1 自注意力機制（上）" class="article-share-link">Teilen</a>
+      <a data-url="https://laxiflora.github.io/2022/07/13/ML-2021-4-1-%E8%87%AA%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%A9%9F%E5%88%B6%EF%BC%88%E4%B8%8A%EF%BC%89/" data-id="cl63ujj38000jhkve1xom8biq" data-title="ML_2021_4-1 自注意力機制（上）" class="article-share-link">Share</a>
       
       
       
@@ -953,7 +1098,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://laxiflora.github.io/2022/07/11/ML-LEE-2022-hw3/" data-id="cl62j1qu7000uu0ve1ksa4eci" data-title="ML_LEE_2022_hw3" class="article-share-link">Teilen</a>
+      <a data-url="https://laxiflora.github.io/2022/07/11/ML-LEE-2022-hw3/" data-id="cl63ujj3g000xhkvedxbu95r2" data-title="ML_LEE_2022_hw3" class="article-share-link">Share</a>
       
       
       
@@ -1140,207 +1285,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://laxiflora.github.io/2022/07/09/ML-2021-3-1-%E5%8D%B7%E7%A9%8D%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF/" data-id="cl62j1qu1000fu0ve6kwwe8gc" data-title="ML_2021_3-1 卷積神經網路" class="article-share-link">Teilen</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-ML-2021-2-6-類神經網路訓練不起來怎麼辦-五" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2022/07/07/ML-2021-2-6-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%BA%94/" class="article-date">
-  <time class="dt-published" datetime="2022-07-07T08:34:18.000Z" itemprop="datePublished">2022-07-07</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2022/07/07/ML-2021-2-6-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%BA%94/">ML_2021_2-6 類神經網路訓練不起來怎麼辦(五)</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <ul>
-<li>簡短介紹Batch Normalization的技術</li>
-<li>另一種直接改變error surface的技術(相對於動態lr，一種改善訓練的方法)</li>
-</ul>
-<p><img src="/../images/20220707_1.png" alt="upload successful"></p>
-<ul>
-<li>考慮以下模型，當$x_1$輸出很小、$x_2$輸出很大的時候，就會產生error surface橢圓的問題</li>
-<li>因為$x_1$小，就算$w_1$變化很大，y的變化量也不會很大(因為相乘);$x_2$則相反</li>
-<li>考慮可以把$x_1、x_2$相同的數值範圍<br><img src="/../images/20220707_2.png" alt="upload successful"></li>
-</ul>
-<h1 id="Feature-Normalization"><a href="#Feature-Normalization" class="headerlink" title="Feature Normalization"></a>Feature Normalization</h1><h2 id="其中一種normalization做法"><a href="#其中一種normalization做法" class="headerlink" title="其中一種normalization做法"></a>其中一種normalization做法</h2><ul>
-<li>對多筆feature vector的同一dimention做標準化<br><img src="/../images/pasted-11.png"></li>
-<li>標準化以後，該dim的平均值&#x3D;0，$\sigma$ &#x3D; 1</li>
-<li>像這樣就可以製造比較平衡的error surface，方便optimization作業</li>
-</ul>
-<h2 id="Case：In-deep-learning"><a href="#Case：In-deep-learning" class="headerlink" title="Case：In deep learning"></a>Case：In deep learning</h2><ul>
-<li>因為深度學習有多個層，雖然在一開始我們把x做了標準化，但是在經過一層layer計算以後，數值又失去了標準化，故我們需要進行多次的標準化</li>
-<li>標準化要放在激發函數前後的影響並不大<br><img src="/../images/pasted-12.png"></li>
-<li>以上圖為例，我們需要對z再度進行標準化，公式如下(feature&#x3D;3的case)<br><img src="/../images/20220707_4.png" alt="upload successful"><br>則可以得到<br>$$\tilde{z}^i &#x3D; \frac{z^i-\mu}{\sigma}$$<br>後續層也依此類推</li>
-<li>這個feature標準化的過程使得所有feature之間有了關聯性 -&gt; 這是一個network<br><img src="/../images/20220707_5.png" alt="upload successful"></li>
-</ul>
-<h2 id="Case：training-in-batch-approach"><a href="#Case：training-in-batch-approach" class="headerlink" title="Case：training in batch approach?"></a>Case：training in batch approach?</h2><ul>
-<li>這樣的標準化流程會跟著batch(一組batch內部做標準化)跑，不是所有feature納進來標準化</li>
-<li>這樣的作法稱作batch normalization<ul>
-<li>問題來了，我們會需要足夠大的batch size才能做一個好的標準化(誤差會比較小)<br><img src="/../images/20220707_6.png"></li>
-</ul>
-</li>
-<li>$\beta、\gamma$是模型的另外兩個參數，透過學習得到</li>
-<li>為啥需要這兩個參數?<ul>
-<li>因為標準化會保證$\tilde{z}$之平均值 &#x3D; 0，這樣的結果有可能會對模型產生一些負面影響，所以我們需要$\beta、\gamma$兩個參數來讓數值變成比較貼合模型需求</li>
-<li>問題：這樣不就又破壞掉標準化平衡了嗎?<ul>
-<li>我們初始設定$\gamma &#x3D; 1 , \beta &#x3D; 0$，讓他們初始為真的標準化</li>
-<li>讓模型來決定值該怎麼分步</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<h3 id="Batch-normalization-testing-data"><a href="#Batch-normalization-testing-data" class="headerlink" title="Batch normalization - testing data"></a>Batch normalization - testing data</h3><ul>
-<li>剛剛講的都是training的情況下</li>
-<li>testing又稱inference</li>
-<li>當真的是線上模型時，我們必須每一筆資料進來就進行預測，不能用batch</li>
-<li>當數據只有一筆，怎麼做normalization($\mu&#x3D;? , \sigma&#x3D;?$)</li>
-<li>實作上的解法(pytorch)：<ul>
-<li>在training若有用這個技術，每次batch算出來的$\mu_i , \sigma_i$就會記錄下來再做以下處理  <br><img src="/../images/pasted-13.png"></li>
-</ul>
-</li>
-</ul>
-<p>在實際test時，就代入<br>$$\tilde{z} &#x3D; \frac{z-\bar{u}}{\bar{\sigma}}<br>$$</p>
-<ul>
-<li>Batch normalization的實際測試結果，<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1502.03167">連結</a><br><img src="/../images/20220707_7.png"></li>
-<li>紅色線是有做batch normalization</li>
-<li>粉色線，使用sigmoid function</li>
-<li>其他線，就是lr乘上$x$倍</li>
-<li>黑色沒有用BN，用inception</li>
-<li>收斂速度更快，但結果差不多</li>
-</ul>
-<h2 id="How-does-Batch-Normalization-help-optimization"><a href="#How-does-Batch-Normalization-help-optimization" class="headerlink" title="How does Batch Normalization help optimization?"></a>How does Batch Normalization help optimization?</h2><ul>
-<li><p>下面這篇論文的作者發明這個詞”Internal covariate shift”</p>
-</li>
-<li><p>根據<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1805.11604">這篇論文</a>所認為有以下可能<br><img src="/../images/pasted-14.png"></p>
-</li>
-<li><p>我們做參數update，將A變成A’，B變成B’，但是B的變動是根據之前算出來的a作為input，當整體更新了以後，B’要面對的input卻不再是a，而是經過A’算出來的a’，故導致仍舊失準</p>
-<ul>
-<li>而Batch normalization的作法，是讓a跟a’有相似的分布(similar statistics)，故誤差會比較接近</li>
-</ul>
-</li>
-<li><p>但是Experimental result並不支持這個緣故(打臉)</p>
-<ul>
-<li>打臉者認為實驗下來，a跟a’的分布都差不多，而且不管分布是不是差很多，影響都不大，於是這個假說是錯的(不是batch normalization的關鍵)</li>
-<li>不過實驗跟理論依然證明，Batch normalization依然會改變error surface的地貌<br><img src="/../images/20220707_9.png"></li>
-<li>此人認為batch normalization的發現可能是偶然(意料之外)的，但無論如何這是有用的方法<br>    - normalization有一堆方法，參考如下<br><img src="/../images/20220707_10.png"></li>
-</ul>
-</li>
-</ul>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://laxiflora.github.io/2022/07/07/ML-2021-2-6-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%BA%94/" data-id="cl62j1qu0000bu0veemjufe2k" data-title="ML_2021_2-6 類神經網路訓練不起來怎麼辦(五)" class="article-share-link">Teilen</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-ML-2021-2-5-類神經網路訓練不起來怎麼辦-四" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2022/07/06/ML-2021-2-5-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E5%9B%9B/" class="article-date">
-  <time class="dt-published" datetime="2022-07-06T14:20:08.000Z" itemprop="datePublished">2022-07-06</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2022/07/06/ML-2021-2-5-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E5%9B%9B/">ML_2021_2-5 類神經網路訓練不起來怎麼辦(四)</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <ul>
-<li>這是如何分類的短版本，長版本連結如下:<br><a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=fZAZUYEeIMg">連結1</a><br><a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=hSXFuypLukA">連結2</a></li>
-<li>這裡直接講分類是怎麼做的</li>
-</ul>
-<h1 id="Classification-as-Regression"><a href="#Classification-as-Regression" class="headerlink" title="Classification as Regression?"></a>Classification as Regression?</h1><p>Regression長這樣<br><img src="/../images/pasted-7.png"></p>
-<ul>
-<li>那classification怎麼看得像regression呢？</li>
-<li>我們讓輸出的y(原本是一種類別)變成編號，跟$\hat{y}$比對</li>
-<li>但這樣會有問題，class 1 跟 class 2 也不同類(loss &#x3D; 1)，但他們的loss會小於class 1 跟 class 3的錯誤預測(loss &#x3D; 2)</li>
-<li>常見的做法是把class用one-hot vector來表示</li>
-<li>當然，這樣我們就會希望output的y是一個向量而非純量 $\rightarrow$ 我們可以用多組的weight去做多次輸出，如下圖<br><img src="/../images/pasted-8.png"></li>
-<li>我們通常會算出一個y以後，先做一個softmax(y)得到y’才去比較</li>
-</ul>
-<h2 id="Softmax-activate-function"><a href="#Softmax-activate-function" class="headerlink" title="Softmax activate function"></a>Softmax activate function</h2><p>公式如下<br>$$<br>y_i’ &#x3D; \frac{exp(y_i)}{\sum_{j}exp(y_i)}<br>$$<br>圖例<br><img src="/../images/pasted-9.png"><br>softmax有兩個特徵：<br>$$<br>1&gt;y_i&gt;0 \\\<br>\sum_iy_i’ &#x3D; 1<br>$$</p>
-<ul>
-<li>其實就是把$y_i$的各自機率算出來，若y&lt;0則機率~0</li>
-</ul>
-<h2 id="why-add-softmax-at-last-layer-in-classification"><a href="#why-add-softmax-at-last-layer-in-classification" class="headerlink" title="why add softmax at last layer in classification?"></a>why add softmax at last layer in classification?</h2><ul>
-<li>可以參考原版錄影，因為解釋較長</li>
-<li>騙小孩的說法是，因為機率是0到1之間，所以我們可以把y做softmax讓他normalize</li>
-</ul>
-<h3 id="Note"><a href="#Note" class="headerlink" title="Note :"></a>Note :</h3><ul>
-<li>Sigmoid就是2 class版的softmax(Ref.深度學習的數學地圖)</li>
-</ul>
-<h1 id="分類模型的loss-function"><a href="#分類模型的loss-function" class="headerlink" title="分類模型的loss function"></a>分類模型的loss function</h1><ul>
-<li>我們仍然可以採用MSE來計算</li>
-<li>但更常用的作法是用cross entropy</li>
-</ul>
-<h2 id="cross-entropy-loss-function"><a href="#cross-entropy-loss-function" class="headerlink" title="cross entropy loss function"></a>cross entropy loss function</h2><p>公式如下<br>$$<br>e &#x3D; - \sum_i\hat{y}_ilny_i’<br>$$</p>
-<ul>
-<li>最小值就是當$y &#x3D; \hat{y}$</li>
-<li>minimize cross entropy &#x3D; maximize likelihood</li>
-<li>基本上softmax是被跟cross entropy綁在一起的，因為向性很高</li>
-<li>所以如果用cross entropy當loss，那模型最後一層自動就會補上softmax當激發函數(pytorch)</li>
-</ul>
-<h2 id="用optimizer的角度來證實cross-entropy優於MSE"><a href="#用optimizer的角度來證實cross-entropy優於MSE" class="headerlink" title="用optimizer的角度來證實cross entropy優於MSE"></a>用optimizer的角度來證實cross entropy優於MSE</h2><ul>
-<li><a target="_blank" rel="noopener" href="https://speech.ee.ntu.edu.tw/~tlkagk/courses/MLDS_2015_2/Lecture/Deep%20More%20(v2).ecm.mp4/index.html">用數學證明的方式說明</a>請參考過去影片</li>
-<li>以下用舉例的方式說明</li>
-<li>已知一個模型如下圖<br><img src="/../images/pasted-10.png"><br>則MSE跟cross entropy的表現如下</li>
-</ul>
-<p><img src="/../images/20220706_15.png" alt="upload successful"></p>
-<ul>
-<li><p>用MSE的前提下，因為點就卡在高loss了，周圍很平坦，很難用梯度下降找到更好的點</p>
-</li>
-<li><p>這是一個透過改變loss function來改變整個error surface的例子</p>
-</li>
-<li><p>loss function的定義是有可能影響訓練難度的</p>
-</li>
-</ul>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://laxiflora.github.io/2022/07/06/ML-2021-2-5-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E5%9B%9B/" data-id="cl62j1qu2000hu0ve031r7dqw" data-title="ML_2021_2-5 類神經網路訓練不起來怎麼辦(四)" class="article-share-link">Teilen</a>
+      <a data-url="https://laxiflora.github.io/2022/07/09/ML-2021-3-1-%E5%8D%B7%E7%A9%8D%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF/" data-id="cl63ujj37000hhkve7mqz0k8r" data-title="ML_2021_3-1 卷積神經網路" class="article-share-link">Share</a>
       
       
       
@@ -1356,7 +1301,7 @@
 
   <nav id="page-nav">
     
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/2/">weiter &raquo;</a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/2/">Next &raquo;</a>
   </nav>
 
 </section>
@@ -1387,7 +1332,7 @@
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Archiv</h3>
+    <h3 class="widget-title">Archives</h3>
     <div class="widget">
       <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">July 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">June 2022</a></li></ul>
     </div>
@@ -1397,9 +1342,17 @@
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">letzter Beitrag</h3>
+    <h3 class="widget-title">Recent Posts</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2022/07/28/ML-2021-6-2-%E7%94%9F%E6%88%90%E5%BC%8F%E5%B0%8D%E6%8A%97%E7%B6%B2%E8%B7%AF-%E4%BA%8C-%E7%90%86%E8%AB%96%E4%BB%8B%E7%B4%B9%E8%88%87WGAN/">ML_2021_6-2 生成式對抗網路(二) - 理論介紹與WGAN</a>
+          </li>
+        
+          <li>
+            <a href="/2022/07/27/ML-2021-6-1-%E7%94%9F%E6%88%90%E5%BC%8F%E5%B0%8D%E6%8A%97%E7%B6%B2%E8%B7%AF-%E4%B8%80-%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E4%BB%8B%E7%B4%B9/">ML_2021_6-1 生成式對抗網路(一) - 基本概念介紹</a>
+          </li>
         
           <li>
             <a href="/2022/07/24/ML-2021-5-3-Transformer%EF%BC%88%E4%B8%8B%EF%BC%89/">ML_2021_5-3 Transformer（下）</a>
@@ -1411,14 +1364,6 @@
         
           <li>
             <a href="/2022/07/23/ML-LEE-2022-hw4/">ML_LEE_2022_hw4</a>
-          </li>
-        
-          <li>
-            <a href="/2022/07/22/Efficient-Transformers-A-Survey%E7%AD%86%E8%A8%98/">Efficient Transformers:A Survey筆記</a>
-          </li>
-        
-          <li>
-            <a href="/2022/07/13/ML-2021-4-2-%E8%87%AA%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%A9%9F%E5%88%B6%EF%BC%88%E4%B8%8B%EF%BC%89/">ML_2021_4-2 自注意力機制（下）</a>
           </li>
         
       </ul>
