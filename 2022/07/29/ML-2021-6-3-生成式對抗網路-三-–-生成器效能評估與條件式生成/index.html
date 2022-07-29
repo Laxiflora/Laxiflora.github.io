@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>ML_2021_6-3 生成式對抗網路(三) – 生成器效能評估與條件式生成 | laxiflora的小天地</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="GAN的訓練仍然困難，gen跟dis有一個卡住了，就整個卡住了 Generator跟Discriminator需要互相match each other    More training GEN tips GAN for Sequence generation 前面講的都是影像的GAN  Decoder變成了generator  Decoder的輸出一樣丟入discriminator訓練，產生分數">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ML_2021_6-3 生成式對抗網路(三) – 生成器效能評估與條件式生成">
+<meta property="og:url" content="https://laxiflora.github.io/2022/07/29/ML-2021-6-3-%E7%94%9F%E6%88%90%E5%BC%8F%E5%B0%8D%E6%8A%97%E7%B6%B2%E8%B7%AF-%E4%B8%89-%E2%80%93-%E7%94%9F%E6%88%90%E5%99%A8%E6%95%88%E8%83%BD%E8%A9%95%E4%BC%B0%E8%88%87%E6%A2%9D%E4%BB%B6%E5%BC%8F%E7%94%9F%E6%88%90/index.html">
+<meta property="og:site_name" content="laxiflora的小天地">
+<meta property="og:description" content="GAN的訓練仍然困難，gen跟dis有一個卡住了，就整個卡住了 Generator跟Discriminator需要互相match each other    More training GEN tips GAN for Sequence generation 前面講的都是影像的GAN  Decoder變成了generator  Decoder的輸出一樣丟入discriminator訓練，產生分數">
+<meta property="og:locale">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220729_2.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/pasted-37.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220729_3.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/pasted-38.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220729_5.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220729_6.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220729_8.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220729_9.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220729_10.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220729_12.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220729_11.png">
+<meta property="article:published_time" content="2022-07-29T07:24:39.000Z">
+<meta property="article:modified_time" content="2022-07-29T12:25:19.395Z">
+<meta property="article:author" content="劉宇承">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://laxiflora.github.io/images/20220729_2.png">
+  
+    <link rel="alternate" href="/atom.xml" title="laxiflora的小天地" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">laxiflora的小天地</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">前進軟體工程師的練功之路</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://laxiflora.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-ML-2021-6-3-生成式對抗網路-三-–-生成器效能評估與條件式生成" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2022/07/29/ML-2021-6-3-%E7%94%9F%E6%88%90%E5%BC%8F%E5%B0%8D%E6%8A%97%E7%B6%B2%E8%B7%AF-%E4%B8%89-%E2%80%93-%E7%94%9F%E6%88%90%E5%99%A8%E6%95%88%E8%83%BD%E8%A9%95%E4%BC%B0%E8%88%87%E6%A2%9D%E4%BB%B6%E5%BC%8F%E7%94%9F%E6%88%90/" class="article-date">
+  <time class="dt-published" datetime="2022-07-29T07:24:39.000Z" itemprop="datePublished">2022-07-29</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      ML_2021_6-3 生成式對抗網路(三) – 生成器效能評估與條件式生成
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <ul>
+<li>GAN的訓練仍然困難，gen跟dis有一個卡住了，就整個卡住了<ul>
+<li>Generator跟Discriminator需要互相match each other</li>
+</ul>
+</li>
+</ul>
+<h1 id="More-training-GEN-tips"><a href="#More-training-GEN-tips" class="headerlink" title="More training GEN tips"></a>More training GEN tips</h1><p><img src="/../images/20220729_2.png"></p>
+<h1 id="GAN-for-Sequence-generation"><a href="#GAN-for-Sequence-generation" class="headerlink" title="GAN for Sequence generation"></a>GAN for Sequence generation</h1><ul>
+<li><p>前面講的都是影像的GAN</p>
+</li>
+<li><p>Decoder變成了generator</p>
+</li>
+<li><p>Decoder的輸出一樣丟入discriminator訓練，產生分數<br><img src="/../images/pasted-37.png"></p>
+</li>
+<li><p>問題在於，decoder不能用梯度下降去train</p>
+<ul>
+<li>微不出decoder weight變化對discriminator的影響（distribution不變）<br><img src="/../images/20220729_3.png"></li>
+</ul>
+</li>
+<li><p>碰到很難train的地方，可以用用看RL</p>
+<ul>
+<li>RL很難train，且GAN也很難train，不好用</li>
+</ul>
+</li>
+<li><p>完整的GAN課程：<a target="_blank" rel="noopener" href="https://www.youtube.com/playlist?list=PLJV_el3uVTsMq6JEFPW35BCiOQTsoqwNw">連結</a></p>
+</li>
+<li><p>More generative models: VAE、FLOW-based Model</p>
+</li>
+</ul>
+<h1 id="可否用supervised-learning做"><a href="#可否用supervised-learning做" class="headerlink" title="可否用supervised learning做"></a>可否用supervised learning做</h1><ul>
+<li>直接把正確的圖片變成vector，作為ground truth（訓練目標）<ul>
+<li>直接放入隨機向量來生成圖片</li>
+</ul>
+</li>
+<li>可以這樣做，但是向量不能亂取，相關文章：<ul>
+<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1707.05776">Generative Latent Optimization (GLO)</a></li>
+<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2007.02798">Gradient Origin Networks</a></li>
+</ul>
+</li>
+</ul>
+<h1 id="Quality-of-GAN"><a href="#Quality-of-GAN" class="headerlink" title="Quality of GAN"></a>Quality of GAN</h1><ul>
+<li><p>如何衡量GAN的好壞</p>
+</li>
+<li><p>以往都是直接真人去看效果，但可能不客觀且價格昂貴</p>
+</li>
+<li><p>在某些任務的確可以衡量</p>
+<ul>
+<li>（作業6）提供一個動畫，看GAN能抓出幾張是人臉</li>
+</ul>
+</li>
+<li><p>分類系統，把GAN輸出的影像作為分類系統的輸入，讓這個系統分類</p>
+<ul>
+<li>Ex. GAN產生班馬，給分類系統分類該圖像是否班馬類</li>
+<li>當分類越集中，則GAN的輸出「可能」越好</li>
+<li>問題：Mode Collapse</li>
+</ul>
+</li>
+</ul>
+<h2 id="Mode-Collapse"><a href="#Mode-Collapse" class="headerlink" title="Mode Collapse"></a>Mode Collapse</h2><ul>
+<li>可能GAN輸出的圖片來來去去就那幾張，過度單一，但那些圖片都剛好分類成功</li>
+<li>GAN知道discriminter的盲點了，就集中攻擊這個點<br><img src="/../images/pasted-38.png"></li>
+<li>上圖的人臉過度單一</li>
+<li>目前暫時無解，但看得出來</li>
+</ul>
+<h2 id="Mode-Dropping"><a href="#Mode-Dropping" class="headerlink" title="Mode Dropping"></a>Mode Dropping</h2><ul>
+<li>GAN輸出的圖片看起來有一些變化性，看不出問題</li>
+<li>但可能輸出的圖片只是真實圖片的一小個子集</li>
+<li>不容易偵測出來</li>
+</ul>
+<h2 id="Diversity"><a href="#Diversity" class="headerlink" title="Diversity"></a>Diversity</h2><ul>
+<li>衡量GAN輸出的多樣性分布</li>
+</ul>
+<p><img src="/images/20220729_5.png" alt="upload successful"></p>
+<ul>
+<li><p>與quality差別在於，quality衡量只看一張圖片，分類越集中越好</p>
+</li>
+<li><p>diversity則是看一堆圖片，輸出的平均越均衡，代表多樣性越好</p>
+</li>
+<li><p>Inception score(IS)：若good quality, diversity，則large IS</p>
+</li>
+<li><p>但作業不會用inception score</p>
+<ul>
+<li>輸出都是人臉，對於IS來說diversity會很小</li>
+</ul>
+</li>
+<li><p>作業採用Frechet inception distance(FID)</p>
+<ul>
+<li>把輸出丟入CNN，再把進入softmax前的那個vector拿出來作為輸入</li>
+<li>假設真實圖片跟產生的圖片都是gaussian distribution</li>
+<li>對他們算Frechet inception distance<ul>
+<li>越小品質越高</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>問題：需要很多samples，且不知道輸出分佈是否為gaussian</p>
+<ul>
+<li>所以不能只看這個，作業會FID跟IS都參考<br><img src="/images/20220729_6.png"></li>
+</ul>
+</li>
+<li><p>有時候，FID很好（低）而且人臉也做得很真實，也未必是一個很好的model</p>
+<ul>
+<li>memory GAN: 如果這個GAN可能是直接照抄訓練資料的，剛好符合diversity跟classification</li>
+<li>可否比對訓練資料跟輸出的相似度？<ul>
+<li>也可能GAN剛好輸出都是輸入資料的左右反轉，相似度又比不出來<br>-&gt; GAN的evaluation仍為可深入研究的題目</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1802.03446">目前的GAN evaluation的作法列舉</a></p>
+</li>
+</ul>
+<h1 id="Conditional-Generation"><a href="#Conditional-Generation" class="headerlink" title="Conditional Generation"></a>Conditional Generation</h1><ul>
+<li><p>到目前為止GAN都只講隨機的輸入</p>
+</li>
+<li><p>若給定一個x(條件)，產生y</p>
+<ul>
+<li>Text to image任務<br><img src="/../images/20220729_8.png"></li>
+</ul>
+</li>
+<li><p>根據Sample的z不同，會產生滿足x條件的不同輸出</p>
+</li>
+</ul>
+<h2 id="Discriminator"><a href="#Discriminator" class="headerlink" title="Discriminator"></a>Discriminator</h2><ul>
+<li>必須也知道文字敘述的條件，不然GAN只會產生清晰圖片，忽略條件</li>
+<li>Discriminator除了看圖片是否好，還要看是否吻合條件</li>
+</ul>
+<p><img src="/images/20220729_9.png"></p>
+<ul>
+<li><p>text-image的training data通常會需要成對的資料(condition,image)</p>
+</li>
+<li><p>但是這樣通常訓練的結果不會很好</p>
+<ul>
+<li>還是要mix一些label &#x3D; 0(故意塞錯的) 的資料（清晰圖片+錯誤描述）<br><img src="/../images/20220729_10.png"></li>
+</ul>
+</li>
+</ul>
+<h2 id="conditional-GAN其他應用"><a href="#conditional-GAN其他應用" class="headerlink" title="conditional GAN其他應用"></a>conditional GAN其他應用</h2><h3 id="sound-to-image"><a href="#sound-to-image" class="headerlink" title="sound to image"></a>sound to image</h3><ul>
+<li><p>給聲音，然後畫出圖片</p>
+<ul>
+<li>給sound一些label其實不難收集，可以爬影片然後get sound以及相關畫面</li>
+<li>(sound, “a dog barking sound”)</li>
+<li>(sound, “river sound”)<br><img src="/../images/20220729_12.png"></li>
+</ul>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://wjohn1483.github.io/audio_to_scene/index.html">參考網站</a></p>
+</li>
+</ul>
+<h3 id="talking-head-generation"><a href="#talking-head-generation" class="headerlink" title="talking head generation"></a>talking head generation</h3><p><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1905.08233">相關文獻</a></p>
+<h3 id="image-to-image"><a href="#image-to-image" class="headerlink" title="image to image"></a>image to image</h3><p><img src="/../images/20220729_11.png"></p>
+<ul>
+<li><p>Conditional GAN也可以做image translation（輸入圖片，輸出吻合條件的圖片）</p>
+<ul>
+<li>pix2pix</li>
+</ul>
+</li>
+<li><p>老樣子，image 2 image用supervisied learning，可能會學習到類似的情況下，圖片輸入很多種，導致輸出模糊（同GAN一開始小精靈的例子）</p>
+<ul>
+<li>所以還是要用GAN<ul>
+<li>但GAN可能還是會有想像力過度豐富的問題</li>
+<li>兩者需要同時使用</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://arxiv.org/avs/1611.07004">相關文獻</a></p>
+</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://laxiflora.github.io/2022/07/29/ML-2021-6-3-%E7%94%9F%E6%88%90%E5%BC%8F%E5%B0%8D%E6%8A%97%E7%B6%B2%E8%B7%AF-%E4%B8%89-%E2%80%93-%E7%94%9F%E6%88%90%E5%99%A8%E6%95%88%E8%83%BD%E8%A9%95%E4%BC%B0%E8%88%87%E6%A2%9D%E4%BB%B6%E5%BC%8F%E7%94%9F%E6%88%90/" data-id="cl66i7r8y000t1gvee1ga7gxg" data-title="ML_2021_6-3 生成式對抗網路(三) – 生成器效能評估與條件式生成" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2022/07/29/ML-2021-6-4-%E7%94%9F%E6%88%90%E5%BC%8F%E5%B0%8D%E6%8A%97%E7%B6%B2%E8%B7%AF-%E5%9B%9B-%E2%80%93-Cycle-GAN/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          ML_2021_6-4 生成式對抗網路(四) – Cycle GAN
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2022/07/28/ML-2021-6-2-%E7%94%9F%E6%88%90%E5%BC%8F%E5%B0%8D%E6%8A%97%E7%B6%B2%E8%B7%AF-%E4%BA%8C-%E7%90%86%E8%AB%96%E4%BB%8B%E7%B4%B9%E8%88%87WGAN/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">ML_2021_6-2 生成式對抗網路(二) - 理論介紹與WGAN</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/BERT/" rel="tag">BERT</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/" rel="tag">C++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/" rel="tag">Hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/NLP/" rel="tag">NLP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Pytorch/" rel="tag">Pytorch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Transformer/" rel="tag">Transformer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9D%8E%E5%AE%8F%E6%AF%85%E7%B3%BB%E5%88%97/" rel="tag">李宏毅系列</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92/" rel="tag">機器學習</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/BERT/" style="font-size: 10px;">BERT</a> <a href="/tags/C/" style="font-size: 10px;">C++</a> <a href="/tags/Hexo/" style="font-size: 15px;">Hexo</a> <a href="/tags/NLP/" style="font-size: 10px;">NLP</a> <a href="/tags/Pytorch/" style="font-size: 10px;">Pytorch</a> <a href="/tags/Transformer/" style="font-size: 10px;">Transformer</a> <a href="/tags/%E6%9D%8E%E5%AE%8F%E6%AF%85%E7%B3%BB%E5%88%97/" style="font-size: 10px;">李宏毅系列</a> <a href="/tags/%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92/" style="font-size: 20px;">機器學習</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">July 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">June 2022</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2022/07/29/ML-2021-6-4-%E7%94%9F%E6%88%90%E5%BC%8F%E5%B0%8D%E6%8A%97%E7%B6%B2%E8%B7%AF-%E5%9B%9B-%E2%80%93-Cycle-GAN/">ML_2021_6-4 生成式對抗網路(四) – Cycle GAN</a>
+          </li>
+        
+          <li>
+            <a href="/2022/07/29/ML-2021-6-3-%E7%94%9F%E6%88%90%E5%BC%8F%E5%B0%8D%E6%8A%97%E7%B6%B2%E8%B7%AF-%E4%B8%89-%E2%80%93-%E7%94%9F%E6%88%90%E5%99%A8%E6%95%88%E8%83%BD%E8%A9%95%E4%BC%B0%E8%88%87%E6%A2%9D%E4%BB%B6%E5%BC%8F%E7%94%9F%E6%88%90/">ML_2021_6-3 生成式對抗網路(三) – 生成器效能評估與條件式生成</a>
+          </li>
+        
+          <li>
+            <a href="/2022/07/28/ML-2021-6-2-%E7%94%9F%E6%88%90%E5%BC%8F%E5%B0%8D%E6%8A%97%E7%B6%B2%E8%B7%AF-%E4%BA%8C-%E7%90%86%E8%AB%96%E4%BB%8B%E7%B4%B9%E8%88%87WGAN/">ML_2021_6-2 生成式對抗網路(二) - 理論介紹與WGAN</a>
+          </li>
+        
+          <li>
+            <a href="/2022/07/27/ML-2021-6-1-%E7%94%9F%E6%88%90%E5%BC%8F%E5%B0%8D%E6%8A%97%E7%B6%B2%E8%B7%AF-%E4%B8%80-%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E4%BB%8B%E7%B4%B9/">ML_2021_6-1 生成式對抗網路(一) - 基本概念介紹</a>
+          </li>
+        
+          <li>
+            <a href="/2022/07/24/ML-2021-5-3-Transformer%EF%BC%88%E4%B8%8B%EF%BC%89/">ML_2021_5-3 Transformer（下）</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2022 劉宇承<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+<!-- <script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script> -->
+</body>
+</html>
