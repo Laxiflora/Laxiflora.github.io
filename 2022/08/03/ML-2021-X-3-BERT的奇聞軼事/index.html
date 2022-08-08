@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css" integrity="sha256-xejo6yLi6vGtAjcMIsY8BHdKsLg7QynVlFMzdQgUuy8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"laxiflora.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":true,"version":"8.12.3","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="明明只學填空，為何BERT有用?  you shall know a word by the company it keeps  詞向量並非是BERT為祖先  BERT(contextualized word embedding) 、 CBOW(word embedding)   BERT會把各個詞彙變成一個詞向量，詞義越相近的詞彙，則他們的向量相似度會更像    BERT是否真的看得懂文章？">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ML_2021_X-3 BERT的奇聞軼事">
+<meta property="og:url" content="https://laxiflora.github.io/2022/08/03/ML-2021-X-3-BERT%E7%9A%84%E5%A5%87%E8%81%9E%E8%BB%BC%E4%BA%8B/index.html">
+<meta property="og:site_name" content="laxiflora的小天地">
+<meta property="og:description" content="明明只學填空，為何BERT有用?  you shall know a word by the company it keeps  詞向量並非是BERT為祖先  BERT(contextualized word embedding) 、 CBOW(word embedding)   BERT會把各個詞彙變成一個詞向量，詞義越相近的詞彙，則他們的向量相似度會更像    BERT是否真的看得懂文章？">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220803_4.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220803_1.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220803_2.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220803_3.png">
+<meta property="article:published_time" content="2022-08-02T17:33:10.000Z">
+<meta property="article:modified_time" content="2022-08-08T14:00:39.588Z">
+<meta property="article:author" content="劉宇承">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://laxiflora.github.io/images/20220803_4.png">
+
+
+<link rel="canonical" href="https://laxiflora.github.io/2022/08/03/ML-2021-X-3-BERT%E7%9A%84%E5%A5%87%E8%81%9E%E8%BB%BC%E4%BA%8B/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://laxiflora.github.io/2022/08/03/ML-2021-X-3-BERT%E7%9A%84%E5%A5%87%E8%81%9E%E8%BB%BC%E4%BA%8B/","path":"2022/08/03/ML-2021-X-3-BERT的奇聞軼事/","title":"ML_2021_X-3 BERT的奇聞軼事"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>ML_2021_X-3 BERT的奇聞軼事 | laxiflora的小天地</title>
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">laxiflora的小天地</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">前進軟體工程師的練功之路</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>標籤</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#BERT%E6%98%AF%E5%90%A6%E7%9C%9F%E7%9A%84%E7%9C%8B%E5%BE%97%E6%87%82%E6%96%87%E7%AB%A0%EF%BC%9F"><span class="nav-number">1.</span> <span class="nav-text">BERT是否真的看得懂文章？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Multi-lingual-BERT"><span class="nav-number">2.</span> <span class="nav-text">Multi-lingual BERT</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">劉宇承</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">32</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">標籤</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://laxiflora.github.io/2022/08/03/ML-2021-X-3-BERT%E7%9A%84%E5%A5%87%E8%81%9E%E8%BB%BC%E4%BA%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="劉宇承">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="laxiflora的小天地">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="ML_2021_X-3 BERT的奇聞軼事 | laxiflora的小天地">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          ML_2021_X-3 BERT的奇聞軼事
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2022-08-03 01:33:10" itemprop="dateCreated datePublished" datetime="2022-08-03T01:33:10+08:00">2022-08-03</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新於</span>
+      <time title="修改時間：2022-08-08 22:00:39" itemprop="dateModified" datetime="2022-08-08T22:00:39+08:00">2022-08-08</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <ul>
+<li><p>明明只學填空，為何BERT有用?</p>
+</li>
+<li><p>you shall know a word by the company it keeps</p>
+</li>
+<li><p>詞向量並非是BERT為祖先</p>
+<ul>
+<li>BERT(contextualized word embedding) 、 CBOW(word embedding)</li>
+</ul>
+</li>
+<li><p>BERT會把各個詞彙變成一個詞向量，詞義越相近的詞彙，則他們的向量相似度會更像<br><img src="/../images/20220803_4.png"></p>
+</li>
+</ul>
+<hr>
+<h1 id="BERT是否真的看得懂文章？"><a href="#BERT是否真的看得懂文章？" class="headerlink" title="BERT是否真的看得懂文章？"></a>BERT是否真的看得懂文章？</h1><ul>
+<li><p>基於語言學假設，知道詞彙的意思要看他的前後文</p>
+</li>
+<li><p>但BERT真的只拿詞彙的前後文當判別依據嗎？</p>
+<ul>
+<li>拿BERT做DNA分類</li>
+</ul>
+</li>
+<li><p>把DNA序列(A,T,C,G)變成好幾個英文詞彙(隨機對)然後直接丟入BERT 做fine-tune training</p>
+<ul>
+<li>BERT pretrained by English</li>
+<li>ex. ATTACG -&gt; He She She He It Us</li>
+</ul>
+</li>
+<li><p>出乎意料的用有pretrain的BERT命中率比直接用隨機參數的transformer encoder模型還高 (<a target="_blank" rel="noopener" href="https://arxiv.org/abs/2103.07162">Reference</a>)</p>
+<ul>
+<li>這個實驗可以發現就算這整串文章毫無邏輯，BERT也可以表現的比完全隨機還好，表示機器就算看不懂文章，也學到了某些東西<br>    - 關於BERT學習過程仍待研究</li>
+</ul>
+</li>
+</ul>
+<p>    <br>關於BERT的研究(變形)</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://youtu.be/1_gRK9EIQpc">BERT(上)</a></li>
+<li><a target="_blank" rel="noopener" href="https://youtu.be/Bywo7m6ySlk">BERT(下)</a></li>
+</ul>
+<hr>
+<h1 id="Multi-lingual-BERT"><a href="#Multi-lingual-BERT" class="headerlink" title="Multi-lingual BERT"></a>Multi-lingual BERT</h1><p> <b><em>Train BERT with different languages</em></b></p>
+<ul>
+<li><p>用多國語言訓練(pretrain)BERT，就可以解中文的資料集</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1909.09587">相關論文實驗</a></li>
+<li>多語言BERT模型的表現是最好的</li>
+</ul>
+</li>
+<li><p>或許對於不同語言之間差異不大? (仍有待研究)</p>
+<ul>
+<li>ex. 兔跟rabbit相近、游跟swim相近</li>
+</ul>
+</li>
+</ul>
+<p> 老師的lab一開始也是嘗試train自己的multi-lingual BERT以查清BERT學習的方法</p>
+<ul>
+<li>實驗結果顯示multi-lingual BERT需要的dataset很大<br><img src="/../images/20220803_1.png"><br><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2010.10938">Reference</a></li>
+</ul>
+<hr>
+<ul>
+<li>但是既然語言特性並非BERT的學習重點，為何不會輸入中文，吐出日文?<ul>
+<li>表示BERT還是會注意語言之間的差異</li>
+<li>那如果抵銷掉語言之間的差異呢？</li>
+</ul>
+</li>
+</ul>
+<p>    <br>   <br><img src="/../images/20220803_2.png"></p>
+<ul>
+<li>老師的lab實際把英文丟入BERT模型內，再加上一個向量，這個向量是英文與中文詞向量平均之間的差距，可以得出輸入英文，輸出中文的填空結果</li>
+</ul>
+<p><img src="/../images/20220803_3.png"></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/07/30/ML-2021-X-1-X-2-BERT%E7%B0%A1%E4%BB%8B/" rel="prev" title="ML_2021_X-1&X-2 BERT簡介">
+                  <i class="fa fa-chevron-left"></i> ML_2021_X-1&X-2 BERT簡介
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/08/04/ML-2021-X-4-GPT%E7%9A%84%E9%87%8E%E6%9C%9B/" rel="next" title="ML_2021_X-4 GPT的野望">
+                  ML_2021_X-4 GPT的野望 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">劉宇承</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>

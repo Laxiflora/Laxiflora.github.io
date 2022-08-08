@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css" integrity="sha256-xejo6yLi6vGtAjcMIsY8BHdKsLg7QynVlFMzdQgUuy8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"laxiflora.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":true,"version":"8.12.3","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="這是如何分類的短版本，長版本連結如下:連結1連結2 這裡直接講分類是怎麼做的  Classification as Regression?Regression長這樣  那classification怎麼看得像regression呢？ 我們讓輸出的y(原本是一種類別)變成編號，跟$\hat{y}$比對 但這樣會有問題，class 1 跟 class 2 也不同類(loss &#x3D; 1)，但他">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ML_2021_2-5 類神經網路訓練不起來怎麼辦(四)">
+<meta property="og:url" content="https://laxiflora.github.io/2022/07/06/ML-2021-2-5-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E5%9B%9B/index.html">
+<meta property="og:site_name" content="laxiflora的小天地">
+<meta property="og:description" content="這是如何分類的短版本，長版本連結如下:連結1連結2 這裡直接講分類是怎麼做的  Classification as Regression?Regression長這樣  那classification怎麼看得像regression呢？ 我們讓輸出的y(原本是一種類別)變成編號，跟$\hat{y}$比對 但這樣會有問題，class 1 跟 class 2 也不同類(loss &#x3D; 1)，但他">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://laxiflora.github.io/images/pasted-7.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/pasted-8.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/pasted-9.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/pasted-10.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220706_15.png">
+<meta property="article:published_time" content="2022-07-06T14:20:08.000Z">
+<meta property="article:modified_time" content="2022-08-08T12:10:07.955Z">
+<meta property="article:author" content="劉宇承">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://laxiflora.github.io/images/pasted-7.png">
+
+
+<link rel="canonical" href="https://laxiflora.github.io/2022/07/06/ML-2021-2-5-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E5%9B%9B/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://laxiflora.github.io/2022/07/06/ML-2021-2-5-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E5%9B%9B/","path":"2022/07/06/ML-2021-2-5-類神經網路訓練不起來怎麼辦-四/","title":"ML_2021_2-5 類神經網路訓練不起來怎麼辦(四)"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>ML_2021_2-5 類神經網路訓練不起來怎麼辦(四) | laxiflora的小天地</title>
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">laxiflora的小天地</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">前進軟體工程師的練功之路</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>標籤</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Classification-as-Regression"><span class="nav-number">1.</span> <span class="nav-text">Classification as Regression?</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Softmax-activate-function"><span class="nav-number">1.1.</span> <span class="nav-text">Softmax activate function</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#why-add-softmax-at-last-layer-in-classification"><span class="nav-number">1.2.</span> <span class="nav-text">why add softmax at last layer in classification?</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Note"><span class="nav-number">1.2.1.</span> <span class="nav-text">Note :</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%88%86%E9%A1%9E%E6%A8%A1%E5%9E%8B%E7%9A%84loss-function"><span class="nav-number">2.</span> <span class="nav-text">分類模型的loss function</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#cross-entropy-loss-function"><span class="nav-number">2.1.</span> <span class="nav-text">cross entropy loss function</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%94%A8optimizer%E7%9A%84%E8%A7%92%E5%BA%A6%E4%BE%86%E8%AD%89%E5%AF%A6cross-entropy%E5%84%AA%E6%96%BCMSE"><span class="nav-number">2.2.</span> <span class="nav-text">用optimizer的角度來證實cross entropy優於MSE</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">劉宇承</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">32</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">標籤</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://laxiflora.github.io/2022/07/06/ML-2021-2-5-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E5%9B%9B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="劉宇承">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="laxiflora的小天地">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="ML_2021_2-5 類神經網路訓練不起來怎麼辦(四) | laxiflora的小天地">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          ML_2021_2-5 類神經網路訓練不起來怎麼辦(四)
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2022-07-06 22:20:08" itemprop="dateCreated datePublished" datetime="2022-07-06T22:20:08+08:00">2022-07-06</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新於</span>
+      <time title="修改時間：2022-08-08 20:10:07" itemprop="dateModified" datetime="2022-08-08T20:10:07+08:00">2022-08-08</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <ul>
+<li>這是如何分類的短版本，長版本連結如下:<br><a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=fZAZUYEeIMg">連結1</a><br><a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=hSXFuypLukA">連結2</a></li>
+<li>這裡直接講分類是怎麼做的</li>
+</ul>
+<h1 id="Classification-as-Regression"><a href="#Classification-as-Regression" class="headerlink" title="Classification as Regression?"></a>Classification as Regression?</h1><p>Regression長這樣<br><img src="/../images/pasted-7.png"></p>
+<ul>
+<li>那classification怎麼看得像regression呢？</li>
+<li>我們讓輸出的y(原本是一種類別)變成編號，跟$\hat{y}$比對</li>
+<li>但這樣會有問題，class 1 跟 class 2 也不同類(loss &#x3D; 1)，但他們的loss會小於class 1 跟 class 3的錯誤預測(loss &#x3D; 2)</li>
+<li>常見的做法是把class用one-hot vector來表示</li>
+<li>當然，這樣我們就會希望output的y是一個向量而非純量 $\rightarrow$ 我們可以用多組的weight去做多次輸出，如下圖<br><img src="/../images/pasted-8.png"></li>
+<li>我們通常會算出一個y以後，先做一個softmax(y)得到y’才去比較</li>
+</ul>
+<h2 id="Softmax-activate-function"><a href="#Softmax-activate-function" class="headerlink" title="Softmax activate function"></a>Softmax activate function</h2><p>公式如下<br>$$<br>y_i’ &#x3D; \frac{exp(y_i)}{\sum_{j}exp(y_i)}<br>$$<br>圖例<br><img src="/../images/pasted-9.png"><br>softmax有兩個特徵：<br>$$<br>1&gt;y_i&gt;0 \\\<br>\sum_iy_i’ &#x3D; 1<br>$$</p>
+<ul>
+<li>其實就是把$y_i$的各自機率算出來，若y&lt;0則機率~0</li>
+</ul>
+<h2 id="why-add-softmax-at-last-layer-in-classification"><a href="#why-add-softmax-at-last-layer-in-classification" class="headerlink" title="why add softmax at last layer in classification?"></a>why add softmax at last layer in classification?</h2><ul>
+<li>可以參考原版錄影，因為解釋較長</li>
+<li>騙小孩的說法是，因為機率是0到1之間，所以我們可以把y做softmax讓他normalize</li>
+</ul>
+<h3 id="Note"><a href="#Note" class="headerlink" title="Note :"></a>Note :</h3><ul>
+<li>Sigmoid就是2 class版的softmax(Ref.深度學習的數學地圖)</li>
+</ul>
+<h1 id="分類模型的loss-function"><a href="#分類模型的loss-function" class="headerlink" title="分類模型的loss function"></a>分類模型的loss function</h1><ul>
+<li>我們仍然可以採用MSE來計算</li>
+<li>但更常用的作法是用cross entropy</li>
+</ul>
+<h2 id="cross-entropy-loss-function"><a href="#cross-entropy-loss-function" class="headerlink" title="cross entropy loss function"></a>cross entropy loss function</h2><p>公式如下<br>$$<br>e &#x3D; - \sum_i\hat{y}_ilny_i’<br>$$</p>
+<ul>
+<li>最小值就是當$y &#x3D; \hat{y}$</li>
+<li>minimize cross entropy &#x3D; maximize likelihood</li>
+<li>基本上softmax是被跟cross entropy綁在一起的，因為向性很高</li>
+<li>所以如果用cross entropy當loss，那模型最後一層自動就會補上softmax當激發函數(pytorch)</li>
+</ul>
+<h2 id="用optimizer的角度來證實cross-entropy優於MSE"><a href="#用optimizer的角度來證實cross-entropy優於MSE" class="headerlink" title="用optimizer的角度來證實cross entropy優於MSE"></a>用optimizer的角度來證實cross entropy優於MSE</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://speech.ee.ntu.edu.tw/~tlkagk/courses/MLDS_2015_2/Lecture/Deep%20More%20(v2).ecm.mp4/index.html">用數學證明的方式說明</a>請參考過去影片</li>
+<li>以下用舉例的方式說明</li>
+<li>已知一個模型如下圖<br><img src="/../images/pasted-10.png"><br>則MSE跟cross entropy的表現如下</li>
+</ul>
+<p><img src="/../images/20220706_15.png" alt="upload successful"></p>
+<ul>
+<li><p>用MSE的前提下，因為點就卡在高loss了，周圍很平坦，很難用梯度下降找到更好的點</p>
+</li>
+<li><p>這是一個透過改變loss function來改變整個error surface的例子</p>
+</li>
+<li><p>loss function的定義是有可能影響訓練難度的</p>
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/07/06/ML-2021-2-4-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%B8%89/" rel="prev" title="ML_2021_2-4 類神經網路訓練不起來怎麼辦(三)">
+                  <i class="fa fa-chevron-left"></i> ML_2021_2-4 類神經網路訓練不起來怎麼辦(三)
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/07/07/ML-2021-2-6-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%BA%94/" rel="next" title="ML_2021_2-6 類神經網路訓練不起來怎麼辦(五)">
+                  ML_2021_2-6 類神經網路訓練不起來怎麼辦(五) <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">劉宇承</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>

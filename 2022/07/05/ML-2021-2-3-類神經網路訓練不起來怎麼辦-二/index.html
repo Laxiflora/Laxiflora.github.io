@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css" integrity="sha256-xejo6yLi6vGtAjcMIsY8BHdKsLg7QynVlFMzdQgUuy8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"laxiflora.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":true,"version":"8.12.3","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="前言 之前課程(Ref. 2021版1-1)說到，在實際train data時我們不是實際把所有Data算出來對L微分求loss，而是把Data先分組切成batch，而所有batch看過一遍，才叫1 epoch 我們可以設定shuffle，就是每個不同的epoch，data都會重新分組  Batch size對模型之影響 首先比較兩個case： 左邊沒有用batch，而右邊batch size &amp;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ML_2021_2-3 類神經網路訓練不起來怎麼辦(二)">
+<meta property="og:url" content="https://laxiflora.github.io/2022/07/05/ML-2021-2-3-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%BA%8C/index.html">
+<meta property="og:site_name" content="laxiflora的小天地">
+<meta property="og:description" content="前言 之前課程(Ref. 2021版1-1)說到，在實際train data時我們不是實際把所有Data算出來對L微分求loss，而是把Data先分組切成batch，而所有batch看過一遍，才叫1 epoch 我們可以設定shuffle，就是每個不同的epoch，data都會重新分組  Batch size對模型之影響 首先比較兩個case： 左邊沒有用batch，而右邊batch size &amp;">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220705_2.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220705_1.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220705_3.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/pasted-1.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220705_4.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220705_6.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220705_7.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/pasted-2.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220706_8.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220706_9.png">
+<meta property="article:published_time" content="2022-07-05T13:59:49.000Z">
+<meta property="article:modified_time" content="2022-08-08T12:10:07.954Z">
+<meta property="article:author" content="劉宇承">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://laxiflora.github.io/images/20220705_2.png">
+
+
+<link rel="canonical" href="https://laxiflora.github.io/2022/07/05/ML-2021-2-3-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%BA%8C/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://laxiflora.github.io/2022/07/05/ML-2021-2-3-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%BA%8C/","path":"2022/07/05/ML-2021-2-3-類神經網路訓練不起來怎麼辦-二/","title":"ML_2021_2-3 類神經網路訓練不起來怎麼辦(二)"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>ML_2021_2-3 類神經網路訓練不起來怎麼辦(二) | laxiflora的小天地</title>
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">laxiflora的小天地</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">前進軟體工程師的練功之路</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>標籤</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Batch-size%E5%B0%8D%E6%A8%A1%E5%9E%8B%E4%B9%8B%E5%BD%B1%E9%9F%BF"><span class="nav-number">2.</span> <span class="nav-text">Batch size對模型之影響</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%A7batch%E5%84%AA%E7%BC%BA"><span class="nav-number">2.1.</span> <span class="nav-text">大batch優缺</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%84%AA%E9%BB%9E"><span class="nav-number">2.1.0.0.1.</span> <span class="nav-text">優點</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%BC%BA%E9%BB%9E"><span class="nav-number">2.1.0.0.2.</span> <span class="nav-text">缺點</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#small-batch-or-big-batch"><span class="nav-number">2.2.</span> <span class="nav-text">small batch or big batch?</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%82%BA%E4%BD%95small-batch-size%E5%8F%AF%E4%BB%A5%E6%9C%89%E6%9B%B4%E5%A5%BD%E7%9A%84%E7%B5%90%E6%9E%9C%EF%BC%9F"><span class="nav-number">2.3.</span> <span class="nav-text">為何small batch size可以有更好的結果？</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#small-batch-still-better-for-testing-data"><span class="nav-number">2.3.1.</span> <span class="nav-text">small batch still better for testing data?</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Summary%EF%BC%9ABatch-comparasion"><span class="nav-number">2.4.</span> <span class="nav-text">Summary：Batch comparasion</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%AD%9A%E8%88%87%E7%86%8A%E6%8E%8C%E5%85%BC%E5%BE%97%E7%9A%84%E8%BE%A6%E6%B3%95"><span class="nav-number">2.5.</span> <span class="nav-text">魚與熊掌兼得的辦法?</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%A6%E4%B8%80%E5%80%8B%E5%B0%8D%E6%8A%97saddle-point%E6%88%96minima%E7%9A%84%E6%8A%80%E8%A1%93-momentum"><span class="nav-number">3.</span> <span class="nav-text">另一個對抗saddle point或minima的技術 : momentum</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Review-%E5%8E%9F%E6%9C%AC%E7%9A%84%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D"><span class="nav-number">3.1.</span> <span class="nav-text">Review : 原本的梯度下降</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D-momentum"><span class="nav-number">3.2.</span> <span class="nav-text">梯度下降+momentum</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">劉宇承</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">32</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">標籤</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://laxiflora.github.io/2022/07/05/ML-2021-2-3-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%BA%8C/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="劉宇承">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="laxiflora的小天地">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="ML_2021_2-3 類神經網路訓練不起來怎麼辦(二) | laxiflora的小天地">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          ML_2021_2-3 類神經網路訓練不起來怎麼辦(二)
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2022-07-05 21:59:49" itemprop="dateCreated datePublished" datetime="2022-07-05T21:59:49+08:00">2022-07-05</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新於</span>
+      <time title="修改時間：2022-08-08 20:10:07" itemprop="dateModified" datetime="2022-08-08T20:10:07+08:00">2022-08-08</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><ul>
+<li>之前課程(Ref. 2021版1-1)說到，在實際train data時我們不是實際把所有Data算出來對L微分求loss，而是把Data先分組切成batch，而所有batch看過一遍，才叫1 epoch</li>
+<li>我們可以設定shuffle，就是每個不同的epoch，data都會重新分組</li>
+</ul>
+<h1 id="Batch-size對模型之影響"><a href="#Batch-size對模型之影響" class="headerlink" title="Batch size對模型之影響"></a>Batch size對模型之影響</h1><ul>
+<li>首先比較兩個case：<br><img src="/../images/20220705_2.png"></li>
+<li>左邊沒有用batch，而右邊batch size &#x3D; 1</li>
+<li>左邊表示每次必須看完所有data，參數才能更新一次；右邊則相反，每看完一個data就更新一次參數</li>
+<li>一個是重攻擊長CD，一個是輕攻擊短CD (?)</li>
+</ul>
+<h2 id="大batch優缺"><a href="#大batch優缺" class="headerlink" title="大batch優缺"></a>大batch優缺</h2><h5 id="優點"><a href="#優點" class="headerlink" title="優點"></a>優點</h5><ul>
+<li>威力大(更新幅度大)且每步都很穩</li>
+</ul>
+<h5 id="缺點"><a href="#缺點" class="headerlink" title="缺點"></a>缺點</h5><ul>
+<li>超級慢<br>(小batch優缺則顛倒)</li>
+</ul>
+<h2 id="small-batch-or-big-batch"><a href="#small-batch-or-big-batch" class="headerlink" title="small batch or big batch?"></a>small batch or big batch?</h2><ul>
+<li>兩邊看似各自相對，但我們還沒考慮平行運算</li>
+<li>若考慮多核心，其實大batch不會比較慢</li>
+<li>以下圖為例，用tesla V100 GPU，batch size到1000都很合適(梯度法)<br><img src="/../images/20220705_1.png"></li>
+<li>因為高batch不一定更花時間，所以其實在平行運算下，大batch的每epoch速度甚至還比小epoch還快</li>
+<li>不過，就算是平行運算下，大batch一定比較好嗎?<ul>
+<li>與直覺相反的是，noisy大有時候反而可以促進訓練能力(如下圖)</li>
+</ul>
+</li>
+</ul>
+<p><img src="/../images/20220705_3.png" alt="upload successful"></p>
+<ul>
+<li>相同model(同bias)下，smaller batch size有更高的performance</li>
+<li>問題來源於optimizer fails(Ref. 2021版2-2關於如何判定問題是哪種)</li>
+</ul>
+<h2 id="為何small-batch-size可以有更好的結果？"><a href="#為何small-batch-size可以有更好的結果？" class="headerlink" title="為何small batch size可以有更好的結果？"></a>為何small batch size可以有更好的結果？</h2><ul>
+<li>一說是Noisy update is better for training<br>見下圖</li>
+</ul>
+<p><img src="/../images/pasted-1.png"><br>small batch下，或許$L^1$卡住了，但是因為$L^2$跟$L^1$有不小的差距，所以剛好可以讓參數更新然後把參數撞開critical point</p>
+<h3 id="small-batch-still-better-for-testing-data"><a href="#small-batch-still-better-for-testing-data" class="headerlink" title="small batch still better for testing data?"></a>small batch still better for testing data?</h3><ul>
+<li>我們知道了small batch在training set表現更好，那testing data是否也是如此呢?</li>
+<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1609.04836">根據這篇論文</a>，可以知道small batch在測試資料也有好表現</li>
+</ul>
+<p><img src="/../images/20220705_4.png" alt="upload successful"></p>
+<ul>
+<li>就算能把big batch model的準確率練到跟small batch model差不多(調hyper parameter)，在測試時也會有差距顯現 $\rightarrow$ big batch有overfitting問題<br>目前普遍認為的原因如下：<ul>
+<li>就算是卡在local minima，也有分好壞</li>
+<li>周圍平坦的local minima較好</li>
+<li>而論文認為大batch size傾向會讓我們走向尖銳的minima point<ul>
+<li>一種說法是，小batch size更動頻繁走向豐富，容易走出周圍很高的minima point(對於逃離critical point能力較高)，而停在平坦的minima point (Ref. 2021版2-2 鞍點)</li>
+</ul>
+<p>	</p>
+</li>
+<li>因為testing 跟 training的loss function，肯定會有所小偏差，如下圖<br><img src="/../images/20220705_6.png" alt="upload successful"></li>
+</ul>
+</li>
+</ul>
+<h2 id="Summary：Batch-comparasion"><a href="#Summary：Batch-comparasion" class="headerlink" title="Summary：Batch comparasion"></a>Summary：Batch comparasion</h2><p><img src="/../images/20220705_7.png" alt="upload successful"></p>
+<ul>
+<li>因此，batch size最終成為了一個hyper parameter</li>
+</ul>
+<h2 id="魚與熊掌兼得的辦法"><a href="#魚與熊掌兼得的辦法" class="headerlink" title="魚與熊掌兼得的辦法?"></a>魚與熊掌兼得的辦法?</h2><ul>
+<li>看ref啃論文  &#x3D; &#x3D;</li>
+</ul>
+<hr>
+<h1 id="另一個對抗saddle-point或minima的技術-momentum"><a href="#另一個對抗saddle-point或minima的技術-momentum" class="headerlink" title="另一個對抗saddle point或minima的技術 : momentum"></a>另一個對抗saddle point或minima的技術 : momentum</h1><ul>
+<li>當small gradient的時候，我們走到一個鞍點或局部最小點之後就會停下來</li>
+<li>但我們可以用物理式來思考，球由高處滾下來到最低點碰到上坡，不一定會停下來，因為有動能</li>
+</ul>
+<h2 id="Review-原本的梯度下降"><a href="#Review-原本的梯度下降" class="headerlink" title="Review : 原本的梯度下降"></a>Review : 原本的梯度下降</h2><p><img src="/../images/pasted-2.png"></p>
+<h2 id="梯度下降-momentum"><a href="#梯度下降-momentum" class="headerlink" title="梯度下降+momentum"></a>梯度下降+momentum</h2><ul>
+<li>簡單來說，就是加入慣性，額外參考上一次的移動軌跡</li>
+</ul>
+<p><img src="/../images/20220706_8.png" alt="upload successful"></p>
+<ul>
+<li>多了一個hyper parameter $\lambda$<br><img src="/../images/20220706_9.png" alt="upload successful"></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/07/04/ML-2022-2-1-%E5%86%8D%E6%8E%A2%E5%AF%B6%E5%8F%AF%E5%A4%A2%E3%80%81%E6%95%B8%E7%A2%BC%E5%AF%B6%E8%B2%9D%E5%88%86%E9%A1%9E%E5%99%A8/" rel="prev" title="ML_2022_2-1 再探寶可夢、數碼寶貝分類器">
+                  <i class="fa fa-chevron-left"></i> ML_2022_2-1 再探寶可夢、數碼寶貝分類器
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/07/06/ML-2021-2-4-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%B8%89/" rel="next" title="ML_2021_2-4 類神經網路訓練不起來怎麼辦(三)">
+                  ML_2021_2-4 類神經網路訓練不起來怎麼辦(三) <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">劉宇承</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>

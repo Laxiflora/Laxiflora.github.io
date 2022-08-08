@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css" integrity="sha256-xejo6yLi6vGtAjcMIsY8BHdKsLg7QynVlFMzdQgUuy8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"laxiflora.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":true,"version":"8.12.3","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="接續5-2，講論文的transformer中的decoder區塊 Decoder有兩種 autoregressive(AT) non-autoregressive(NAT)   這堂課主講AT  Transformer：Decoder的運作 (語音辨識為範例) 輸入一段聲音，輸出一段文字  encoder收到聲音訊號(seq)以後，輸出一排vector(seq)  Decoder用於產生語音辨識">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ML_2021_5-3 Transformer（下）">
+<meta property="og:url" content="https://laxiflora.github.io/2022/07/24/ML-2021-5-3-Transformer%EF%BC%88%E4%B8%8B%EF%BC%89/index.html">
+<meta property="og:site_name" content="laxiflora的小天地">
+<meta property="og:description" content="接續5-2，講論文的transformer中的decoder區塊 Decoder有兩種 autoregressive(AT) non-autoregressive(NAT)   這堂課主講AT  Transformer：Decoder的運作 (語音辨識為範例) 輸入一段聲音，輸出一段文字  encoder收到聲音訊號(seq)以後，輸出一排vector(seq)  Decoder用於產生語音辨識">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220726_1.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220726_2.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220726_3.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220726_4.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220726_5.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220726_6.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220726_7.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/pasted-31.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/pasted-27.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/pasted-30.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220727_2.png">
+<meta property="article:published_time" content="2022-07-24T14:54:31.000Z">
+<meta property="article:modified_time" content="2022-08-08T12:10:07.957Z">
+<meta property="article:author" content="劉宇承">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://laxiflora.github.io/images/20220726_1.png">
+
+
+<link rel="canonical" href="https://laxiflora.github.io/2022/07/24/ML-2021-5-3-Transformer%EF%BC%88%E4%B8%8B%EF%BC%89/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://laxiflora.github.io/2022/07/24/ML-2021-5-3-Transformer%EF%BC%88%E4%B8%8B%EF%BC%89/","path":"2022/07/24/ML-2021-5-3-Transformer（下）/","title":"ML_2021_5-3 Transformer（下）"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>ML_2021_5-3 Transformer（下） | laxiflora的小天地</title>
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">laxiflora的小天地</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">前進軟體工程師的練功之路</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>標籤</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Transformer%EF%BC%9ADecoder%E7%9A%84%E9%81%8B%E4%BD%9C-%E8%AA%9E%E9%9F%B3%E8%BE%A8%E8%AD%98%E7%82%BA%E7%AF%84%E4%BE%8B"><span class="nav-number">1.</span> <span class="nav-text">Transformer：Decoder的運作 (語音辨識為範例)</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Transformer%EF%BC%9ADecoder%E7%B5%90%E6%A7%8B"><span class="nav-number">2.</span> <span class="nav-text">Transformer：Decoder結構</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#masked-self-attention"><span class="nav-number">2.1.</span> <span class="nav-text">masked self-attention</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Determine-output-length"><span class="nav-number">2.2.</span> <span class="nav-text">Determine output length</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Non-autoregressive-NAT"><span class="nav-number">2.3.</span> <span class="nav-text">Non-autoregressive(NAT)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Determine-NAT-output-length"><span class="nav-number">2.3.1.</span> <span class="nav-text">Determine NAT output length</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#NAT%E5%84%AA%E9%BB%9E"><span class="nav-number">2.3.2.</span> <span class="nav-text">NAT優點</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Transformer%EF%BC%9AEncoder-Decoder"><span class="nav-number">3.</span> <span class="nav-text">Transformer：Encoder-Decoder</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Seq2Seq%EF%BC%9ATraining"><span class="nav-number">4.</span> <span class="nav-text">Seq2Seq：Training</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Teacher-forcing"><span class="nav-number">4.1.</span> <span class="nav-text">Teacher forcing</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Copy-mechanism"><span class="nav-number">4.2.</span> <span class="nav-text">Copy mechanism</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Guided-Attention"><span class="nav-number">4.3.</span> <span class="nav-text">Guided Attention</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Beam-search"><span class="nav-number">4.4.</span> <span class="nav-text">Beam search</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Optimizing-evalyation-metrics"><span class="nav-number">4.5.</span> <span class="nav-text">Optimizing evalyation metrics?</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Exposure-bias"><span class="nav-number">4.6.</span> <span class="nav-text">Exposure bias</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">劉宇承</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">32</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">標籤</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://laxiflora.github.io/2022/07/24/ML-2021-5-3-Transformer%EF%BC%88%E4%B8%8B%EF%BC%89/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="劉宇承">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="laxiflora的小天地">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="ML_2021_5-3 Transformer（下） | laxiflora的小天地">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          ML_2021_5-3 Transformer（下）
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2022-07-24 22:54:31" itemprop="dateCreated datePublished" datetime="2022-07-24T22:54:31+08:00">2022-07-24</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新於</span>
+      <time title="修改時間：2022-08-08 20:10:07" itemprop="dateModified" datetime="2022-08-08T20:10:07+08:00">2022-08-08</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <ul>
+<li>接續5-2，講論文的transformer中的decoder區塊</li>
+<li>Decoder有兩種<ul>
+<li>autoregressive(AT)</li>
+<li>non-autoregressive(NAT)</li>
+</ul>
+</li>
+<li>這堂課主講AT</li>
+</ul>
+<h1 id="Transformer：Decoder的運作-語音辨識為範例"><a href="#Transformer：Decoder的運作-語音辨識為範例" class="headerlink" title="Transformer：Decoder的運作 (語音辨識為範例)"></a>Transformer：Decoder的運作 (語音辨識為範例)</h1><ul>
+<li><p>輸入一段聲音，輸出一段文字</p>
+</li>
+<li><p>encoder收到聲音訊號(seq)以後，輸出一排vector(seq)</p>
+</li>
+<li><p>Decoder用於產生語音辨識的結果<br><img src="/../images/20220726_1.png"></p>
+</li>
+<li><p>輸出會是一個向量(one-hot vector)，他的長度就是整個語料庫的大小</p>
+<ul>
+<li>中文通常就是一個字為單位，英文有可能以詞為單位，也可能以字根字首為單位(subwords)</li>
+</ul>
+</li>
+<li><p>第一步驟的時候，decoder會輸入一個token(BEGIN)，一種特殊符號</p>
+</li>
+<li><p>接下來第二及之後的步驟，會把前面步驟輸出的字母丟入decoder作為輸入<br><img src="/../images/20220726_2.png"></p>
+<ul>
+<li>這樣的問題就是，如果前面辨識產生的結果是錯的，那後面的輸出也會受到錯誤的結果影響 (error propagation)</li>
+</ul>
+</li>
+</ul>
+<h1 id="Transformer：Decoder結構"><a href="#Transformer：Decoder結構" class="headerlink" title="Transformer：Decoder結構"></a>Transformer：Decoder結構</h1><ul>
+<li>暫且忽略來自encoder的輸入</li>
+</ul>
+<p><img src="/../images/20220726_3.png" alt="upload successful"></p>
+<ul>
+<li>撇除圈起來的地方不看，可以發現decoder跟encoder的差別沒有很大</li>
+</ul>
+<h2 id="masked-self-attention"><a href="#masked-self-attention" class="headerlink" title="masked self-attention"></a>masked self-attention</h2><ul>
+<li>注意到decoder第一格有一個”masked multi-head attention”</li>
+<li>相對於原始的self-attention，decoder只能參考前面的vector，不能參考之後的<br><img src="/../images/20220726_4.png"></li>
+<li>因為token是一個一個產生，不能考慮右邊</li>
+</ul>
+<h2 id="Determine-output-length"><a href="#Determine-output-length" class="headerlink" title="Determine output length"></a>Determine output length</h2><ul>
+<li>目前的decoder運作機制，不知道甚麼時候該停下來 (無限自動選字的概念)</li>
+<li>需要有一個「斷」的token，塞在輸出的vector class內<br><img src="/../images/20220726_5.png"></li>
+</ul>
+<h2 id="Non-autoregressive-NAT"><a href="#Non-autoregressive-NAT" class="headerlink" title="Non-autoregressive(NAT)"></a>Non-autoregressive(NAT)</h2><p><img src="/../images/20220726_6.png" alt="upload successful"></p>
+<ul>
+<li>AT會把上一個字輸出出來，才產生下一個字元</li>
+<li>NAT則是一次給好幾個START token，一次性產生整個sequence</li>
+</ul>
+<h3 id="Determine-NAT-output-length"><a href="#Determine-NAT-output-length" class="headerlink" title="Determine NAT output length"></a>Determine NAT output length</h3><ul>
+<li>如何知道NAT decoder的長度哩?<ul>
+<li>另外做一個pridictor去預測NAT該輸出的長度</li>
+<li>假設一個句子的長度上限，看哪段輸出了END，就把字串砍到那個位置</li>
+</ul>
+</li>
+</ul>
+<h3 id="NAT優點"><a href="#NAT優點" class="headerlink" title="NAT優點"></a>NAT優點</h3><ul>
+<li>相對於AT更平行化</li>
+<li>可控的輸出長度(可以不用被動等到有END)<ul>
+<li>可以發現AT是有點RNN、LSTM的思維</li>
+<li>NAT是熱門的研究主題</li>
+</ul>
+</li>
+<li>目前NAT的performance還是比較差<ul>
+<li>原因:<a target="_blank" rel="noopener" href="https://youtu.be/jvyKmU4OM3c">multi-modality</a></li>
+</ul>
+</li>
+</ul>
+<h1 id="Transformer：Encoder-Decoder"><a href="#Transformer：Encoder-Decoder" class="headerlink" title="Transformer：Encoder-Decoder"></a>Transformer：Encoder-Decoder</h1><ul>
+<li>現在焦點放到剛剛圖中圈起來的地方，這裡是encoder與decoder交會的地方(cross attention)</li>
+</ul>
+<p>圖示如下:<br><img src="/../images/20220726_7.png"></p>
+<ul>
+<li><p>做法很像一層self-attention在做的事情，只是q來自於decoder，而k,v來自於encoder</p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://ieeexplore.ieee.org/document/7472621">cross attention的相關論文</a></p>
+<ul>
+<li>這個方法不是來自transformer<br>    - 是先有cross才有self</li>
+</ul>
+</li>
+<li><p>在原始論文內，decoder每一層cross attention都會拿encoder最後一層的輸出當輸入</p>
+<ul>
+<li>當然也有其他種連接方式，<a target="_blank" rel="noopener" href="https://arxov.org/abs/2005.08081">參考</a></li>
+</ul>
+</li>
+</ul>
+<hr>
+<p> 以上是模型訓練好以後，模型怎麼去跑，接下來來談seq2seq類模型在training中碰到的小問題</p>
+<h1 id="Seq2Seq：Training"><a href="#Seq2Seq：Training" class="headerlink" title="Seq2Seq：Training"></a>Seq2Seq：Training</h1><h2 id="Teacher-forcing"><a href="#Teacher-forcing" class="headerlink" title="Teacher forcing"></a>Teacher forcing</h2><p>下圖為Transformer的最終訓練展示圖<br><img src="/../images/pasted-31.png"></p>
+<ul>
+<li>每一次預測一個單位字，就是做一次的分類問題</li>
+<li>每一個字視為一個分類問題，所以要minimize 這些所有預測+BEGIN、END各自的cross entropy</li>
+<li>在訓練的時候會給decoder看ground truth<ul>
+<li>這樣做法叫做Teacher forcing</li>
+</ul>
+</li>
+</ul>
+<h2 id="Copy-mechanism"><a href="#Copy-mechanism" class="headerlink" title="Copy mechanism"></a>Copy mechanism</h2><ul>
+<li>很多任務不一定要decoder產生東西，而是從輸入中複製東西出來<ul>
+<li>Ex. User: 你好，我是庫洛洛<br>    	Machine: 庫洛洛你好，很高興認識你<br>    - 機器不需要知道庫洛洛是誰，只要判別出人名複製就好</li>
+</ul>
+</li>
+<li>機器聽不懂的話，也可以直接copy user input來再次詢問user是甚麼意思</li>
+<li>應用: 閱讀文章的摘要</li>
+<li>Pointer Network、Copy network</li>
+</ul>
+<h2 id="Guided-Attention"><a href="#Guided-Attention" class="headerlink" title="Guided Attention"></a>Guided Attention</h2><ul>
+<li>TTS as example(語音合成)</li>
+<li>看到過短的句子可能沒念完整，但讓她念好幾次卻發音成功<ul>
+<li>嘗試強迫機器把所有看到的東西都看一遍 -&gt; guided attention</li>
+</ul>
+</li>
+<li>在輸出嚴格的任務中頗好用(語音合成、辨識)<br><img src="/../images/pasted-27.png"></li>
+<li>如果機器的觀看順序顛三倒四，表示這種attention可能會出問題</li>
+<li>Guided attention就是強迫機器的attention有規範(ex.由左向右)</li>
+<li>相關參考：Monotonic attention、Location-aware attention</li>
+</ul>
+<h2 id="Beam-search"><a href="#Beam-search" class="headerlink" title="Beam search"></a>Beam search</h2><p><img src="/../images/pasted-30.png"></p>
+<ul>
+<li><p>假設這個decoder只可能產生兩個token，要輸出一段sequence，前面都是直接輸出該輪概率最高的token，稱為「Greedy decoding」</p>
+</li>
+<li><p>但有沒有可能前面選擇非最佳的token，反倒導致後續的decode命中率更集中呢</p>
+</li>
+<li><p>Beam search找一個非最佳也不用爆搜的作法</p>
+</li>
+<li><p>關於這個演算法，有兩方論戰：<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1904.09751">The curious case of neural test degeneration</a></p>
+<ul>
+<li>Randomness is needed for decoder when generating seq in some tasks (ex.TTS)</li>
+</ul>
+</li>
+<li><p>老師認為在針對答案較為單一的任務，Beam search會表現比較好；而如果需要機器的想像力(空間大)的任務，則建議需要一些隨機性(故意加一些noise)</p>
+</li>
+<li><p>TTS任務中，需要在測試集加入雜訊</p>
+<ul>
+<li>true beauty lies in the crackks of imperfection</li>
+</ul>
+</li>
+</ul>
+<h2 id="Optimizing-evalyation-metrics"><a href="#Optimizing-evalyation-metrics" class="headerlink" title="Optimizing evalyation metrics?"></a>Optimizing evalyation metrics?</h2><ul>
+<li>作業用BLEU Score作為判斷依據<ul>
+<li>Decoder產生輸出以後，跟正確的句子做比較</li>
+</ul>
+</li>
+<li>但訓練的時候資料分開計算，只能用cross entropy。這兩者之間未必正相關</li>
+<li>不一定要挑decoder cross entropy效果最好的那個模型<ul>
+<li>可否在training用BLEU score?<br>    	- 不容易，BLEU本身很複雜，不易微分<br>        - 當遇到opti無法解決的問題，就用RL(強化學習)硬train一發<ul>
+<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1511.06732">REF</a> (HARD)</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="Exposure-bias"><a href="#Exposure-bias" class="headerlink" title="Exposure bias"></a>Exposure bias</h2><p><img src="/../images/20220727_2.png"></p>
+<ul>
+<li><p>因為decoder在train的時候，前面的vector是看著ground truth在做，所以不會有「一步錯，步步錯的問題」</p>
+</li>
+<li><p>但當然在測試時不可能這麼做</p>
+</li>
+<li><p>可以故意在training裡面加入錯的ground truth來讓模型習慣前面有錯誤輸出的應對方式 -&gt; <a target="_blank" rel="noopener" href="https://arxiv.org/abs/1506.03099">Scheduled Sampling</a></p>
+</li>
+<li><p>在transformer中會有所變化，<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1906.07651">參考</a></p>
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/07/23/ML-2021-5-2-Transformer%EF%BC%88%E4%B8%8A%EF%BC%89/" rel="prev" title="ML_2021_5-2 Transformer（上）">
+                  <i class="fa fa-chevron-left"></i> ML_2021_5-2 Transformer（上）
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/07/27/ML-2021-6-1-%E7%94%9F%E6%88%90%E5%BC%8F%E5%B0%8D%E6%8A%97%E7%B6%B2%E8%B7%AF-%E4%B8%80-%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E4%BB%8B%E7%B4%B9/" rel="next" title="ML_2021_6-1 生成式對抗網路(一) - 基本概念介紹">
+                  ML_2021_6-1 生成式對抗網路(一) - 基本概念介紹 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">劉宇承</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>

@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css" integrity="sha256-xejo6yLi6vGtAjcMIsY8BHdKsLg7QynVlFMzdQgUuy8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"laxiflora.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":true,"version":"8.12.3","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="在C++中，我們常常會使用Container來存儲資料，而Container分為三種  Sequence Container Associative Container Container Adapters在這裡簡單介紹一下他們的特性，暫不包括method以及使用範例的部分  Sequence Container 這類的容器資料是有序存放的 常用範例如Vector、Deque、List  Vect">
+<meta property="og:type" content="article">
+<meta property="og:title" content="C++ 常見STL容器概述">
+<meta property="og:url" content="https://laxiflora.github.io/2022/06/22/C++%20%E5%B8%B8%E8%A6%8BSTL%E5%AE%B9%E5%99%A8%E6%A6%82%E8%BF%B0/index.html">
+<meta property="og:site_name" content="laxiflora的小天地">
+<meta property="og:description" content="在C++中，我們常常會使用Container來存儲資料，而Container分為三種  Sequence Container Associative Container Container Adapters在這裡簡單介紹一下他們的特性，暫不包括method以及使用範例的部分  Sequence Container 這類的容器資料是有序存放的 常用範例如Vector、Deque、List  Vect">
+<meta property="og:locale" content="zh_TW">
+<meta property="article:published_time" content="2022-06-22T09:51:30.000Z">
+<meta property="article:modified_time" content="2022-08-08T12:10:07.952Z">
+<meta property="article:author" content="劉宇承">
+<meta property="article:tag" content="C++">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://laxiflora.github.io/2022/06/22/C++%20%E5%B8%B8%E8%A6%8BSTL%E5%AE%B9%E5%99%A8%E6%A6%82%E8%BF%B0/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://laxiflora.github.io/2022/06/22/C++%20%E5%B8%B8%E8%A6%8BSTL%E5%AE%B9%E5%99%A8%E6%A6%82%E8%BF%B0/","path":"2022/06/22/C++ 常見STL容器概述/","title":"C++ 常見STL容器概述"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>C++ 常見STL容器概述 | laxiflora的小天地</title>
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">laxiflora的小天地</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">前進軟體工程師的練功之路</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>標籤</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Sequence-Container"><span class="nav-number">1.</span> <span class="nav-text">Sequence Container</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Vector-%E5%B8%B8%E7%94%A8"><span class="nav-number">1.1.</span> <span class="nav-text">Vector(常用)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Deque"><span class="nav-number">1.2.</span> <span class="nav-text">Deque</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#List"><span class="nav-number">1.3.</span> <span class="nav-text">List</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Associative-Container"><span class="nav-number">2.</span> <span class="nav-text">Associative Container</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Set"><span class="nav-number">2.1.</span> <span class="nav-text">Set</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Multiset"><span class="nav-number">2.2.</span> <span class="nav-text">Multiset</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Map"><span class="nav-number">2.3.</span> <span class="nav-text">Map</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Multimap"><span class="nav-number">2.4.</span> <span class="nav-text">Multimap</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Container-Adapters"><span class="nav-number">3.</span> <span class="nav-text">Container Adapters</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Stack"><span class="nav-number">3.1.</span> <span class="nav-text">Stack</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Queue"><span class="nav-number">3.2.</span> <span class="nav-text">Queue</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Priority-queue"><span class="nav-number">3.3.</span> <span class="nav-text">Priority_queue</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">劉宇承</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">32</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">標籤</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://laxiflora.github.io/2022/06/22/C++%20%E5%B8%B8%E8%A6%8BSTL%E5%AE%B9%E5%99%A8%E6%A6%82%E8%BF%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="劉宇承">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="laxiflora的小天地">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="C++ 常見STL容器概述 | laxiflora的小天地">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          C++ 常見STL容器概述
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2022-06-22 17:51:30" itemprop="dateCreated datePublished" datetime="2022-06-22T17:51:30+08:00">2022-06-22</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新於</span>
+      <time title="修改時間：2022-08-08 20:10:07" itemprop="dateModified" datetime="2022-08-08T20:10:07+08:00">2022-08-08</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>在C++中，我們常常會使用Container來存儲資料，而Container分為三種</p>
+<ul>
+<li>Sequence Container</li>
+<li>Associative Container</li>
+<li>Container Adapters<br><br>在這裡簡單介紹一下他們的特性，暫不包括method以及使用範例的部分</li>
+</ul>
+<h2 id="Sequence-Container"><a href="#Sequence-Container" class="headerlink" title="Sequence Container"></a>Sequence Container</h2><ul>
+<li>這類的容器資料是有序存放的</li>
+<li>常用範例如Vector、Deque、List</li>
+</ul>
+<h3 id="Vector-常用"><a href="#Vector-常用" class="headerlink" title="Vector(常用)"></a>Vector(常用)</h3><ul>
+<li>類似一個動態大小的陣列</li>
+<li>支援隨機存取</li>
+<li>保證記憶體空間連續 (可善用Spatial Locality)</li>
+<li>雙頭皆可加入元素，且加入與刪除的複雜度其平攤成本均為O(1)</li>
+<li>相比於Deque，insertion in rear在速度上更有利</li>
+<li>一般建議除非很清楚知道使用其他結構的原因，不然建議使用Vector</li>
+</ul>
+<h3 id="Deque"><a href="#Deque" class="headerlink" title="Deque"></a>Deque</h3><ul>
+<li>又名double-ended queue</li>
+<li>跟vector很像，但是不保證記憶體空間連續</li>
+<li>相比於Vector，insertion in front在速度上更有利</li>
+</ul>
+<h3 id="List"><a href="#List" class="headerlink" title="List"></a>List</h3><ul>
+<li>以doubled link list實作</li>
+<li><a target="_blank" rel="noopener" href="https://imgur.com/a/Jc894yi?third_party=1#_=_">對於任意位置的插入與刪除均為O(1)</a></li>
+<li>若是要存取中間的元素，仍然需要整個遍歷過一遍</li>
+</ul>
+<h2 id="Associative-Container"><a href="#Associative-Container" class="headerlink" title="Associative Container"></a>Associative Container</h2><ul>
+<li>這類容器中的元素無序存放，但通常元素之間有對應關係</li>
+<li>常用範例如Set、Multiset、Map、Multimap</li>
+</ul>
+<h3 id="Set"><a href="#Set" class="headerlink" title="Set"></a>Set</h3><ul>
+<li>如數學集合定義，集合內同樣的元素只允許存在1個，若是重複加入同樣元素則會被忽略</li>
+</ul>
+<h3 id="Multiset"><a href="#Multiset" class="headerlink" title="Multiset"></a>Multiset</h3><ul>
+<li>這類集合允許重複的元素存在於集合中，這個結構會追蹤各個元素有幾個</li>
+</ul>
+<h3 id="Map"><a href="#Map" class="headerlink" title="Map"></a>Map</h3><ul>
+<li>又名Associative Array</li>
+<li>有點像Python的基本字典，一次插入是一對key-value</li>
+</ul>
+<h3 id="Multimap"><a href="#Multimap" class="headerlink" title="Multimap"></a>Multimap</h3><ul>
+<li>有點像python裡面的字典，不過每組value都是一個list(multiple values for the same key)</li>
+<li>當用一個key搜尋的時候，得到一個包含所有值的container</li>
+</ul>
+<h2 id="Container-Adapters"><a href="#Container-Adapters" class="headerlink" title="Container Adapters"></a>Container Adapters</h2><ul>
+<li>一種介面，用於放在一個Container之上，用於限制他的方法</li>
+<li>比如我們會用Stack adapters型態宣告Deque Container，限制Deque的功能，讓他表現得像Stack</li>
+<li>常見範例如Stack、Queue、Priority_queue</li>
+</ul>
+<h3 id="Stack"><a href="#Stack" class="headerlink" title="Stack"></a>Stack</h3><ul>
+<li>LIFO access</li>
+<li>通常架在Deque上</li>
+</ul>
+<h3 id="Queue"><a href="#Queue" class="headerlink" title="Queue"></a>Queue</h3><ul>
+<li>FIFO access</li>
+<li>通常架在Deque上</li>
+</ul>
+<h3 id="Priority-queue"><a href="#Priority-queue" class="headerlink" title="Priority_queue"></a>Priority_queue</h3><ul>
+<li>插入的元素按照所決定的優先順序(優先取最低值)排列，其餘表現同queue</li>
+<li>內部通常是用heap實作，所以通常架在vector上面</li>
+</ul>
+<p>以上是比較常用的一些STL容器以及相關介紹，更多的內容(物件的方法、複雜度等等)可以到<a target="_blank" rel="noopener" href="https://cplusplus.com/reference/stl/">這裡</a>翻閱</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/C/" rel="tag"># C++</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/06/21/%E5%A6%82%E4%BD%95%E7%94%A8hexo%E5%9C%A8github%20page%E4%B8%8A%E9%83%A8%E7%BD%B2%E5%B1%AC%E6%96%BC%E8%87%AA%E5%B7%B1%E7%9A%84%E7%AC%AC%E4%B8%80%E5%80%8B%E7%B6%B2%E7%AB%99/" rel="prev" title="如何用hexo在github page上部署屬於自己的第一個網站">
+                  <i class="fa fa-chevron-left"></i> 如何用hexo在github page上部署屬於自己的第一個網站
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/06/28/Hexo%E4%BD%BF%E7%94%A8%E6%8A%80%E5%B7%A7/" rel="next" title="Hexo使用技巧">
+                  Hexo使用技巧 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">劉宇承</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>

@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css" integrity="sha256-xejo6yLi6vGtAjcMIsY8BHdKsLg7QynVlFMzdQgUuy8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"laxiflora.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":true,"version":"8.12.3","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="GAN的訓練仍然困難，gen跟dis有一個卡住了，就整個卡住了 Generator跟Discriminator需要互相match each other    More training GEN tips GAN for Sequence generation 前面講的都是影像的GAN  Decoder變成了generator  Decoder的輸出一樣丟入discriminator訓練，產生分數">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ML_2021_6-3 生成式對抗網路(三) – 生成器效能評估與條件式生成">
+<meta property="og:url" content="https://laxiflora.github.io/2022/07/29/ML-2021-6-3-%E7%94%9F%E6%88%90%E5%BC%8F%E5%B0%8D%E6%8A%97%E7%B6%B2%E8%B7%AF-%E4%B8%89-%E2%80%93-%E7%94%9F%E6%88%90%E5%99%A8%E6%95%88%E8%83%BD%E8%A9%95%E4%BC%B0%E8%88%87%E6%A2%9D%E4%BB%B6%E5%BC%8F%E7%94%9F%E6%88%90/index.html">
+<meta property="og:site_name" content="laxiflora的小天地">
+<meta property="og:description" content="GAN的訓練仍然困難，gen跟dis有一個卡住了，就整個卡住了 Generator跟Discriminator需要互相match each other    More training GEN tips GAN for Sequence generation 前面講的都是影像的GAN  Decoder變成了generator  Decoder的輸出一樣丟入discriminator訓練，產生分數">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220729_2.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/pasted-37.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220729_3.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/pasted-38.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220729_5.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220729_6.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220729_8.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220729_9.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220729_10.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220729_12.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220729_11.png">
+<meta property="article:published_time" content="2022-07-29T07:24:39.000Z">
+<meta property="article:modified_time" content="2022-08-08T12:10:07.958Z">
+<meta property="article:author" content="劉宇承">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://laxiflora.github.io/images/20220729_2.png">
+
+
+<link rel="canonical" href="https://laxiflora.github.io/2022/07/29/ML-2021-6-3-%E7%94%9F%E6%88%90%E5%BC%8F%E5%B0%8D%E6%8A%97%E7%B6%B2%E8%B7%AF-%E4%B8%89-%E2%80%93-%E7%94%9F%E6%88%90%E5%99%A8%E6%95%88%E8%83%BD%E8%A9%95%E4%BC%B0%E8%88%87%E6%A2%9D%E4%BB%B6%E5%BC%8F%E7%94%9F%E6%88%90/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://laxiflora.github.io/2022/07/29/ML-2021-6-3-%E7%94%9F%E6%88%90%E5%BC%8F%E5%B0%8D%E6%8A%97%E7%B6%B2%E8%B7%AF-%E4%B8%89-%E2%80%93-%E7%94%9F%E6%88%90%E5%99%A8%E6%95%88%E8%83%BD%E8%A9%95%E4%BC%B0%E8%88%87%E6%A2%9D%E4%BB%B6%E5%BC%8F%E7%94%9F%E6%88%90/","path":"2022/07/29/ML-2021-6-3-生成式對抗網路-三-–-生成器效能評估與條件式生成/","title":"ML_2021_6-3 生成式對抗網路(三) – 生成器效能評估與條件式生成"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>ML_2021_6-3 生成式對抗網路(三) – 生成器效能評估與條件式生成 | laxiflora的小天地</title>
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">laxiflora的小天地</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">前進軟體工程師的練功之路</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>標籤</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#More-training-GEN-tips"><span class="nav-number">1.</span> <span class="nav-text">More training GEN tips</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#GAN-for-Sequence-generation"><span class="nav-number">2.</span> <span class="nav-text">GAN for Sequence generation</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%AF%E5%90%A6%E7%94%A8supervised-learning%E5%81%9A"><span class="nav-number">3.</span> <span class="nav-text">可否用supervised learning做</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Quality-of-GAN"><span class="nav-number">4.</span> <span class="nav-text">Quality of GAN</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Mode-Collapse"><span class="nav-number">4.1.</span> <span class="nav-text">Mode Collapse</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Mode-Dropping"><span class="nav-number">4.2.</span> <span class="nav-text">Mode Dropping</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Diversity"><span class="nav-number">4.3.</span> <span class="nav-text">Diversity</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Conditional-Generation"><span class="nav-number">5.</span> <span class="nav-text">Conditional Generation</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Discriminator"><span class="nav-number">5.1.</span> <span class="nav-text">Discriminator</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#conditional-GAN%E5%85%B6%E4%BB%96%E6%87%89%E7%94%A8"><span class="nav-number">5.2.</span> <span class="nav-text">conditional GAN其他應用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#sound-to-image"><span class="nav-number">5.2.1.</span> <span class="nav-text">sound to image</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#talking-head-generation"><span class="nav-number">5.2.2.</span> <span class="nav-text">talking head generation</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#image-to-image"><span class="nav-number">5.2.3.</span> <span class="nav-text">image to image</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">劉宇承</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">32</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">標籤</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://laxiflora.github.io/2022/07/29/ML-2021-6-3-%E7%94%9F%E6%88%90%E5%BC%8F%E5%B0%8D%E6%8A%97%E7%B6%B2%E8%B7%AF-%E4%B8%89-%E2%80%93-%E7%94%9F%E6%88%90%E5%99%A8%E6%95%88%E8%83%BD%E8%A9%95%E4%BC%B0%E8%88%87%E6%A2%9D%E4%BB%B6%E5%BC%8F%E7%94%9F%E6%88%90/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="劉宇承">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="laxiflora的小天地">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="ML_2021_6-3 生成式對抗網路(三) – 生成器效能評估與條件式生成 | laxiflora的小天地">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          ML_2021_6-3 生成式對抗網路(三) – 生成器效能評估與條件式生成
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2022-07-29 15:24:39" itemprop="dateCreated datePublished" datetime="2022-07-29T15:24:39+08:00">2022-07-29</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新於</span>
+      <time title="修改時間：2022-08-08 20:10:07" itemprop="dateModified" datetime="2022-08-08T20:10:07+08:00">2022-08-08</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <ul>
+<li>GAN的訓練仍然困難，gen跟dis有一個卡住了，就整個卡住了<ul>
+<li>Generator跟Discriminator需要互相match each other</li>
+</ul>
+</li>
+</ul>
+<h1 id="More-training-GEN-tips"><a href="#More-training-GEN-tips" class="headerlink" title="More training GEN tips"></a>More training GEN tips</h1><p><img src="/../images/20220729_2.png"></p>
+<h1 id="GAN-for-Sequence-generation"><a href="#GAN-for-Sequence-generation" class="headerlink" title="GAN for Sequence generation"></a>GAN for Sequence generation</h1><ul>
+<li><p>前面講的都是影像的GAN</p>
+</li>
+<li><p>Decoder變成了generator</p>
+</li>
+<li><p>Decoder的輸出一樣丟入discriminator訓練，產生分數<br><img src="/../images/pasted-37.png"></p>
+</li>
+<li><p>問題在於，decoder不能用梯度下降去train</p>
+<ul>
+<li>微不出decoder weight變化對discriminator的影響（distribution不變）<br><img src="/../images/20220729_3.png"></li>
+</ul>
+</li>
+<li><p>碰到很難train的地方，可以用用看RL</p>
+<ul>
+<li>RL很難train，且GAN也很難train，不好用</li>
+</ul>
+</li>
+<li><p>完整的GAN課程：<a target="_blank" rel="noopener" href="https://www.youtube.com/playlist?list=PLJV_el3uVTsMq6JEFPW35BCiOQTsoqwNw">連結</a></p>
+</li>
+<li><p>More generative models: VAE、FLOW-based Model</p>
+</li>
+</ul>
+<h1 id="可否用supervised-learning做"><a href="#可否用supervised-learning做" class="headerlink" title="可否用supervised learning做"></a>可否用supervised learning做</h1><ul>
+<li>直接把正確的圖片變成vector，作為ground truth（訓練目標）<ul>
+<li>直接放入隨機向量來生成圖片</li>
+</ul>
+</li>
+<li>可以這樣做，但是向量不能亂取，相關文章：<ul>
+<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1707.05776">Generative Latent Optimization (GLO)</a></li>
+<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2007.02798">Gradient Origin Networks</a></li>
+</ul>
+</li>
+</ul>
+<h1 id="Quality-of-GAN"><a href="#Quality-of-GAN" class="headerlink" title="Quality of GAN"></a>Quality of GAN</h1><ul>
+<li><p>如何衡量GAN的好壞</p>
+</li>
+<li><p>以往都是直接真人去看效果，但可能不客觀且價格昂貴</p>
+</li>
+<li><p>在某些任務的確可以衡量</p>
+<ul>
+<li>（作業6）提供一個動畫，看GAN能抓出幾張是人臉</li>
+</ul>
+</li>
+<li><p>分類系統，把GAN輸出的影像作為分類系統的輸入，讓這個系統分類</p>
+<ul>
+<li>Ex. GAN產生班馬，給分類系統分類該圖像是否班馬類</li>
+<li>當分類越集中，則GAN的輸出「可能」越好</li>
+<li>問題：Mode Collapse</li>
+</ul>
+</li>
+</ul>
+<h2 id="Mode-Collapse"><a href="#Mode-Collapse" class="headerlink" title="Mode Collapse"></a>Mode Collapse</h2><ul>
+<li>可能GAN輸出的圖片來來去去就那幾張，過度單一，但那些圖片都剛好分類成功</li>
+<li>GAN知道discriminter的盲點了，就集中攻擊這個點<br><img src="/../images/pasted-38.png"></li>
+<li>上圖的人臉過度單一</li>
+<li>目前暫時無解，但看得出來</li>
+</ul>
+<h2 id="Mode-Dropping"><a href="#Mode-Dropping" class="headerlink" title="Mode Dropping"></a>Mode Dropping</h2><ul>
+<li>GAN輸出的圖片看起來有一些變化性，看不出問題</li>
+<li>但可能輸出的圖片只是真實圖片的一小個子集</li>
+<li>不容易偵測出來</li>
+</ul>
+<h2 id="Diversity"><a href="#Diversity" class="headerlink" title="Diversity"></a>Diversity</h2><ul>
+<li>衡量GAN輸出的多樣性分布</li>
+</ul>
+<p><img src="/images/20220729_5.png" alt="upload successful"></p>
+<ul>
+<li><p>與quality差別在於，quality衡量只看一張圖片，分類越集中越好</p>
+</li>
+<li><p>diversity則是看一堆圖片，輸出的平均越均衡，代表多樣性越好</p>
+</li>
+<li><p>Inception score(IS)：若good quality, diversity，則large IS</p>
+</li>
+<li><p>但作業不會用inception score</p>
+<ul>
+<li>輸出都是人臉，對於IS來說diversity會很小</li>
+</ul>
+</li>
+<li><p>作業採用Frechet inception distance(FID)</p>
+<ul>
+<li>把輸出丟入CNN，再把進入softmax前的那個vector拿出來作為輸入</li>
+<li>假設真實圖片跟產生的圖片都是gaussian distribution</li>
+<li>對他們算Frechet inception distance<ul>
+<li>越小品質越高</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>問題：需要很多samples，且不知道輸出分佈是否為gaussian</p>
+<ul>
+<li>所以不能只看這個，作業會FID跟IS都參考<br><img src="/images/20220729_6.png"></li>
+</ul>
+</li>
+<li><p>有時候，FID很好（低）而且人臉也做得很真實，也未必是一個很好的model</p>
+<ul>
+<li>memory GAN: 如果這個GAN可能是直接照抄訓練資料的，剛好符合diversity跟classification</li>
+<li>可否比對訓練資料跟輸出的相似度？<ul>
+<li>也可能GAN剛好輸出都是輸入資料的左右反轉，相似度又比不出來<br>-&gt; GAN的evaluation仍為可深入研究的題目</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1802.03446">目前的GAN evaluation的作法列舉</a></p>
+</li>
+</ul>
+<h1 id="Conditional-Generation"><a href="#Conditional-Generation" class="headerlink" title="Conditional Generation"></a>Conditional Generation</h1><ul>
+<li><p>到目前為止GAN都只講隨機的輸入</p>
+</li>
+<li><p>若給定一個x(條件)，產生y</p>
+<ul>
+<li>Text to image任務<br><img src="/../images/20220729_8.png"></li>
+</ul>
+</li>
+<li><p>根據Sample的z不同，會產生滿足x條件的不同輸出</p>
+</li>
+</ul>
+<h2 id="Discriminator"><a href="#Discriminator" class="headerlink" title="Discriminator"></a>Discriminator</h2><ul>
+<li>必須也知道文字敘述的條件，不然GAN只會產生清晰圖片，忽略條件</li>
+<li>Discriminator除了看圖片是否好，還要看是否吻合條件</li>
+</ul>
+<p><img src="/images/20220729_9.png"></p>
+<ul>
+<li><p>text-image的training data通常會需要成對的資料(condition,image)</p>
+</li>
+<li><p>但是這樣通常訓練的結果不會很好</p>
+<ul>
+<li>還是要mix一些label &#x3D; 0(故意塞錯的) 的資料（清晰圖片+錯誤描述）<br><img src="/../images/20220729_10.png"></li>
+</ul>
+</li>
+</ul>
+<h2 id="conditional-GAN其他應用"><a href="#conditional-GAN其他應用" class="headerlink" title="conditional GAN其他應用"></a>conditional GAN其他應用</h2><h3 id="sound-to-image"><a href="#sound-to-image" class="headerlink" title="sound to image"></a>sound to image</h3><ul>
+<li><p>給聲音，然後畫出圖片</p>
+<ul>
+<li>給sound一些label其實不難收集，可以爬影片然後get sound以及相關畫面</li>
+<li>(sound, “a dog barking sound”)</li>
+<li>(sound, “river sound”)<br><img src="/../images/20220729_12.png"></li>
+</ul>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://wjohn1483.github.io/audio_to_scene/index.html">參考網站</a></p>
+</li>
+</ul>
+<h3 id="talking-head-generation"><a href="#talking-head-generation" class="headerlink" title="talking head generation"></a>talking head generation</h3><p><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1905.08233">相關文獻</a></p>
+<h3 id="image-to-image"><a href="#image-to-image" class="headerlink" title="image to image"></a>image to image</h3><p><img src="/../images/20220729_11.png"></p>
+<ul>
+<li><p>Conditional GAN也可以做image translation（輸入圖片，輸出吻合條件的圖片）</p>
+<ul>
+<li>pix2pix</li>
+</ul>
+</li>
+<li><p>老樣子，image 2 image用supervisied learning，可能會學習到類似的情況下，圖片輸入很多種，導致輸出模糊（同GAN一開始小精靈的例子）</p>
+<ul>
+<li>所以還是要用GAN<ul>
+<li>但GAN可能還是會有想像力過度豐富的問題</li>
+<li>兩者需要同時使用</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://arxiv.org/avs/1611.07004">相關文獻</a></p>
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/07/28/ML-2021-6-2-%E7%94%9F%E6%88%90%E5%BC%8F%E5%B0%8D%E6%8A%97%E7%B6%B2%E8%B7%AF-%E4%BA%8C-%E7%90%86%E8%AB%96%E4%BB%8B%E7%B4%B9%E8%88%87WGAN/" rel="prev" title="ML_2021_6-2 生成式對抗網路(二) - 理論介紹與WGAN">
+                  <i class="fa fa-chevron-left"></i> ML_2021_6-2 生成式對抗網路(二) - 理論介紹與WGAN
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/07/29/ML-2021-6-4-%E7%94%9F%E6%88%90%E5%BC%8F%E5%B0%8D%E6%8A%97%E7%B6%B2%E8%B7%AF-%E5%9B%9B-%E2%80%93-Cycle-GAN/" rel="next" title="ML_2021_6-4 生成式對抗網路(四) – Cycle GAN">
+                  ML_2021_6-4 生成式對抗網路(四) – Cycle GAN <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">劉宇承</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>

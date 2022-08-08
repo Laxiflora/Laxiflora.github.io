@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css" integrity="sha256-xejo6yLi6vGtAjcMIsY8BHdKsLg7QynVlFMzdQgUuy8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"laxiflora.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":true,"version":"8.12.3","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="這裡只討論optimazion失靈的時候，如何把梯度下降做得更好 為何opti會失敗（grad）？ gradient decent&#x3D;0，使參數無法再更新 點卡在local minima or saddle point(稱為卡在critical point)  分辨critical point是saddle point or local minima 雖然我們無法知道loss funct">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ML_2021_2-2 類神經網路訓練不起來怎麼辦(一)">
+<meta property="og:url" content="https://laxiflora.github.io/2022/07/04/ML-2021-2-2-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%B8%80/index.html">
+<meta property="og:site_name" content="laxiflora的小天地">
+<meta property="og:description" content="這裡只討論optimazion失靈的時候，如何把梯度下降做得更好 為何opti會失敗（grad）？ gradient decent&#x3D;0，使參數無法再更新 點卡在local minima or saddle point(稱為卡在critical point)  分辨critical point是saddle point or local minima 雖然我們無法知道loss funct">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220704_1.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220704_3.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220704_2.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220704_5.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220704_6.png">
+<meta property="article:published_time" content="2022-07-04T14:22:35.000Z">
+<meta property="article:modified_time" content="2022-08-08T12:10:07.954Z">
+<meta property="article:author" content="劉宇承">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://laxiflora.github.io/images/20220704_1.png">
+
+
+<link rel="canonical" href="https://laxiflora.github.io/2022/07/04/ML-2021-2-2-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%B8%80/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://laxiflora.github.io/2022/07/04/ML-2021-2-2-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%B8%80/","path":"2022/07/04/ML-2021-2-2-類神經網路訓練不起來怎麼辦-一/","title":"ML_2021_2-2 類神經網路訓練不起來怎麼辦(一)"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>ML_2021_2-2 類神經網路訓練不起來怎麼辦(一) | laxiflora的小天地</title>
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">laxiflora的小天地</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">前進軟體工程師的練功之路</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>標籤</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%82%BA%E4%BD%95opti%E6%9C%83%E5%A4%B1%E6%95%97%EF%BC%88grad%EF%BC%89%EF%BC%9F"><span class="nav-number">1.</span> <span class="nav-text">為何opti會失敗（grad）？</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E8%BE%A8critical-point%E6%98%AFsaddle-point-or-local-minima"><span class="nav-number">1.1.</span> <span class="nav-text">分辨critical point是saddle point or local minima</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AF%84%E4%BE%8B%E8%AA%AA%E6%98%8E"><span class="nav-number">1.2.</span> <span class="nav-text">範例說明</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#case-saddle-point"><span class="nav-number">2.</span> <span class="nav-text">case: saddle point</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AF%84%E4%BE%8B%E8%AA%AA%E6%98%8E-1"><span class="nav-number">2.1.</span> <span class="nav-text">範例說明</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Saddle-point-vs-Local-Minima"><span class="nav-number">3.</span> <span class="nav-text">Saddle point vs. Local Minima</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">劉宇承</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">32</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">標籤</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://laxiflora.github.io/2022/07/04/ML-2021-2-2-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%B8%80/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="劉宇承">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="laxiflora的小天地">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="ML_2021_2-2 類神經網路訓練不起來怎麼辦(一) | laxiflora的小天地">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          ML_2021_2-2 類神經網路訓練不起來怎麼辦(一)
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2022-07-04 22:22:35" itemprop="dateCreated datePublished" datetime="2022-07-04T22:22:35+08:00">2022-07-04</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新於</span>
+      <time title="修改時間：2022-08-08 20:10:07" itemprop="dateModified" datetime="2022-08-08T20:10:07+08:00">2022-08-08</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <ul>
+<li><p>這裡只討論optimazion失靈的時候，如何把梯度下降做得更好</p>
+<h2 id="為何opti會失敗（grad）？"><a href="#為何opti會失敗（grad）？" class="headerlink" title="為何opti會失敗（grad）？"></a>為何opti會失敗（grad）？</h2><ul>
+<li>gradient decent&#x3D;0，使參數無法再更新</li>
+<li>點卡在local minima or saddle point(稱為卡在critical point)</li>
+</ul>
+<h3 id="分辨critical-point是saddle-point-or-local-minima"><a href="#分辨critical-point是saddle-point-or-local-minima" class="headerlink" title="分辨critical point是saddle point or local minima"></a>分辨critical point是saddle point or local minima</h3><ul>
+<li>雖然我們無法知道loss function長怎樣，但可以用泰勒展開式逼近</li>
+<li>給定一組參數$\theta’$</li>
+<li>則使用tayler series approximation<br>原式為<br>$$<br>f(x) &#x3D; f(a) + \frac{f’(a)}{1!}(x-a) + \frac{f’’(a)}{2!}(x-a)^2 + ….<br>$$<br>我們取到2次微分，代入$x &#x3D; \theta及a &#x3D; \theta’$得到<br>$$<br>L(\theta) \sim L(\theta’)^Tg + \frac{1}{2}(\theta - \theta’)^TH(\theta - \theta’)<br>,其中 g &#x3D; \nabla L(\theta’)(請參考上週)<br>$$</li>
+</ul>
+</li>
+</ul>
+<p><img src="/../images/20220704_1.png"></p>
+<ul>
+<li><p>其實g就是$L(\theta’)$對$\theta_i$的一階微分，Hessian是$L(\theta’)$對$\theta_{ij}$做二次微分</p>
+</li>
+<li><p>因為critical point的時候g &#x3D; 0，所以我們要考慮H(也就是2次微分的部分)來分辨是哪種問題，2次微分可以看出地貌<br>把Hessian部分拉出來討論<br><img src="/../images/20220704_3.png"><br>要如何確認滿足哪個原因呢?</p>
+<ul>
+<li>線性代數：正定、負定、均非 (看H的eigen value)</li>
+</ul>
+<h3 id="範例說明"><a href="#範例說明" class="headerlink" title="範例說明"></a>範例說明</h3></li>
+<li><p>給定一個模型$y &#x3D; w_1w_2x$，資料僅有一筆，$f(1)$時其label &#x3D; 1，且w1w2之間不具有任何激發函數，loss function採用MSE</p>
+</li>
+<li><p>則x&#x3D;1時透過爆搜我們可以得出下面的error surface(偷偷看正解圖)<br><img src="/../images/20220704_2.png"></p>
+</li>
+<li><p>其中鞍點的四周都是高牆，無法離開</p>
+</li>
+<li><p>局部最小點則是在範圍內找不到更低的點</p>
+</li>
+<li><p>但假設我們不知道這個error surface，我們可以應用上面的方法來測定他是哪個問題，根據MSE公式我們得出<br>$$<br>L &#x3D; (\hat{y}-w_1w_2x)^2 &#x3D; (1-w_1w_2)^2<br>$$<br>對他們做微分可以得到(注意chain rule)<br>$$<br>g &#x3D; \frac{\partial L}{\partial w_1} &#x3D; 2(1-w_1w_2)(-w_2)<br>$$<br>$$<br>g &#x3D; \frac{\partial L}{\partial w_2} &#x3D; 2(1-w_1w_2)(-w_1)<br>$$<br>代入g&#x3D;0，可以發現當$w_1 &#x3D; w_2 &#x3D; 0$，有critical point<br>接下來要確認他們是哪個問題，就繼續再做微分:<br><img src="/../images/20220704_5.png"><br>代入剛剛的$w_1 &#x3D; w_2 &#x3D; 0$得到<br>$$<br>H &#x3D;  <br>\left[<br>\begin{matrix}<br>     0 &amp;&amp; -2 \\\ -2 &amp;&amp; 0<br>\end{matrix}<br>\right] \tag{3}<br>$$<br>抓H的eigen values來知道他是哪個point</p>
+</li>
+</ul>
+<h2 id="case-saddle-point"><a href="#case-saddle-point" class="headerlink" title="case: saddle point"></a>case: saddle point</h2><ul>
+<li>我們可以藉由H來得到參數該移動的方向<br>令$\lambda$是H的一個eigen value, u為$\lambda$的其中一個eigen vector<br>則<br>$$<br>v^THv &#x3D; u^THu &#x3D; u^T(\lambda u) &#x3D; \lambda \vert \vert u \vert \vert^2<br>$$<br>若今天$\lambda &lt; 0$則必定$u^THu&lt;0$，回顧剛剛的式子<br>$$<br>L(\theta) \sim L(\theta’)^Tg + \frac{1}{2}(\theta - \theta’)^TH(\theta - \theta’)<br>$$<br>可以知道$L(\theta)必定&gt;L(\theta’)$<br><img src="/../images/20220704_6.png"><br>我們只要將$\theta’沿著u的方向更新u得到\theta$，就可以再次降低loss</li>
+</ul>
+<h3 id="範例說明-1"><a href="#範例說明-1" class="headerlink" title="範例說明"></a>範例說明</h3><ul>
+<li>延續剛剛的例子，我們知道$H的\lambda_1 &#x3D; 2, \lambda_2 &#x3D;-2$，屬於saddle point(非正定與負定)</li>
+<li>取$\lambda_2 &#x3D; -2 , u &#x3D; (1,1)$，則把$\theta &#x3D; (0,0)+(1,1)$，就可以逃出saddle point</li>
+<li>實務上不易使用，因為要做出2次微分且還需要用到找出該矩陣的eigen value，計算量過大 (還有別招可以用)</li>
+</ul>
+<h2 id="Saddle-point-vs-Local-Minima"><a href="#Saddle-point-vs-Local-Minima" class="headerlink" title="Saddle point vs. Local Minima"></a>Saddle point vs. Local Minima</h2><ul>
+<li>在三維的密閉石棺中，在更高維度未必是密閉的</li>
+<li>在低維度的local minima中，是否只是高維中的saddle point? </li>
+<li>當參數超級多，是否極度有可能local minima其實只是saddle point? (假說)</li>
+<li>在實作中，絕大多數的模型，critical point所在點中，幾乎找不到所有eigen value均&gt;0的範例，表示我們幾乎不可能找到完全的local minima</li>
+<li>定義一個數值”Minimum ratio &#x3D; $\frac{正\lambda數}{\lambda數}$”，表示你的critical point有多像local minima</li>
+<li>所以我們可以知道，通常一個模型train到loss卡住，極高可能是卡在一個saddle point</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/07/04/ML-2021-2-1-%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E4%BB%BB%E5%8B%99%E6%94%BB%E7%95%A5/" rel="prev" title="ML_2021_2-1 機器學習任務攻略">
+                  <i class="fa fa-chevron-left"></i> ML_2021_2-1 機器學習任務攻略
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/07/04/ML-2022-2-1-%E5%86%8D%E6%8E%A2%E5%AF%B6%E5%8F%AF%E5%A4%A2%E3%80%81%E6%95%B8%E7%A2%BC%E5%AF%B6%E8%B2%9D%E5%88%86%E9%A1%9E%E5%99%A8/" rel="next" title="ML_2022_2-1 再探寶可夢、數碼寶貝分類器">
+                  ML_2022_2-1 再探寶可夢、數碼寶貝分類器 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">劉宇承</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>

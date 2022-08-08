@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css" integrity="sha256-xejo6yLi6vGtAjcMIsY8BHdKsLg7QynVlFMzdQgUuy8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"laxiflora.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":true,"version":"8.12.3","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="network架構的其中一種變形:CNN 此講專注在CNN專門用在影像上的講解(目前也普遍用在影像)  Image classification - Version 1 我們需要假設圖片輸入的大小都是固定的 如果大小不一，就得要rescale   是classification問題，所以輸出one-hot vector (向量的長度代表你能分出多少種類別)  如何把影像當作輸入 一張圖片其實是一">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ML_2021_3-1 卷積神經網路">
+<meta property="og:url" content="https://laxiflora.github.io/2022/07/09/ML-2021-3-1-%E5%8D%B7%E7%A9%8D%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF/index.html">
+<meta property="og:site_name" content="laxiflora的小天地">
+<meta property="og:description" content="network架構的其中一種變形:CNN 此講專注在CNN專門用在影像上的講解(目前也普遍用在影像)  Image classification - Version 1 我們需要假設圖片輸入的大小都是固定的 如果大小不一，就得要rescale   是classification問題，所以輸出one-hot vector (向量的長度代表你能分出多少種類別)  如何把影像當作輸入 一張圖片其實是一">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220709_1.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220709_2.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220709_3.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220709_4.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220709_5.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220709_6.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220709_7.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/pasted-15.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220709_8.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220709_9.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220709_10.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220709_11.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220709_12.png">
+<meta property="article:published_time" content="2022-07-09T08:13:09.000Z">
+<meta property="article:modified_time" content="2022-08-08T12:10:07.956Z">
+<meta property="article:author" content="劉宇承">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://laxiflora.github.io/images/20220709_1.png">
+
+
+<link rel="canonical" href="https://laxiflora.github.io/2022/07/09/ML-2021-3-1-%E5%8D%B7%E7%A9%8D%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://laxiflora.github.io/2022/07/09/ML-2021-3-1-%E5%8D%B7%E7%A9%8D%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF/","path":"2022/07/09/ML-2021-3-1-卷積神經網路/","title":"ML_2021_3-1 卷積神經網路"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>ML_2021_3-1 卷積神經網路 | laxiflora的小天地</title>
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">laxiflora的小天地</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">前進軟體工程師的練功之路</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>標籤</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Image-classification-Version-1"><span class="nav-number">1.</span> <span class="nav-text">Image classification - Version 1</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E6%8A%8A%E5%BD%B1%E5%83%8F%E7%95%B6%E4%BD%9C%E8%BC%B8%E5%85%A5"><span class="nav-number">1.1.</span> <span class="nav-text">如何把影像當作輸入</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Train-with-fully-connected-network%EF%BC%9F"><span class="nav-number">1.2.</span> <span class="nav-text">Train with fully connected network？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Observation-1"><span class="nav-number">1.3.</span> <span class="nav-text">Observation 1</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Simplification-1-typical-settig"><span class="nav-number">1.3.1.</span> <span class="nav-text">Simplification 1 - typical settig</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Observation-2"><span class="nav-number">1.4.</span> <span class="nav-text">Observation 2</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Simplification-2-typical-setting"><span class="nav-number">1.4.1.</span> <span class="nav-text">Simplification 2 -typical setting</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Benefit-of-Convolutional-layer"><span class="nav-number">1.5.</span> <span class="nav-text">Benefit of Convolutional layer</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%A6%E4%B8%80%E5%80%8B%E8%AA%AA%E6%98%8ECNN%E7%9A%84%E7%89%88%E6%9C%AC"><span class="nav-number">2.</span> <span class="nav-text">另一個說明CNN的版本</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Convolutional-layer"><span class="nav-number">2.1.</span> <span class="nav-text">Convolutional layer</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Note"><span class="nav-number">2.1.0.1.</span> <span class="nav-text">Note:</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Comparison-of-2-version"><span class="nav-number">2.2.</span> <span class="nav-text">Comparison of 2 version</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Observation-3"><span class="nav-number">2.3.</span> <span class="nav-text">Observation 3</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#The-whole-CNN"><span class="nav-number">3.</span> <span class="nav-text">The whole CNN</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Application-GO"><span class="nav-number">4.</span> <span class="nav-text">Application: GO</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Hen%E9%87%8D%E8%A6%81%E7%9A%84Notes"><span class="nav-number">5.</span> <span class="nav-text">Hen重要的Notes:</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">劉宇承</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">32</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">標籤</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://laxiflora.github.io/2022/07/09/ML-2021-3-1-%E5%8D%B7%E7%A9%8D%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="劉宇承">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="laxiflora的小天地">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="ML_2021_3-1 卷積神經網路 | laxiflora的小天地">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          ML_2021_3-1 卷積神經網路
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2022-07-09 16:13:09" itemprop="dateCreated datePublished" datetime="2022-07-09T16:13:09+08:00">2022-07-09</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新於</span>
+      <time title="修改時間：2022-08-08 20:10:07" itemprop="dateModified" datetime="2022-08-08T20:10:07+08:00">2022-08-08</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <ul>
+<li>network架構的其中一種變形:CNN</li>
+<li>此講專注在CNN專門用在影像上的講解(目前也普遍用在影像)</li>
+</ul>
+<h1 id="Image-classification-Version-1"><a href="#Image-classification-Version-1" class="headerlink" title="Image classification - Version 1"></a>Image classification - Version 1</h1><ul>
+<li>我們需要假設圖片輸入的大小都是固定的<ul>
+<li>如果大小不一，就得要rescale</li>
+</ul>
+</li>
+<li>是classification問題，所以輸出one-hot vector (向量的長度代表你能分出多少種類別)</li>
+</ul>
+<h2 id="如何把影像當作輸入"><a href="#如何把影像當作輸入" class="headerlink" title="如何把影像當作輸入"></a>如何把影像當作輸入</h2><ul>
+<li>一張圖片其實是一個3維的Tensor (RGB)<ul>
+<li>Tensor(長跟寬)，並有3個Channel</li>
+</ul>
+</li>
+<li>我們把3維的Tensor拉直，成為一個向量 (這也是為何影像大小需要相同)</li>
+</ul>
+<h2 id="Train-with-fully-connected-network？"><a href="#Train-with-fully-connected-network？" class="headerlink" title="Train with fully connected network？"></a>Train with fully connected network？</h2><ul>
+<li>如果我們依然使用fully connected network來訓練，又假設neuron取1000個，則一個100x100的圖片輸入，會產生$100<em>100</em>3(彩色)<em>1000 &#x3D; 3</em>10^7$個weight，是一個巨大的數字，大幅增加了overfitting的風險 (彈性過大)<br><img src="/../images/20220709_1.png"></li>
+<li>不採用全連接層，以下透過一些觀察來嘗試簡化這個網路</li>
+</ul>
+<h2 id="Observation-1"><a href="#Observation-1" class="headerlink" title="Observation 1"></a>Observation 1</h2><ul>
+<li>對於圖片辨識，我們要做的是針對圖片裡面找到一些關鍵的部位 (ex. 鳥嘴、眼睛、翅膀)</li>
+<li>每個neuron並不需要看過整張圖片(即，不用fully connected)</li>
+<li>我們可以讓每個neuron只看特定的區塊就好</li>
+</ul>
+<h3 id="Simplification-1-typical-settig"><a href="#Simplification-1-typical-settig" class="headerlink" title="Simplification 1 - typical settig"></a>Simplification 1 - typical settig</h3><ul>
+<li><p>CNN會設定一個『Receptive Field』，每個neuron讀取一個他負責的區塊<br><img src="/../images/20220709_2.png"></p>
+</li>
+<li><p>Receptive Field可以重疊</p>
+</li>
+<li><p>Different neuron是可以有不同的receptive field的</p>
+</li>
+<li><p>上述案例裡面，就是3x3的kernel size</p>
+</li>
+<li><p>通常會有一排(64、128等)個neuron去守備他</p>
+</li>
+<li><p>不同的receptive field之間的距離差距稱為『stride』</p>
+</li>
+<li><p>通常receptive field都會高度重疊</p>
+</li>
+<li><p>如果一個receptive field關注的範圍超出圖片範圍，就需要把外面的值補值(補0、補平均等)，稱為『padding』</p>
+</li>
+<li><p>Receptive fields cover the whole image</p>
+</li>
+</ul>
+<h2 id="Observation-2"><a href="#Observation-2" class="headerlink" title="Observation 2"></a>Observation 2</h2><ul>
+<li>當一個特殊部位落在不同的receptive field內怎麼處理?</li>
+</ul>
+<h3 id="Simplification-2-typical-setting"><a href="#Simplification-2-typical-setting" class="headerlink" title="Simplification 2 -typical setting"></a>Simplification 2 -typical setting</h3><p><img src="/../images/20220709_3.png"></p>
+<ul>
+<li>我們可以讓一些neuron採用共用參數(Parameter sharing)，讓他們的參數都一模一樣</li>
+<li>因為輸入(receptive field)不一樣，所以各自的輸出也不會相同</li>
+<li>可能rf1的第一個neuron跟rf2的第一個neuron共用參數，rf1的第二個跟rf2的第二個neuron共參… etc</li>
+<li>這些共用的參數稱為『Filter』<br><img src="/../images/20220709_4.png"></li>
+</ul>
+<h2 id="Benefit-of-Convolutional-layer"><a href="#Benefit-of-Convolutional-layer" class="headerlink" title="Benefit of Convolutional layer"></a>Benefit of Convolutional layer</h2><ul>
+<li>根據上述的觀察，我們成功讓CNN network針對相片輸入的訓練更加簡化<br><img src="/../images/20220709_5.png"></li>
+<li>Convolutional layer的model bias會比較大，但CNN是專門為影像設計的network<br>PS. 這邊為何CNN bias會比較大，以及為何這樣不好，可以再google一下</li>
+</ul>
+<hr>
+<h1 id="另一個說明CNN的版本"><a href="#另一個說明CNN的版本" class="headerlink" title="另一個說明CNN的版本"></a>另一個說明CNN的版本</h1><h2 id="Convolutional-layer"><a href="#Convolutional-layer" class="headerlink" title="Convolutional layer"></a>Convolutional layer</h2><ul>
+<li><p>所謂Convolutional Layer，裡面有很多的Filter，裡面都有一個3x3xchannel維的tensor</p>
+</li>
+<li><p>每一個filter都是要抓取某個pattern</p>
+</li>
+<li><p>以下假設是channel &#x3D; 1(黑白照片)</p>
+</li>
+<li><p>我們把各個rf跟filter做內積，得出各值<br><img src="/../images/20220709_6.png"></p>
+</li>
+<li><p>接下來把所有pattern對各filter一樣的計算</p>
+</li>
+<li><p>這內積出來的一群數字稱為『Feature map』，再這個例子中，我們有64個filter，則我們的feature map會有64組(channels)數字，每組有4x4個數字</p>
+</li>
+<li><p>接下來進到第二層的convolution，我們的filter必須變成3x3x<em>64</em>，因為上一層輸出了64個channel，相對於第一層只有一個channel，第二層會出現64個channel</p>
+</li>
+</ul>
+<h4 id="Note"><a href="#Note" class="headerlink" title="Note:"></a>Note:</h4><ul>
+<li>隨著捲積層的深入，我們觀察的圖片pattern會越來越大</li>
+<li>繼續上面的例子，如果我們的filter之rf一樣是看3x3大小的話，因為我們的feature map中的3x3大小實際上是對應到圖片裡面的5x5大小(跟stride有關)，所以其實層數越高，我們一次考慮的範圍會越大！<br><img src="/../images/20220709_7.png"></li>
+</ul>
+<h2 id="Comparison-of-2-version"><a href="#Comparison-of-2-version" class="headerlink" title="Comparison of 2 version"></a>Comparison of 2 version</h2><ul>
+<li>第一個版本的共用參數，就是第二版本的filter(本slide忽略bias)</li>
+<li>把一個filter掃過一張圖片，稱作『convolves over』<ul>
+<li>例句(?)： each filter convolves over the input image<br><img src="/../images/pasted-15.png"></li>
+</ul>
+</li>
+</ul>
+<p><img src="/../images/20220709_8.png"></p>
+<h2 id="Observation-3"><a href="#Observation-3" class="headerlink" title="Observation 3"></a>Observation 3</h2><ul>
+<li>如果我們把一張大圖片縮小、拿掉odd columns，圖片還是不會有所影響(看起來差不多)，稱為subsampling -&gt; pooling</li>
+<li>Pooling 本身沒有參數，沒有任何東西要learn，有些人稱他為一種激發函數</li>
+<li>pooling就是把圖片像素分組，然後從裡面只選一個像素留下，簡化圖片像素大小</li>
+<li>下圖為示意圖<br><img src="/../images/20220709_9.png"></li>
+<li>過度pooling仍會傷害訓練效益</li>
+</ul>
+<hr>
+<h1 id="The-whole-CNN"><a href="#The-whole-CNN" class="headerlink" title="The whole CNN"></a>The whole CNN</h1><p><img src="/../images/20220709_10.png"></p>
+<ul>
+<li>做完卷積層以後要做flatten</li>
+<li>flatten就是把矩陣數值拉直</li>
+<li>flatten完以後扔進fully connected layer訓練完，配個softmax(分類)，就是一個經典的CNN network</li>
+</ul>
+<h1 id="Application-GO"><a href="#Application-GO" class="headerlink" title="Application: GO"></a>Application: GO</h1><ul>
+<li><p>我們用一個19x19的向量來描述一個棋盤，把它扔進network以後輸出next move應該在的位置</p>
+</li>
+<li><p>下圍棋可以是一個類別分類問題</p>
+</li>
+<li><p>這個問題也可以用fully-connected network解決</p>
+</li>
+<li><p>但用CNN效果更好-&gt; 棋盤可以看做一個19x19來描述</p>
+</li>
+<li><p>每個棋盤格的channel有48個(這格可能被叫吃等等)</p>
+</li>
+<li><p>這意味著圍棋與影像有許多相似特性</p>
+<ul>
+<li>可以只看小區塊(alpha go: 5x5)<br>    - Same pattern appear in different regions (雙叫吃等等)</li>
+</ul>
+</li>
+<li><p>棋盤可否用pooling ? 因為每格都很重要(精細度高) -&gt; Alpha Go有沒有用呢?
+  </p>
+</li>
+<li><p>李宏毅教你畫重點XD：學著幫論文畫重點，抓critical terms<br><img src="/../images/20220709_11.png"></p>
+</li>
+<li><p>alpha go 正文沒有提到神經網路結構，這是在附件找到的</p>
+<ol>
+<li>視為19x19x48的image</li>
+<li>zero pads(padding補0至23x23)</li>
+<li>有k個filter(競賽用的go，filter &#x3D; 192)</li>
+<li>filter的kernel size &#x3D; 5x5</li>
+<li>stride &#x3D; 1</li>
+<li>用到rectifier nonlinearity(ReLU)</li>
+<li>2~12層都有做zero padding至21x21，filter數同，kernel size &#x3D; 3x3，stride &#x3D; 1</li>
+<li>最後apply softmax function<br><img src="/../images/20220709_12.png"></li>
+</ol>
+</li>
+<li><p>alpha go 沒有用pooling!!</p>
+</li>
+</ul>
+<hr>
+<h1 id="Hen重要的Notes"><a href="#Hen重要的Notes" class="headerlink" title="Hen重要的Notes:"></a>Hen重要的Notes:</h1><ul>
+<li>語音上、文字處理上，文獻上的方法要仔細看，CNN的receptive field設計會特別為他們特化，這裡講的單純是影像的</li>
+<li>CNN並不能處理影像放大縮小(Scaling)旋轉(Rotation)的問題… (向量問題)<ul>
+<li>為此我們需要data augmentation</li>
+</ul>
+</li>
+<li>其實有Network架構(Spatial Transformer Layer)可以解決這個問題，請Ref.<a target="_blank" rel="noopener" href="https://youtu.be/SoCywZ1hZak">這個影片</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/07/07/ML-2021-2-6-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%BA%94/" rel="prev" title="ML_2021_2-6 類神經網路訓練不起來怎麼辦(五)">
+                  <i class="fa fa-chevron-left"></i> ML_2021_2-6 類神經網路訓練不起來怎麼辦(五)
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/07/11/ML-LEE-2022-hw3/" rel="next" title="ML_LEE_2022_hw3">
+                  ML_LEE_2022_hw3 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">劉宇承</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>

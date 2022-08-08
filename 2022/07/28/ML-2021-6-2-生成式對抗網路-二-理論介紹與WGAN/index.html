@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css" integrity="sha256-xejo6yLi6vGtAjcMIsY8BHdKsLg7QynVlFMzdQgUuy8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"laxiflora.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":true,"version":"8.12.3","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="訓練的目標 訓練到底要min&#x2F;max甚麼東西呢?  一維的範例   要找的最佳化G參數就是$$G^* &#x3D; arg\ min_GDiv(P_G,P_{data})$$  其中Div()表示兩個distribution之間的距離(相似度)公式  問題在不知道怎麼計算divergence  GAN可以在只有Sample的情況下，估計出div()是多少  需要從$P_G、P_{data">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ML_2021_6-2 生成式對抗網路(二) - 理論介紹與WGAN">
+<meta property="og:url" content="https://laxiflora.github.io/2022/07/28/ML-2021-6-2-%E7%94%9F%E6%88%90%E5%BC%8F%E5%B0%8D%E6%8A%97%E7%B6%B2%E8%B7%AF-%E4%BA%8C-%E7%90%86%E8%AB%96%E4%BB%8B%E7%B4%B9%E8%88%87WGAN/index.html">
+<meta property="og:site_name" content="laxiflora的小天地">
+<meta property="og:description" content="訓練的目標 訓練到底要min&#x2F;max甚麼東西呢?  一維的範例   要找的最佳化G參數就是$$G^* &#x3D; arg\ min_GDiv(P_G,P_{data})$$  其中Div()表示兩個distribution之間的距離(相似度)公式  問題在不知道怎麼計算divergence  GAN可以在只有Sample的情況下，估計出div()是多少  需要從$P_G、P_{data">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220728_1.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220728_2.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220729_1.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220728_3.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220728_4.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220728_5.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/pasted-34.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220728_7.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220728_9.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/pasted-35.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/pasted-36.png">
+<meta property="article:published_time" content="2022-07-27T16:53:06.000Z">
+<meta property="article:modified_time" content="2022-08-08T12:10:07.958Z">
+<meta property="article:author" content="劉宇承">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://laxiflora.github.io/images/20220728_1.png">
+
+
+<link rel="canonical" href="https://laxiflora.github.io/2022/07/28/ML-2021-6-2-%E7%94%9F%E6%88%90%E5%BC%8F%E5%B0%8D%E6%8A%97%E7%B6%B2%E8%B7%AF-%E4%BA%8C-%E7%90%86%E8%AB%96%E4%BB%8B%E7%B4%B9%E8%88%87WGAN/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://laxiflora.github.io/2022/07/28/ML-2021-6-2-%E7%94%9F%E6%88%90%E5%BC%8F%E5%B0%8D%E6%8A%97%E7%B6%B2%E8%B7%AF-%E4%BA%8C-%E7%90%86%E8%AB%96%E4%BB%8B%E7%B4%B9%E8%88%87WGAN/","path":"2022/07/28/ML-2021-6-2-生成式對抗網路-二-理論介紹與WGAN/","title":"ML_2021_6-2 生成式對抗網路(二) - 理論介紹與WGAN"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>ML_2021_6-2 生成式對抗網路(二) - 理論介紹與WGAN | laxiflora的小天地</title>
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">laxiflora的小天地</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">前進軟體工程師的練功之路</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>標籤</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%A8%93%E7%B7%B4%E7%9A%84%E7%9B%AE%E6%A8%99"><span class="nav-number">1.</span> <span class="nav-text">訓練的目標</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#JS-divergence"><span class="nav-number">1.1.</span> <span class="nav-text">JS divergence</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E7%9A%84divergence"><span class="nav-number">1.2.</span> <span class="nav-text">其他的divergence</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%A8%93%E7%B7%B4GAN%E7%9A%84%E5%B0%8F%E6%8A%80%E5%B7%A7"><span class="nav-number">2.</span> <span class="nav-text">訓練GAN的小技巧</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#JS-divergence-%E7%9A%84%E5%95%8F%E9%A1%8C"><span class="nav-number">2.1.</span> <span class="nav-text">JS divergence 的問題</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#WGAN"><span class="nav-number">2.2.</span> <span class="nav-text">WGAN</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Wasserstein-distance"><span class="nav-number">2.2.1.</span> <span class="nav-text">Wasserstein distance</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Evaluate-Wasserstein-distance"><span class="nav-number">2.2.2.</span> <span class="nav-text">Evaluate Wasserstein distance</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#how-to-%E7%A2%BA%E4%BF%9D%E9%80%99%E5%80%8B%E5%BC%8F%E5%AD%90%E5%8F%AF%E7%94%A8"><span class="nav-number">2.2.3.</span> <span class="nav-text">how to 確保這個式子可用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Q-amp-A"><span class="nav-number">2.2.3.1.</span> <span class="nav-text">Q &amp; A</span></a></li></ol></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">劉宇承</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">32</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">標籤</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://laxiflora.github.io/2022/07/28/ML-2021-6-2-%E7%94%9F%E6%88%90%E5%BC%8F%E5%B0%8D%E6%8A%97%E7%B6%B2%E8%B7%AF-%E4%BA%8C-%E7%90%86%E8%AB%96%E4%BB%8B%E7%B4%B9%E8%88%87WGAN/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="劉宇承">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="laxiflora的小天地">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="ML_2021_6-2 生成式對抗網路(二) - 理論介紹與WGAN | laxiflora的小天地">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          ML_2021_6-2 生成式對抗網路(二) - 理論介紹與WGAN
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2022-07-28 00:53:06" itemprop="dateCreated datePublished" datetime="2022-07-28T00:53:06+08:00">2022-07-28</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新於</span>
+      <time title="修改時間：2022-08-08 20:10:07" itemprop="dateModified" datetime="2022-08-08T20:10:07+08:00">2022-08-08</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="訓練的目標"><a href="#訓練的目標" class="headerlink" title="訓練的目標"></a>訓練的目標</h1><ul>
+<li>訓練到底要min&#x2F;max甚麼東西呢?<br><img src="/../images/20220728_1.png"></li>
+</ul>
+<p>一維的範例</p>
+<p><img src="/../images/20220728_2.png"></p>
+<ul>
+<li><p>要找的最佳化G參數就是<br>$$<br>G^* &#x3D; arg\ min_GDiv(P_G,P_{data})<br>$$</p>
+</li>
+<li><p>其中Div()表示兩個distribution之間的距離(相似度)公式</p>
+</li>
+<li><p>問題在不知道怎麼計算divergence</p>
+</li>
+<li><p>GAN可以在只有Sample的情況下，估計出div()是多少</p>
+<ul>
+<li>需要從$P_G、P_{data}$取樣，$P_{data}$取自圖庫，而$P_G$則取自generator產生的圖片<br>    - 這部分就要交給Discriminator，他要max一個objective function，公式有很多種</li>
+</ul>
+</li>
+</ul>
+<h2 id="JS-divergence"><a href="#JS-divergence" class="headerlink" title="JS divergence"></a>JS divergence</h2><p>公式如下(我們要取Max)<br>    $$<br>    V(G,D) &#x3D; E_{y\ from\ P_{data}}[logD(y)] + E_{y\ from\ P_G}[log(1-D(y)]<br>    $$</p>
+<ul>
+<li>我們會需要來自data的D(y)越大越好，來自G的D(y)越小越好</li>
+</ul>
+<p>Note: 若加上一點自由度，簡化上述公式，可以得到<br>$$<br>J^D &#x3D; -D(x) + D(G(z)), for\ all\ D(x),\ D(G(z))\  \in \ [0,1]<br>$$<br>且生成器的損失函數：<br>$$<br>J^G &#x3D; -J^D<br>$$<br>因為他們之間彼此對抗，所以他們兩者之間的損失只差一個負號，稱為min-max GAN</p>
+<p><img src="/../images/20220729_1.png"></p>
+<ul>
+<li>其實 $D^*$ 等同於(-1) x cross entropy<ul>
+<li>早年這麼設計的理由是因為，希望objective function可以跟二元分類扯上關係</li>
+</ul>
+</li>
+</ul>
+<p><img src="/../images/20220728_3.png"></p>
+<ul>
+<li><p><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1406.2661">參考</a></p>
+</li>
+<li><p>small divergence，data跟G的圖很像，則hard to discrininate，則small max V(D,G)</p>
+</li>
+<li><p>因為$max_D\ V(D,G)$與JS divergence有關聯，所以我們可以把Div()換掉，變成<br>$$<br>G^* &#x3D; arg\ min_G [max_DV(G,D)] \\\<br>D^* &#x3D; arg\ max_DV(D,G)<br>$$<br>&#x2F;&#x2F;D的max objetive value跟JS divergence有關</p>
+</li>
+</ul>
+<h2 id="其他的divergence"><a href="#其他的divergence" class="headerlink" title="其他的divergence"></a>其他的divergence</h2><ul>
+<li>當然，我們也可以用不同的divergence<ul>
+<li>對於不同的divergence，用甚麼樣的objective function，<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1606.00709">這篇論文有詳細解釋</a><br><img src="/../images/20220728_4.png"></li>
+</ul>
+</li>
+</ul>
+<h1 id="訓練GAN的小技巧"><a href="#訓練GAN的小技巧" class="headerlink" title="訓練GAN的小技巧"></a>訓練GAN的小技巧</h1><h2 id="JS-divergence-的問題"><a href="#JS-divergence-的問題" class="headerlink" title="JS divergence 的問題"></a>JS divergence 的問題</h2><ul>
+<li><p>$P_G、P_{data}$重疊的地方往往很少</p>
+<ul>
+<li>pf1. 圖片是高維空間裡面，低維的manifold<br>    	- 就像在一個平面空間中的兩條線一樣，重合的地方很少<br>    	- 在高維空間內隨便sample的點都不會是圖片<br>    	- 所以他們相交的部分幾乎可以忽略</li>
+<li>pf2.若$P_G、P_{data}$sample的點不夠多，很容易劃出一個界線把他們切開<br>-&gt; $P_G、P_{data}$重疊範圍非常少</li>
+</ul>
+</li>
+<li><p>若兩個分布沒有重疊的地方，算出來的Div就會永遠都是log 2，看不出差距<br><img src="/../images/20220728_5.png"></p>
+</li>
+</ul>
+<h2 id="WGAN"><a href="#WGAN" class="headerlink" title="WGAN"></a>WGAN</h2><ul>
+<li>換一個衡量divergense來衡量2 distribution之相似度</li>
+</ul>
+<h3 id="Wasserstein-distance"><a href="#Wasserstein-distance" class="headerlink" title="Wasserstein distance"></a>Wasserstein distance</h3><ul>
+<li><p>假設一個distribution P為一坨土，而另一個distribution Q為目的地</p>
+</li>
+<li><p>把土堆P挪到Q所需要的移動距離平均就是Wasserstein distance<br><img src="/../images/pasted-34.png"></p>
+</li>
+<li><p>因為可能的挪法很多，所以d會有不同</p>
+<ul>
+<li>定義: 窮舉所有的moving plan，找出最小的移動距離當作wasserstein distance<ul>
+<li>計算麻煩</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>假設我們能計算Wasserstein distance，帶來的優點:</p>
+<ul>
+<li>就可以解決JS divergence看不出上圖的好壞比較的問題  <br><img src="/../images/20220728_7.png"></li>
+</ul>
+</li>
+</ul>
+<h3 id="Evaluate-Wasserstein-distance"><a href="#Evaluate-Wasserstein-distance" class="headerlink" title="Evaluate Wasserstein distance"></a>Evaluate Wasserstein distance</h3><ul>
+<li>解下面的Optimization問題(下圖)，解出來就會是Wasserstein distance<br><img src="/../images/20220728_9.png"><br>[、]是期望值，D(x)就是剛剛的D(y)</li>
+<li>D必須是1-Lipschitz function (Discriminator不可變化劇烈)<ul>
+<li>如果沒有這個constraint，則D的training不會收斂<br>    - 讓D保持smooth強迫D(x)變成無窮與負無窮</li>
+<li>基本上就是保證real跟generated的data距離不會太遠</li>
+</ul>
+</li>
+</ul>
+<p><img src="/../images/pasted-35.png"></p>
+<h3 id="how-to-確保這個式子可用"><a href="#how-to-確保這個式子可用" class="headerlink" title="how to 確保這個式子可用"></a>how to 確保這個式子可用</h3><ul>
+<li><p>原始GAN方法</p>
+<ul>
+<li>強迫network的parameters w bound在[c,-c]<br>    - 在梯度下降的para更新後，若w&gt;c , w&#x3D;c ; if w&lt;-c , w &#x3D; -c<br>    - 可能可以讓function平滑一點，但沒有解決問題</li>
+</ul>
+</li>
+<li><p>有一篇 paper : improved WGAN 做的處理方法:</p>
+<ul>
+<li>在real data取sample，在fake data取一個sample，在中間再取一個sample，這個sample的梯度需要接近1 (?)</li>
+</ul>
+</li>
+</ul>
+<p>      <br><img src="/../images/pasted-36.png"></p>
+<ul>
+<li>相關方法很多，可以多查查<ul>
+<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1802.05957">Spectral Norm</a><ul>
+<li>Keep gradient norm在哪都 &lt; 1</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="Q-amp-A"><a href="#Q-amp-A" class="headerlink" title="Q &amp; A"></a>Q &amp; A</h4><p>Q1: 在discriminator訓練時，可否加入GAN以往的輸出</p>
+<p>A1: 可。實務上跑的時候不會真的讓discriminator被maximize，太花時間，所以通常幾個iteration後就會轉換到generator</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/07/27/ML-2021-6-1-%E7%94%9F%E6%88%90%E5%BC%8F%E5%B0%8D%E6%8A%97%E7%B6%B2%E8%B7%AF-%E4%B8%80-%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E4%BB%8B%E7%B4%B9/" rel="prev" title="ML_2021_6-1 生成式對抗網路(一) - 基本概念介紹">
+                  <i class="fa fa-chevron-left"></i> ML_2021_6-1 生成式對抗網路(一) - 基本概念介紹
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/07/29/ML-2021-6-3-%E7%94%9F%E6%88%90%E5%BC%8F%E5%B0%8D%E6%8A%97%E7%B6%B2%E8%B7%AF-%E4%B8%89-%E2%80%93-%E7%94%9F%E6%88%90%E5%99%A8%E6%95%88%E8%83%BD%E8%A9%95%E4%BC%B0%E8%88%87%E6%A2%9D%E4%BB%B6%E5%BC%8F%E7%94%9F%E6%88%90/" rel="next" title="ML_2021_6-3 生成式對抗網路(三) – 生成器效能評估與條件式生成">
+                  ML_2021_6-3 生成式對抗網路(三) – 生成器效能評估與條件式生成 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">劉宇承</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>

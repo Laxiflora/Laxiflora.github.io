@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css" integrity="sha256-xejo6yLi6vGtAjcMIsY8BHdKsLg7QynVlFMzdQgUuy8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"laxiflora.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":true,"version":"8.12.3","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="目錄如何在get repo裡面加上README ?如何在hexo設置的網頁插入圖片 ?如何在hexo設置網頁錨點 ?如何在hexo輸入數學式 ? 如何在git repo裡面加上README 由於hexo會幫你自動把md檔轉成html上傳github，因此直接在_posts裡面新增README是不可行的  Step1 到_config.yml裡面找到#Directory子項，在裡面的skip_ren">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hexo使用技巧">
+<meta property="og:url" content="https://laxiflora.github.io/2022/06/28/Hexo%E4%BD%BF%E7%94%A8%E6%8A%80%E5%B7%A7/index.html">
+<meta property="og:site_name" content="laxiflora的小天地">
+<meta property="og:description" content="目錄如何在get repo裡面加上README ?如何在hexo設置的網頁插入圖片 ?如何在hexo設置網頁錨點 ?如何在hexo輸入數學式 ? 如何在git repo裡面加上README 由於hexo會幫你自動把md檔轉成html上傳github，因此直接在_posts裡面新增README是不可行的  Step1 到_config.yml裡面找到#Directory子項，在裡面的skip_ren">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220621_4.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220628_1.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220701_3.png">
+<meta property="article:published_time" content="2022-06-28T13:13:03.000Z">
+<meta property="article:modified_time" content="2022-08-08T14:09:15.132Z">
+<meta property="article:author" content="劉宇承">
+<meta property="article:tag" content="Hexo">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://laxiflora.github.io/images/20220621_4.png">
+
+
+<link rel="canonical" href="https://laxiflora.github.io/2022/06/28/Hexo%E4%BD%BF%E7%94%A8%E6%8A%80%E5%B7%A7/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://laxiflora.github.io/2022/06/28/Hexo%E4%BD%BF%E7%94%A8%E6%8A%80%E5%B7%A7/","path":"2022/06/28/Hexo使用技巧/","title":"Hexo使用技巧"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Hexo使用技巧 | laxiflora的小天地</title>
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">laxiflora的小天地</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">前進軟體工程師的練功之路</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>標籤</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%9B%AE%E9%8C%84"><span class="nav-number">1.</span> <span class="nav-text">目錄</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E5%9C%A8git-repo%E8%A3%A1%E9%9D%A2%E5%8A%A0%E4%B8%8AREADME"><span class="nav-number">2.</span> <span class="nav-text">如何在git repo裡面加上README</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Step1"><span class="nav-number">2.1.</span> <span class="nav-text">Step1</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Step2"><span class="nav-number">2.2.</span> <span class="nav-text">Step2</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%99%84%E8%A8%BB%EF%BC%9A%E5%A6%82%E6%9E%9C%E6%83%B3%E5%82%99%E4%BB%BDblog%E5%8E%9F%E5%A7%8B%E6%AA%94%E5%88%B0github%EF%BC%8CREADME%E6%87%89%E8%A9%B2%E5%81%9A%E5%9C%A8%E6%A0%B9%E7%9B%AE%E9%8C%84%E4%B8%8A%E8%80%8C%E9%9D%9Esource%E5%85%A7%EF%BC%8C%E4%B8%94%E5%85%A9%E5%80%8BREADME%E5%8F%AF%E4%BB%A5%E7%8D%A8%E7%AB%8B%E5%AD%98%E5%9C%A8"><span class="nav-number">2.2.1.</span> <span class="nav-text">附註：如果想備份blog原始檔到github，README應該做在根目錄上而非source內，且兩個README可以獨立存在!</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%9E%E7%9B%AE%E9%8C%84"><span class="nav-number">2.2.2.</span> <span class="nav-text">(回目錄)</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E5%9C%A8hexo%E8%A8%AD%E7%BD%AE%E7%9A%84%E7%B6%B2%E9%A0%81%E6%8F%92%E5%85%A5%E5%9C%96%E7%89%87"><span class="nav-number">3.</span> <span class="nav-text">如何在hexo設置的網頁插入圖片</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Step1-1"><span class="nav-number">3.1.</span> <span class="nav-text">Step1</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Step2-1"><span class="nav-number">3.2.</span> <span class="nav-text">Step2</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%9E%E7%9B%AE%E9%8C%84-1"><span class="nav-number">3.2.1.</span> <span class="nav-text">(回目錄)</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E5%9C%A8hexo%E8%A8%AD%E7%BD%AE%E7%B6%B2%E9%A0%81%E9%8C%A8%E9%BB%9E"><span class="nav-number">4.</span> <span class="nav-text">如何在hexo設置網頁錨點</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%89%E5%A4%A0-%E6%AD%AA%E4%B8%83%E6%89%AD%E5%85%AB-%E6%A8%99-%E9%A1%8C"><span class="nav-number">4.0.1.</span> <span class="nav-text">有夠 歪七扭八)標()題)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%9E%E7%9B%AE%E9%8C%84-2"><span class="nav-number">4.0.2.</span> <span class="nav-text">(回目錄)</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E5%9C%A8hexo%E8%BC%B8%E5%85%A5%E6%95%B8%E5%AD%B8%E5%BC%8F"><span class="nav-number">5.</span> <span class="nav-text">如何在hexo輸入數學式</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B3%95%E4%B8%80%EF%BC%9Ahexo-renderer-marked-hexo-math"><span class="nav-number">5.1.</span> <span class="nav-text">法一：hexo-renderer-marked + hexo-math</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B3%95%E4%BA%8C%EF%BC%9Ahexo-renderer-markdown-it-markdown-it-latex2img"><span class="nav-number">5.2.</span> <span class="nav-text">法二：hexo-renderer-markdown-it + markdown-it-latex2img</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B3%95%E4%B8%89%EF%BC%9A"><span class="nav-number">5.3.</span> <span class="nav-text">法三：</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%9B%AE%E5%89%8D%E5%B7%B2%E7%9F%A5%E5%95%8F%E9%A1%8C%EF%BC%9A"><span class="nav-number">5.3.0.1.</span> <span class="nav-text">目前已知問題：</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9B%B4%E6%96%B0%EF%BC%9A%E6%9C%80%E5%BE%8C%E5%8F%8D%E7%92%9E%E6%AD%B8%E7%9C%9F%E5%8F%AA%E7%94%A8hexo-renderer-marked-hexo-math-%E5%B1%85%E7%84%B6%E5%8F%AF%E4%BB%A5%E7%94%A8-%E8%80%8C%E4%B8%94-%E4%B8%8D%E6%9C%83%E8%A2%AB%E7%84%A1%E8%A6%96%E2%80%A6-%E9%9B%96%E7%84%B6%E6%88%91%E4%B8%8D%E7%9F%A5%E9%81%93%E7%99%BC%E7%94%9F%E7%94%9A%E9%BA%BC%E4%BD%86%E7%B8%BD%E4%B9%8B%E4%BB%96%E5%8B%95%E4%BA%86%E2%80%A6orz"><span class="nav-number">5.4.</span> <span class="nav-text">更新：最後反璞歸真只用hexo-renderer-marked + hexo-math 居然可以用$$而且\不會被無視… 雖然我不知道發生甚麼但總之他動了…orz</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B3%95%E5%9B%9B"><span class="nav-number">5.5.</span> <span class="nav-text">法四</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%AE%E5%89%8D%E8%A8%AD%E6%B3%95"><span class="nav-number">5.6.</span> <span class="nav-text">目前設法:</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%9E%E7%9B%AE%E9%8C%84-3"><span class="nav-number">5.6.1.</span> <span class="nav-text">(回目錄)</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">劉宇承</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">32</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">標籤</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://laxiflora.github.io/2022/06/28/Hexo%E4%BD%BF%E7%94%A8%E6%8A%80%E5%B7%A7/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="劉宇承">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="laxiflora的小天地">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Hexo使用技巧 | laxiflora的小天地">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Hexo使用技巧
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2022-06-28 21:13:03" itemprop="dateCreated datePublished" datetime="2022-06-28T21:13:03+08:00">2022-06-28</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新於</span>
+      <time title="修改時間：2022-08-08 22:09:15" itemprop="dateModified" datetime="2022-08-08T22:09:15+08:00">2022-08-08</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="目錄"><a href="#目錄" class="headerlink" title="目錄"></a>目錄</h1><p><a href="#%E5%A6%82%E4%BD%95%E5%9C%A8git-repo%E8%A3%A1%E9%9D%A2%E5%8A%A0%E4%B8%8AREADME">如何在get repo裡面加上README ?</a><br><a href="#%E5%A6%82%E4%BD%95%E5%9C%A8hexo%E8%A8%AD%E7%BD%AE%E7%9A%84%E7%B6%B2%E9%A0%81%E6%8F%92%E5%85%A5%E5%9C%96%E7%89%87">如何在hexo設置的網頁插入圖片 ?</a><br><a href="#%E5%A6%82%E4%BD%95%E5%9C%A8hexo%E8%A8%AD%E7%BD%AE%E7%B6%B2%E9%A0%81%E9%8C%A8%E9%BB%9E">如何在hexo設置網頁錨點 ?</a><br><a href="#%E5%A6%82%E4%BD%95%E5%9C%A8hexo%E8%BC%B8%E5%85%A5%E6%95%B8%E5%AD%B8%E5%BC%8F">如何在hexo輸入數學式 ?</a></p>
+<h1 id="如何在git-repo裡面加上README"><a href="#如何在git-repo裡面加上README" class="headerlink" title="如何在git repo裡面加上README"></a>如何在git repo裡面加上README</h1><ul>
+<li>由於hexo會幫你自動把md檔轉成html上傳github，因此直接在_posts裡面新增README是不可行的</li>
+</ul>
+<h2 id="Step1"><a href="#Step1" class="headerlink" title="Step1"></a>Step1</h2><ul>
+<li>到_config.yml裡面找到#Directory子項，在裡面的skip_render補上README.md</li>
+</ul>
+<h2 id="Step2"><a href="#Step2" class="headerlink" title="Step2"></a>Step2</h2><ul>
+<li>完成以後就可以直接在source&#x2F;_posts裡面直接補上README囉~上傳的時候也可以正常顯示了<br><img src="/../images/20220621_4.png"></li>
+</ul>
+<h3 id="附註：如果想備份blog原始檔到github，README應該做在根目錄上而非source內，且兩個README可以獨立存在"><a href="#附註：如果想備份blog原始檔到github，README應該做在根目錄上而非source內，且兩個README可以獨立存在" class="headerlink" title="附註：如果想備份blog原始檔到github，README應該做在根目錄上而非source內，且兩個README可以獨立存在!"></a>附註：如果想備份blog原始檔到github，README應該做在根目錄上而非source內，且兩個README可以獨立存在!</h3><h3 id="回目錄"><a href="#回目錄" class="headerlink" title="(回目錄)"></a><a href="#%E7%9B%AE%E9%8C%84">(回目錄)</a></h3><hr>
+<h1 id="如何在hexo設置的網頁插入圖片"><a href="#如何在hexo設置的網頁插入圖片" class="headerlink" title="如何在hexo設置的網頁插入圖片"></a>如何在hexo設置的網頁插入圖片</h1><ul>
+<li>如果直接在source&#x2F;image放入圖片並且在md連連結的話，會連不上圖片</li>
+<li>可以使用admin套件來協助</li>
+</ul>
+<h2 id="Step1-1"><a href="#Step1-1" class="headerlink" title="Step1"></a>Step1</h2><p>在終端機輸入</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$npm install hexo-admin --save</span><br></pre></td></tr></table></figure>
+<p>來安裝admin套件</p>
+<h2 id="Step2-1"><a href="#Step2-1" class="headerlink" title="Step2"></a>Step2</h2><ul>
+<li>安裝完以後，在localhost狀態下補一個<code>/admin</code>就可以進入admin介面</li>
+<li>在admin介面可以直接看到你的所有貼文，按下筆進入編輯，在這頁面下直接貼上圖片即可</li>
+</ul>
+<p><img src="/../images/20220628_1.png"></p>
+<ul>
+<li>在貼上成功以後會出現<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">![upload successful](\\images\yourPicName.png\)</span><br></pre></td></tr></table></figure>
+請把<code>\</code>改成<code>/</code>並且把<code>\\</code>改成<code>../</code>即可 (Win11，其他系統可能改法不同，請依照系統特性修改)</li>
+</ul>
+<h3 id="回目錄-1"><a href="#回目錄-1" class="headerlink" title="(回目錄)"></a><a href="#%E7%9B%AE%E9%8C%84">(回目錄)</a></h3><hr>
+<h1 id="如何在hexo設置網頁錨點"><a href="#如何在hexo設置網頁錨點" class="headerlink" title="如何在hexo設置網頁錨點"></a>如何在hexo設置網頁錨點</h1><p>markdown語法為：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[連結文字](#你要連結的標題名稱)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>碰上空格需要以-代替</li>
+<li>如果碰上.或是()，依照各編輯器與網站，處理方法不同<ul>
+<li>有些編輯器直接忽略即可</li>
+<li>有些編輯器(如本站)同樣用-代替(複數.跟()相連也只需要一個-)，若遇到結尾有)可以忽略</li>
+</ul>
+</li>
+<li>以錨定標題『有夠 歪七扭八)標()題)』為例，語法為<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[嘗試看看吧!](#有夠-歪七扭八-標-題)</span><br></pre></td></tr></table></figure>
+<a href="#%E6%9C%89%E5%A4%A0-%E6%AD%AA%E4%B8%83%E6%89%AD%E5%85%AB-%E6%A8%99-%E9%A1%8C">嘗試看看吧!</a></li>
+</ul>
+<h3 id="有夠-歪七扭八-標-題"><a href="#有夠-歪七扭八-標-題" class="headerlink" title="有夠 歪七扭八)標()題)"></a>有夠 歪七扭八)標()題)</h3><h3 id="回目錄-2"><a href="#回目錄-2" class="headerlink" title="(回目錄)"></a><a href="#%E7%9B%AE%E9%8C%84">(回目錄)</a></h3><hr>
+<h1 id="如何在hexo輸入數學式"><a href="#如何在hexo輸入數學式" class="headerlink" title="如何在hexo輸入數學式"></a>如何在hexo輸入數學式</h1><p>原本以為這只是小問題，結果卻搞了我整整半天…原生hexo渲染器對於LaTex支援性太差了…這點輸HackMD</p>
+<h2 id="法一：hexo-renderer-marked-hexo-math"><a href="#法一：hexo-renderer-marked-hexo-math" class="headerlink" title="法一：hexo-renderer-marked + hexo-math"></a>法一：hexo-renderer-marked + hexo-math</h2><p><a target="_blank" rel="noopener" href="https://www.tzingtao.com/2019/06/21/Math-Equations-in-Hexo/">參考資料來源</a><br><a target="_blank" rel="noopener" href="https://github.com/hexojs/hexo-math">hexo-math頁面</a></p>
+<ul>
+<li>Hexo預設的renderer是不支持直接在md中使用<code>$...$</code>的，一般來說推薦的工具是hexo-math，直接在終端機輸入以下指令即可安裝<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo-math --save</span><br></pre></td></tr></table></figure></li>
+<li>然而雖然我們可以直接在md檔中用$…$輸入LaTex表達式，但因為”&quot;屬於特殊符號，都會先被markdown先行解析，因此我們每次要使用到\都需要先在前面打一個\來避免他被吃掉(\)</li>
+<li>依照官方文件建議，我們可以使用hexo-math指定的標籤<code>『&#123;% math %&#125; ... &#123;% endmath %&#125;』</code>來包住數學式，這樣我們就可以防止數學式的\符號被markdown randerer影響<ul>
+<li>這麼做的好處是寫表達式不用一個一個去處理\，但是壞處就是在對於沒有支援hexo-math的地方使用這樣的標籤會導致相容性出問題(而且那陀標籤很笨重)，使網頁跑版。</li>
+</ul>
+</li>
+</ul>
+<p>PS. 與法三相對，是選擇跟renderer規則和平共處的做法(不改裝pandoc或改主題的前提下)，現在回來看這做法好像不錯orz…</p>
+<h2 id="法二：hexo-renderer-markdown-it-markdown-it-latex2img"><a href="#法二：hexo-renderer-markdown-it-markdown-it-latex2img" class="headerlink" title="法二：hexo-renderer-markdown-it + markdown-it-latex2img"></a>法二：hexo-renderer-markdown-it + markdown-it-latex2img</h2><p><a target="_blank" rel="noopener" href="https://github.com/MakerGYT/markdown-it-latex2img#hexo">markdown-it-latex2img頁面</a><br><a target="_blank" rel="noopener" href="https://github.com/hexojs/hexo-renderer-markdown-it">hexo-renderer-markdown-it頁面</a></p>
+<ul>
+<li>相比於官方原始的renderer，這個版本的渲染器支援更多功能</li>
+<li>markdown-it-laten2img是一個plugin，用於支援LaTex的文字格式</li>
+<li>若採用這個方法，需要先移除原版的renderer<br>指令如下:<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">npm uni hexo-renderer-marked --save</span><br><span class="line">npm i hexo-renderer-markdown-it --save</span><br><span class="line">npm i markdown-it-latex2img --save</span><br></pre></td></tr></table></figure>
+安裝完以後，到<code>_config.yml</code>中補這段：<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#markdown setting for hexo-renderer-markdown-it</span></span><br><span class="line"><span class="attr">markdown:</span></span><br><span class="line">  <span class="attr">plugins:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">markdown-it-latex2img</span></span><br></pre></td></tr></table></figure>
+就可以了<br>PS. 目前已知問題：改用這個renderer會導致錨點功能失效！(因為整個渲染器被改掉，可能導致原始的一些符號渲染成其他符號而讓原本的文本失效!)<br>PPS. 因為後來連admin插件都不能用，原本的圖片連結都失效了，不得已只好放棄這個做法</li>
+</ul>
+<h2 id="法三："><a href="#法三：" class="headerlink" title="法三："></a>法三：</h2><p>筆者處理這個問題的時候弄到頭昏腦脹…直接貼別人的教學網誌<br><a target="_blank" rel="noopener" href="https://nighting4le.com/2020/12/05/hexoWithLatex/">請參照這篇網誌</a></p>
+<h4 id="目前已知問題："><a href="#目前已知問題：" class="headerlink" title="目前已知問題："></a>目前已知問題：</h4><ul>
+<li>因為有改到渲染escape的規則，所以會導致有些東西失靈(同前面法2的原因)</li>
+<li>&lt;detail&gt;不可使用</li>
+<li>\也不再會被丟入特殊字元中 (這是為了配合LaTex裡面動不動就需要用到\，所以必須把\的保留字移除)<ul>
+<li>這樣做的壞處是(、)、.、\、\n、\t、&lt;&gt;、[]等等特殊符號不可跟某些需要用到這些符號的指令混用了</li>
+<li>ex: 不能在連結內打[]</li>
+</ul>
+</li>
+</ul>
+<p>目前這樣設置只是折衷，不可能兼顧方便性與相容性(打$$可以切LaTex inline)、又兼顧全面性(\的保留字依然適用)，只能說，當有些保留字<br>衝突的時候真的就只能犧牲一者(所以你在我的網誌裡面會看不到toggle list，因為\被無視了XD，請善用錨點功能)</p>
+<h2 id="更新：最後反璞歸真只用hexo-renderer-marked-hexo-math-居然可以用-而且-不會被無視…-雖然我不知道發生甚麼但總之他動了…orz"><a href="#更新：最後反璞歸真只用hexo-renderer-marked-hexo-math-居然可以用-而且-不會被無視…-雖然我不知道發生甚麼但總之他動了…orz" class="headerlink" title="更新：最後反璞歸真只用hexo-renderer-marked + hexo-math 居然可以用$$而且\不會被無視… 雖然我不知道發生甚麼但總之他動了…orz"></a>更新：最後反璞歸真只用hexo-renderer-marked + hexo-math 居然可以用$$而且\不會被無視… 雖然我不知道發生甚麼但總之他動了…orz</h2><p><img src="/../images/20220701_3.png" alt="upload successful"></p>
+<h2 id="法四"><a href="#法四" class="headerlink" title="法四"></a>法四</h2><p>直接使用hexo next theme…</p>
+<h2 id="目前設法"><a href="#目前設法" class="headerlink" title="目前設法:"></a>目前設法:</h2><ul>
+<li>使用hexo next theme</li>
+<li>安裝hexo-math</li>
+<li>使用原始的renderer</li>
+<li>在<code>_config.next.yml</code>裡面找到math，enable mathjax，且every_page&#x3D; true</li>
+</ul>
+<p>Note: 如果用Katex會跑版，然後如果用mathjax配上hexo-renderer-markdown-it會讓圖片的_(或其他字元)被渲染器被吃掉導致無法顯示<br>參考資料：<a target="_blank" rel="noopener" href="https://theme-next.js.org/docs/third-party-services/math-equations">hexo-next官方文件</a></p>
+<h3 id="回目錄-3"><a href="#回目錄-3" class="headerlink" title="(回目錄)"></a><a href="#%E7%9B%AE%E9%8C%84">(回目錄)</a></h3><hr>
+<!-- ## 法二：使用 -->
+<!-- 附註給自己
+目前使用法1 -->
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Hexo/" rel="tag"># Hexo</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/06/22/C++%20%E5%B8%B8%E8%A6%8BSTL%E5%AE%B9%E5%99%A8%E6%A6%82%E8%BF%B0/" rel="prev" title="C++ 常見STL容器概述">
+                  <i class="fa fa-chevron-left"></i> C++ 常見STL容器概述
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/07/02/pytorch%E5%85%A5%E9%96%80/" rel="next" title="pytorch入門">
+                  pytorch入門 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">劉宇承</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>

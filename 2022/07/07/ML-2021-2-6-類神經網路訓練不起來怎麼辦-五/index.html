@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css" integrity="sha256-xejo6yLi6vGtAjcMIsY8BHdKsLg7QynVlFMzdQgUuy8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"laxiflora.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":true,"version":"8.12.3","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="簡短介紹Batch Normalization的技術 另一種直接改變error surface的技術(相對於動態lr，一種改善訓練的方法)    考慮以下模型，當$x_1$輸出很小、$x_2$輸出很大的時候，就會產生error surface橢圓的問題 因為$x_1$小，就算$w_1$變化很大，y的變化量也不會很大(因為相乘);$x_2$則相反 考慮可以把$x_1、x_2$相同的數值範圍  Fe">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ML_2021_2-6 類神經網路訓練不起來怎麼辦(五)">
+<meta property="og:url" content="https://laxiflora.github.io/2022/07/07/ML-2021-2-6-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%BA%94/index.html">
+<meta property="og:site_name" content="laxiflora的小天地">
+<meta property="og:description" content="簡短介紹Batch Normalization的技術 另一種直接改變error surface的技術(相對於動態lr，一種改善訓練的方法)    考慮以下模型，當$x_1$輸出很小、$x_2$輸出很大的時候，就會產生error surface橢圓的問題 因為$x_1$小，就算$w_1$變化很大，y的變化量也不會很大(因為相乘);$x_2$則相反 考慮可以把$x_1、x_2$相同的數值範圍  Fe">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220707_1.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220707_2.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/pasted-11.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/pasted-12.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220707_4.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220707_5.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220707_6.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/pasted-13.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220707_7.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/pasted-14.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220707_9.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220707_10.png">
+<meta property="article:published_time" content="2022-07-07T08:34:18.000Z">
+<meta property="article:modified_time" content="2022-08-08T12:10:07.956Z">
+<meta property="article:author" content="劉宇承">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://laxiflora.github.io/images/20220707_1.png">
+
+
+<link rel="canonical" href="https://laxiflora.github.io/2022/07/07/ML-2021-2-6-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%BA%94/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://laxiflora.github.io/2022/07/07/ML-2021-2-6-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%BA%94/","path":"2022/07/07/ML-2021-2-6-類神經網路訓練不起來怎麼辦-五/","title":"ML_2021_2-6 類神經網路訓練不起來怎麼辦(五)"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>ML_2021_2-6 類神經網路訓練不起來怎麼辦(五) | laxiflora的小天地</title>
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">laxiflora的小天地</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">前進軟體工程師的練功之路</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>標籤</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Feature-Normalization"><span class="nav-number">1.</span> <span class="nav-text">Feature Normalization</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B6%E4%B8%AD%E4%B8%80%E7%A8%AEnormalization%E5%81%9A%E6%B3%95"><span class="nav-number">1.1.</span> <span class="nav-text">其中一種normalization做法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Case%EF%BC%9AIn-deep-learning"><span class="nav-number">1.2.</span> <span class="nav-text">Case：In deep learning</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Case%EF%BC%9Atraining-in-batch-approach"><span class="nav-number">1.3.</span> <span class="nav-text">Case：training in batch approach?</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Batch-normalization-testing-data"><span class="nav-number">1.3.1.</span> <span class="nav-text">Batch normalization - testing data</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#How-does-Batch-Normalization-help-optimization"><span class="nav-number">1.4.</span> <span class="nav-text">How does Batch Normalization help optimization?</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">劉宇承</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">32</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">標籤</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://laxiflora.github.io/2022/07/07/ML-2021-2-6-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%BA%94/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="劉宇承">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="laxiflora的小天地">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="ML_2021_2-6 類神經網路訓練不起來怎麼辦(五) | laxiflora的小天地">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          ML_2021_2-6 類神經網路訓練不起來怎麼辦(五)
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2022-07-07 16:34:18" itemprop="dateCreated datePublished" datetime="2022-07-07T16:34:18+08:00">2022-07-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新於</span>
+      <time title="修改時間：2022-08-08 20:10:07" itemprop="dateModified" datetime="2022-08-08T20:10:07+08:00">2022-08-08</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <ul>
+<li>簡短介紹Batch Normalization的技術</li>
+<li>另一種直接改變error surface的技術(相對於動態lr，一種改善訓練的方法)</li>
+</ul>
+<p><img src="/../images/20220707_1.png" alt="upload successful"></p>
+<ul>
+<li>考慮以下模型，當$x_1$輸出很小、$x_2$輸出很大的時候，就會產生error surface橢圓的問題</li>
+<li>因為$x_1$小，就算$w_1$變化很大，y的變化量也不會很大(因為相乘);$x_2$則相反</li>
+<li>考慮可以把$x_1、x_2$相同的數值範圍<br><img src="/../images/20220707_2.png" alt="upload successful"></li>
+</ul>
+<h1 id="Feature-Normalization"><a href="#Feature-Normalization" class="headerlink" title="Feature Normalization"></a>Feature Normalization</h1><h2 id="其中一種normalization做法"><a href="#其中一種normalization做法" class="headerlink" title="其中一種normalization做法"></a>其中一種normalization做法</h2><ul>
+<li>對多筆feature vector的同一dimention做標準化<br><img src="/../images/pasted-11.png"></li>
+<li>標準化以後，該dim的平均值&#x3D;0，$\sigma$ &#x3D; 1</li>
+<li>像這樣就可以製造比較平衡的error surface，方便optimization作業</li>
+</ul>
+<h2 id="Case：In-deep-learning"><a href="#Case：In-deep-learning" class="headerlink" title="Case：In deep learning"></a>Case：In deep learning</h2><ul>
+<li>因為深度學習有多個層，雖然在一開始我們把x做了標準化，但是在經過一層layer計算以後，數值又失去了標準化，故我們需要進行多次的標準化</li>
+<li>標準化要放在激發函數前後的影響並不大<br><img src="/../images/pasted-12.png"></li>
+<li>以上圖為例，我們需要對z再度進行標準化，公式如下(feature&#x3D;3的case)<br><img src="/../images/20220707_4.png" alt="upload successful"><br>則可以得到<br>$$\tilde{z}^i &#x3D; \frac{z^i-\mu}{\sigma}$$<br>後續層也依此類推</li>
+<li>這個feature標準化的過程使得所有feature之間有了關聯性 -&gt; 這是一個network<br><img src="/../images/20220707_5.png" alt="upload successful"></li>
+</ul>
+<h2 id="Case：training-in-batch-approach"><a href="#Case：training-in-batch-approach" class="headerlink" title="Case：training in batch approach?"></a>Case：training in batch approach?</h2><ul>
+<li>這樣的標準化流程會跟著batch(一組batch內部做標準化)跑，不是所有feature納進來標準化</li>
+<li>這樣的作法稱作batch normalization<ul>
+<li>問題來了，我們會需要足夠大的batch size才能做一個好的標準化(誤差會比較小)<br><img src="/../images/20220707_6.png"></li>
+</ul>
+</li>
+<li>$\beta、\gamma$是模型的另外兩個參數，透過學習得到</li>
+<li>為啥需要這兩個參數?<ul>
+<li>因為標準化會保證$\tilde{z}$之平均值 &#x3D; 0，這樣的結果有可能會對模型產生一些負面影響，所以我們需要$\beta、\gamma$兩個參數來讓數值變成比較貼合模型需求</li>
+<li>問題：這樣不就又破壞掉標準化平衡了嗎?<ul>
+<li>我們初始設定$\gamma &#x3D; 1 , \beta &#x3D; 0$，讓他們初始為真的標準化</li>
+<li>讓模型來決定值該怎麼分步</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="Batch-normalization-testing-data"><a href="#Batch-normalization-testing-data" class="headerlink" title="Batch normalization - testing data"></a>Batch normalization - testing data</h3><ul>
+<li>剛剛講的都是training的情況下</li>
+<li>testing又稱inference</li>
+<li>當真的是線上模型時，我們必須每一筆資料進來就進行預測，不能用batch</li>
+<li>當數據只有一筆，怎麼做normalization($\mu&#x3D;? , \sigma&#x3D;?$)</li>
+<li>實作上的解法(pytorch)：<ul>
+<li>在training若有用這個技術，每次batch算出來的$\mu_i , \sigma_i$就會記錄下來再做以下處理  <br><img src="/../images/pasted-13.png"></li>
+</ul>
+</li>
+</ul>
+<p>在實際test時，就代入<br>$$\tilde{z} &#x3D; \frac{z-\bar{u}}{\bar{\sigma}}<br>$$</p>
+<ul>
+<li>Batch normalization的實際測試結果，<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1502.03167">連結</a><br><img src="/../images/20220707_7.png"></li>
+<li>紅色線是有做batch normalization</li>
+<li>粉色線，使用sigmoid function</li>
+<li>其他線，就是lr乘上$x$倍</li>
+<li>黑色沒有用BN，用inception</li>
+<li>收斂速度更快，但結果差不多</li>
+</ul>
+<h2 id="How-does-Batch-Normalization-help-optimization"><a href="#How-does-Batch-Normalization-help-optimization" class="headerlink" title="How does Batch Normalization help optimization?"></a>How does Batch Normalization help optimization?</h2><ul>
+<li><p>下面這篇論文的作者發明這個詞”Internal covariate shift”</p>
+</li>
+<li><p>根據<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1805.11604">這篇論文</a>所認為有以下可能<br><img src="/../images/pasted-14.png"></p>
+</li>
+<li><p>我們做參數update，將A變成A’，B變成B’，但是B的變動是根據之前算出來的a作為input，當整體更新了以後，B’要面對的input卻不再是a，而是經過A’算出來的a’，故導致仍舊失準</p>
+<ul>
+<li>而Batch normalization的作法，是讓a跟a’有相似的分布(similar statistics)，故誤差會比較接近</li>
+</ul>
+</li>
+<li><p>但是Experimental result並不支持這個緣故(打臉)</p>
+<ul>
+<li>打臉者認為實驗下來，a跟a’的分布都差不多，而且不管分布是不是差很多，影響都不大，於是這個假說是錯的(不是batch normalization的關鍵)</li>
+<li>不過實驗跟理論依然證明，Batch normalization依然會改變error surface的地貌<br><img src="/../images/20220707_9.png"></li>
+<li>此人認為batch normalization的發現可能是偶然(意料之外)的，但無論如何這是有用的方法<br>    - normalization有一堆方法，參考如下<br><img src="/../images/20220707_10.png"></li>
+</ul>
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/07/06/ML-2021-2-5-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E5%9B%9B/" rel="prev" title="ML_2021_2-5 類神經網路訓練不起來怎麼辦(四)">
+                  <i class="fa fa-chevron-left"></i> ML_2021_2-5 類神經網路訓練不起來怎麼辦(四)
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/07/09/ML-2021-3-1-%E5%8D%B7%E7%A9%8D%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF/" rel="next" title="ML_2021_3-1 卷積神經網路">
+                  ML_2021_3-1 卷積神經網路 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">劉宇承</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>
