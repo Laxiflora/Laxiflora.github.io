@@ -125,7 +125,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">32</span>
+          <span class="site-state-item-count">34</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
@@ -160,6 +160,280 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://laxiflora.github.io/2022/07/07/ML-2021-2-6-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%BA%94/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="劉宇承">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="laxiflora的小天地">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | laxiflora的小天地">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2022/07/07/ML-2021-2-6-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%BA%94/" class="post-title-link" itemprop="url">ML_2021_2-6 類神經網路訓練不起來怎麼辦(五)</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2022-07-07 16:34:18" itemprop="dateCreated datePublished" datetime="2022-07-07T16:34:18+08:00">2022-07-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新於</span>
+      <time title="修改時間：2022-08-08 20:10:07" itemprop="dateModified" datetime="2022-08-08T20:10:07+08:00">2022-08-08</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <ul>
+<li>簡短介紹Batch Normalization的技術</li>
+<li>另一種直接改變error surface的技術(相對於動態lr，一種改善訓練的方法)</li>
+</ul>
+<p><img src="/../images/20220707_1.png" alt="upload successful"></p>
+<ul>
+<li>考慮以下模型，當$x_1$輸出很小、$x_2$輸出很大的時候，就會產生error surface橢圓的問題</li>
+<li>因為$x_1$小，就算$w_1$變化很大，y的變化量也不會很大(因為相乘);$x_2$則相反</li>
+<li>考慮可以把$x_1、x_2$相同的數值範圍<br><img src="/../images/20220707_2.png" alt="upload successful"></li>
+</ul>
+<h1 id="Feature-Normalization"><a href="#Feature-Normalization" class="headerlink" title="Feature Normalization"></a>Feature Normalization</h1><h2 id="其中一種normalization做法"><a href="#其中一種normalization做法" class="headerlink" title="其中一種normalization做法"></a>其中一種normalization做法</h2><ul>
+<li>對多筆feature vector的同一dimention做標準化<br><img src="/../images/pasted-11.png"></li>
+<li>標準化以後，該dim的平均值&#x3D;0，$\sigma$ &#x3D; 1</li>
+<li>像這樣就可以製造比較平衡的error surface，方便optimization作業</li>
+</ul>
+<h2 id="Case：In-deep-learning"><a href="#Case：In-deep-learning" class="headerlink" title="Case：In deep learning"></a>Case：In deep learning</h2><ul>
+<li>因為深度學習有多個層，雖然在一開始我們把x做了標準化，但是在經過一層layer計算以後，數值又失去了標準化，故我們需要進行多次的標準化</li>
+<li>標準化要放在激發函數前後的影響並不大<br><img src="/../images/pasted-12.png"></li>
+<li>以上圖為例，我們需要對z再度進行標準化，公式如下(feature&#x3D;3的case)<br><img src="/../images/20220707_4.png" alt="upload successful"><br>則可以得到<br>$$\tilde{z}^i &#x3D; \frac{z^i-\mu}{\sigma}$$<br>後續層也依此類推</li>
+<li>這個feature標準化的過程使得所有feature之間有了關聯性 -&gt; 這是一個network<br><img src="/../images/20220707_5.png" alt="upload successful"></li>
+</ul>
+<h2 id="Case：training-in-batch-approach"><a href="#Case：training-in-batch-approach" class="headerlink" title="Case：training in batch approach?"></a>Case：training in batch approach?</h2><ul>
+<li>這樣的標準化流程會跟著batch(一組batch內部做標準化)跑，不是所有feature納進來標準化</li>
+<li>這樣的作法稱作batch normalization<ul>
+<li>問題來了，我們會需要足夠大的batch size才能做一個好的標準化(誤差會比較小)<br><img src="/../images/20220707_6.png"></li>
+</ul>
+</li>
+<li>$\beta、\gamma$是模型的另外兩個參數，透過學習得到</li>
+<li>為啥需要這兩個參數?<ul>
+<li>因為標準化會保證$\tilde{z}$之平均值 &#x3D; 0，這樣的結果有可能會對模型產生一些負面影響，所以我們需要$\beta、\gamma$兩個參數來讓數值變成比較貼合模型需求</li>
+<li>問題：這樣不就又破壞掉標準化平衡了嗎?<ul>
+<li>我們初始設定$\gamma &#x3D; 1 , \beta &#x3D; 0$，讓他們初始為真的標準化</li>
+<li>讓模型來決定值該怎麼分步</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="Batch-normalization-testing-data"><a href="#Batch-normalization-testing-data" class="headerlink" title="Batch normalization - testing data"></a>Batch normalization - testing data</h3><ul>
+<li>剛剛講的都是training的情況下</li>
+<li>testing又稱inference</li>
+<li>當真的是線上模型時，我們必須每一筆資料進來就進行預測，不能用batch</li>
+<li>當數據只有一筆，怎麼做normalization($\mu&#x3D;? , \sigma&#x3D;?$)</li>
+<li>實作上的解法(pytorch)：<ul>
+<li>在training若有用這個技術，每次batch算出來的$\mu_i , \sigma_i$就會記錄下來再做以下處理  <br><img src="/../images/pasted-13.png"></li>
+</ul>
+</li>
+</ul>
+<p>在實際test時，就代入<br>$$\tilde{z} &#x3D; \frac{z-\bar{u}}{\bar{\sigma}}<br>$$</p>
+<ul>
+<li>Batch normalization的實際測試結果，<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1502.03167">連結</a><br><img src="/../images/20220707_7.png"></li>
+<li>紅色線是有做batch normalization</li>
+<li>粉色線，使用sigmoid function</li>
+<li>其他線，就是lr乘上$x$倍</li>
+<li>黑色沒有用BN，用inception</li>
+<li>收斂速度更快，但結果差不多</li>
+</ul>
+<h2 id="How-does-Batch-Normalization-help-optimization"><a href="#How-does-Batch-Normalization-help-optimization" class="headerlink" title="How does Batch Normalization help optimization?"></a>How does Batch Normalization help optimization?</h2><ul>
+<li><p>下面這篇論文的作者發明這個詞”Internal covariate shift”</p>
+</li>
+<li><p>根據<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1805.11604">這篇論文</a>所認為有以下可能<br><img src="/../images/pasted-14.png"></p>
+</li>
+<li><p>我們做參數update，將A變成A’，B變成B’，但是B的變動是根據之前算出來的a作為input，當整體更新了以後，B’要面對的input卻不再是a，而是經過A’算出來的a’，故導致仍舊失準</p>
+<ul>
+<li>而Batch normalization的作法，是讓a跟a’有相似的分布(similar statistics)，故誤差會比較接近</li>
+</ul>
+</li>
+<li><p>但是Experimental result並不支持這個緣故(打臉)</p>
+<ul>
+<li>打臉者認為實驗下來，a跟a’的分布都差不多，而且不管分布是不是差很多，影響都不大，於是這個假說是錯的(不是batch normalization的關鍵)</li>
+<li>不過實驗跟理論依然證明，Batch normalization依然會改變error surface的地貌<br><img src="/../images/20220707_9.png"></li>
+<li>此人認為batch normalization的發現可能是偶然(意料之外)的，但無論如何這是有用的方法<br>    - normalization有一堆方法，參考如下<br><img src="/../images/20220707_10.png"></li>
+</ul>
+</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://laxiflora.github.io/2022/07/06/ML-2021-2-5-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E5%9B%9B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="劉宇承">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="laxiflora的小天地">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | laxiflora的小天地">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2022/07/06/ML-2021-2-5-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E5%9B%9B/" class="post-title-link" itemprop="url">ML_2021_2-5 類神經網路訓練不起來怎麼辦(四)</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2022-07-06 22:20:08" itemprop="dateCreated datePublished" datetime="2022-07-06T22:20:08+08:00">2022-07-06</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新於</span>
+      <time title="修改時間：2022-08-08 20:10:07" itemprop="dateModified" datetime="2022-08-08T20:10:07+08:00">2022-08-08</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <ul>
+<li>這是如何分類的短版本，長版本連結如下:<br><a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=fZAZUYEeIMg">連結1</a><br><a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=hSXFuypLukA">連結2</a></li>
+<li>這裡直接講分類是怎麼做的</li>
+</ul>
+<h1 id="Classification-as-Regression"><a href="#Classification-as-Regression" class="headerlink" title="Classification as Regression?"></a>Classification as Regression?</h1><p>Regression長這樣<br><img src="/../images/pasted-7.png"></p>
+<ul>
+<li>那classification怎麼看得像regression呢？</li>
+<li>我們讓輸出的y(原本是一種類別)變成編號，跟$\hat{y}$比對</li>
+<li>但這樣會有問題，class 1 跟 class 2 也不同類(loss &#x3D; 1)，但他們的loss會小於class 1 跟 class 3的錯誤預測(loss &#x3D; 2)</li>
+<li>常見的做法是把class用one-hot vector來表示</li>
+<li>當然，這樣我們就會希望output的y是一個向量而非純量 $\rightarrow$ 我們可以用多組的weight去做多次輸出，如下圖<br><img src="/../images/pasted-8.png"></li>
+<li>我們通常會算出一個y以後，先做一個softmax(y)得到y’才去比較</li>
+</ul>
+<h2 id="Softmax-activate-function"><a href="#Softmax-activate-function" class="headerlink" title="Softmax activate function"></a>Softmax activate function</h2><p>公式如下<br>$$<br>y_i’ &#x3D; \frac{exp(y_i)}{\sum_{j}exp(y_i)}<br>$$<br>圖例<br><img src="/../images/pasted-9.png"><br>softmax有兩個特徵：<br>$$<br>1&gt;y_i&gt;0 \\\<br>\sum_iy_i’ &#x3D; 1<br>$$</p>
+<ul>
+<li>其實就是把$y_i$的各自機率算出來，若y&lt;0則機率~0</li>
+</ul>
+<h2 id="why-add-softmax-at-last-layer-in-classification"><a href="#why-add-softmax-at-last-layer-in-classification" class="headerlink" title="why add softmax at last layer in classification?"></a>why add softmax at last layer in classification?</h2><ul>
+<li>可以參考原版錄影，因為解釋較長</li>
+<li>騙小孩的說法是，因為機率是0到1之間，所以我們可以把y做softmax讓他normalize</li>
+</ul>
+<h3 id="Note"><a href="#Note" class="headerlink" title="Note :"></a>Note :</h3><ul>
+<li>Sigmoid就是2 class版的softmax(Ref.深度學習的數學地圖)</li>
+</ul>
+<h1 id="分類模型的loss-function"><a href="#分類模型的loss-function" class="headerlink" title="分類模型的loss function"></a>分類模型的loss function</h1><ul>
+<li>我們仍然可以採用MSE來計算</li>
+<li>但更常用的作法是用cross entropy</li>
+</ul>
+<h2 id="cross-entropy-loss-function"><a href="#cross-entropy-loss-function" class="headerlink" title="cross entropy loss function"></a>cross entropy loss function</h2><p>公式如下<br>$$<br>e &#x3D; - \sum_i\hat{y}_ilny_i’<br>$$</p>
+<ul>
+<li>最小值就是當$y &#x3D; \hat{y}$</li>
+<li>minimize cross entropy &#x3D; maximize likelihood</li>
+<li>基本上softmax是被跟cross entropy綁在一起的，因為向性很高</li>
+<li>所以如果用cross entropy當loss，那模型最後一層自動就會補上softmax當激發函數(pytorch)</li>
+</ul>
+<h2 id="用optimizer的角度來證實cross-entropy優於MSE"><a href="#用optimizer的角度來證實cross-entropy優於MSE" class="headerlink" title="用optimizer的角度來證實cross entropy優於MSE"></a>用optimizer的角度來證實cross entropy優於MSE</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://speech.ee.ntu.edu.tw/~tlkagk/courses/MLDS_2015_2/Lecture/Deep%20More%20(v2).ecm.mp4/index.html">用數學證明的方式說明</a>請參考過去影片</li>
+<li>以下用舉例的方式說明</li>
+<li>已知一個模型如下圖<br><img src="/../images/pasted-10.png"><br>則MSE跟cross entropy的表現如下</li>
+</ul>
+<p><img src="/../images/20220706_15.png" alt="upload successful"></p>
+<ul>
+<li><p>用MSE的前提下，因為點就卡在高loss了，周圍很平坦，很難用梯度下降找到更好的點</p>
+</li>
+<li><p>這是一個透過改變loss function來改變整個error surface的例子</p>
+</li>
+<li><p>loss function的定義是有可能影響訓練難度的</p>
+</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1168,7 +1442,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新於</span>
-      <time title="修改時間：2022-08-08 20:10:07" itemprop="dateModified" datetime="2022-08-08T20:10:07+08:00">2022-08-08</time>
+      <time title="修改時間：2022-08-09 03:23:19" itemprop="dateModified" datetime="2022-08-09T03:23:19+08:00">2022-08-09</time>
     </span>
 
   
@@ -1186,7 +1460,7 @@
 <li>課程影片： <a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=Ye018rCVvOo&list=PLJV_el3uVTsMhtt7_Y6sgTHGHp1Vb2P2J">2021預習影片</a>  <a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=7XZR0-4uS5s&list=PLJV_el3uVTsPM2mM-OQzJXziCGJa8nJL8">2022正課影片</a></li>
 <li><a target="_blank" rel="noopener" href="https://speech.ee.ntu.edu.tw/~hylee/ml/2022-spring.php">課程網頁</a></li>
 </ul>
-<h1 id="2021年預習筆記"><a href="#2021年預習筆記" class="headerlink" title="2021年預習筆記"></a>2021年預習筆記</h1><h2 id="Ch-1-Introduction-of-Deep-Learning"><a href="#Ch-1-Introduction-of-Deep-Learning" class="headerlink" title="Ch 1:Introduction of Deep Learning"></a>Ch 1:Introduction of Deep Learning</h2><p><a href="/2022/07/04/ML-2021-1-1-%E7%9B%A3%E7%9D%A3%E5%BC%8F%E5%AD%B8%E7%BF%92%E6%A6%82%E8%AB%96/">1-1 監督式學習概論</a></p>
+<h1 id="2021年預習筆記"><a href="#2021年預習筆記" class="headerlink" title="2021年預習筆記"></a>2021年預習筆記</h1><h2 id="Ch-1：Introduction-of-Deep-Learning"><a href="#Ch-1：Introduction-of-Deep-Learning" class="headerlink" title="Ch 1：Introduction of Deep Learning"></a>Ch 1：Introduction of Deep Learning</h2><p>[1-1]<a href="/2022/07/04/ML-2021-1-1-%E7%9B%A3%E7%9D%A3%E5%BC%8F%E5%AD%B8%E7%BF%92%E6%A6%82%E8%AB%96/">監督式學習概論</a></p>
 <ul>
 <li>介紹甚麼是機器學習，以及機器學習的任務</li>
 <li>以預測李宏毅老師的頻道觀看人數為例，介紹監督式學習的運作流程<blockquote>
@@ -1195,7 +1469,7 @@
 </li>
 </ul>
 <hr>
-<h2 id="Ch-2-What-to-do-if-my-network-fails-to-train"><a href="#Ch-2-What-to-do-if-my-network-fails-to-train" class="headerlink" title="Ch 2:What to do if my network fails to train"></a>Ch 2:What to do if my network fails to train</h2><p><a href="/2022/07/04/ML-2021-2-1-%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E4%BB%BB%E5%8B%99%E6%94%BB%E7%95%A5/">2-1 機器學習任務攻略</a></p>
+<h2 id="Ch-2：What-to-do-if-my-network-fails-to-train"><a href="#Ch-2：What-to-do-if-my-network-fails-to-train" class="headerlink" title="Ch 2：What to do if my network fails to train"></a>Ch 2：What to do if my network fails to train</h2><p>[2-1]<a href="/2022/07/04/ML-2021-2-1-%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E4%BB%BB%E5%8B%99%E6%94%BB%E7%95%A5/">機器學習任務攻略</a></p>
 <ul>
 <li>機器學習上可能碰到的疑難雜症介紹，以及如何改善</li>
 <li>區分命中率問題到底是overfitting、model bias issue還是Optimization issue，甚至是data mismatch</li>
@@ -1205,7 +1479,7 @@
 </li>
 </ul>
 <hr>
-<p><a href="/2022/07/04/ML-2021-2-2-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%B8%80/">2-2 類神經網路訓練不起來怎麼辦(一)</a></p>
+<p>[2-2]<a href="/2022/07/04/ML-2021-2-2-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%B8%80/">類神經網路訓練不起來怎麼辦(一)</a></p>
 <ul>
 <li>續2-1的大綱，專注在討論optimizer失靈的解決方法與成因分辨</li>
 <li>提供一個應用線性代數的例子：如何讓一個卡在鞍點的$\theta$逃離鞍點 (但計算曠日廢時)<ul>
@@ -1218,7 +1492,7 @@
 </li>
 </ul>
 <hr>
-<p><a href="/2022/07/05/ML-2021-2-3-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%BA%8C/">2-3 類神經網路訓練不起來怎麼辦(二)</a></p>
+<p>[2-3]<a href="/2022/07/05/ML-2021-2-3-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%BA%8C/">類神經網路訓練不起來怎麼辦(二)</a></p>
 <ul>
 <li>續2021版1-1的內容，我們這次探討batch size對於training與testing有甚麼影響</li>
 <li>big batch size好還是small batch size好？ 要看hyper para怎麼調以及對於訓練速度的需求</li>
@@ -1228,7 +1502,7 @@
 </li>
 </ul>
 <hr>
-<p><a href="/2022/07/06/ML-2021-2-4-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%B8%89/">2-4 類神經網路訓練不起來怎麼辦(三)</a></p>
+<p>[2-4]<a href="/2022/07/06/ML-2021-2-4-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%B8%89/">類神經網路訓練不起來怎麼辦(三)</a></p>
 <ul>
 <li>這次討論Optimizer中，關於Learning rate的問題</li>
 <li>一個模型的跑動，常常碰到單一learning rate所會碰到的困境，所以我們需要可以隨著單次訓練中各種情況變動的learning rate</li>
@@ -1239,7 +1513,7 @@
 </li>
 </ul>
 <hr>
-<p><a href="/2022/07/06/ML-2021-2-5-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E5%9B%9B/">2-5 類神經網路訓練不起來怎麼辦(四)</a></p>
+<p>[2-5]<a href="/2022/07/06/ML-2021-2-5-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E5%9B%9B/">類神經網路訓練不起來怎麼辦(四)</a></p>
 <ul>
 <li>簡短介紹當碰到分類問題的時候，最後一層激發函數該選哪個函數</li>
 <li>介紹了one-hot vector作為新的輸出型態，以及基本原因</li>
@@ -1250,7 +1524,7 @@
 </li>
 </ul>
 <hr>
-<p><a href="/2022/07/07/ML-2021-2-6-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%BA%94/">2-6 類神經網路訓練不起來怎麼辦(五)</a></p>
+<p>[2-6]<a href="/2022/07/07/ML-2021-2-6-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%BA%94/">類神經網路訓練不起來怎麼辦(五)</a></p>
 <ul>
 <li>簡短介紹Batch Normalization的技術</li>
 <li>這是另一種直接改變error surface的技術(相對於動態lr)</li>
@@ -1260,7 +1534,7 @@
 </li>
 </ul>
 <hr>
-<h2 id="Ch3-image-as-input"><a href="#Ch3-image-as-input" class="headerlink" title="Ch3 : image as input"></a>Ch3 : image as input</h2><p><a href="/2022/07/09/ML-2021-3-1-%E5%8D%B7%E7%A9%8D%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF/">3-1 卷積神經網路</a></p>
+<h2 id="Ch3-image-as-input"><a href="#Ch3-image-as-input" class="headerlink" title="Ch3 : image as input"></a>Ch3 : image as input</h2><p>[3-1]<a href="/2022/07/09/ML-2021-3-1-%E5%8D%B7%E7%A9%8D%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF/">卷積神經網路</a></p>
 <ul>
 <li>介紹CNN neurol network 以及他的相關常用術語</li>
 <li>旨在讓我們了解CNN，一個入門指引</li>
@@ -1270,7 +1544,7 @@
 </li>
 </ul>
 <hr>
-<h2 id="Ch4：Sequence-as-input"><a href="#Ch4：Sequence-as-input" class="headerlink" title="Ch4：Sequence as input"></a>Ch4：Sequence as input</h2><p><a href="/2022/07/13/ML-2021-4-1-%E8%87%AA%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%A9%9F%E5%88%B6%EF%BC%88%E4%B8%8A%EF%BC%89/">4-1 自注意力機制（上）</a></p>
+<h2 id="Ch4：Sequence-as-input"><a href="#Ch4：Sequence-as-input" class="headerlink" title="Ch4：Sequence as input"></a>Ch4：Sequence as input</h2><p>[4-1]<a href="/2022/07/13/ML-2021-4-1-%E8%87%AA%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%A9%9F%E5%88%B6%EF%BC%88%E4%B8%8A%EF%BC%89/">自注意力機制（上）</a></p>
 <ul>
 <li>介紹在碰到輸入的時候不只是一個向量，甚至可能輸入的向量數量會變動，該怎麼處理</li>
 <li>簡單介紹輸入為sequence的常見問題以及不同輸出的類別</li>
@@ -1281,7 +1555,7 @@
 </li>
 </ul>
 <hr>
-<p><a href="/2022/07/13/ML-2021-4-2-%E8%87%AA%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%A9%9F%E5%88%B6%EF%BC%88%E4%B8%8B%EF%BC%89/">4-2 自注意力機制（下）</a></p>
+<p>[4-2]<a href="/2022/07/13/ML-2021-4-2-%E8%87%AA%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%A9%9F%E5%88%B6%EF%BC%88%E4%B8%8B%EF%BC%89/">自注意力機制（下）</a></p>
 <ul>
 <li>常用(上週討論的)self-attention計算方法，其實就是很多的矩陣相乘</li>
 <li>當一個vector出現在sequence的不同位置也需要考量，該怎麼處理 -&gt; Positional encoding</li>
@@ -1300,7 +1574,7 @@
 <li>5-1就是2-6，介紹batch norm</li>
 </ul>
 <hr>
-<p><a href="/2022/07/23/ML-2021-5-2-Transformer%EF%BC%88%E4%B8%8A%EF%BC%89/">5-2 Transformer(上)</a></p>
+<p>[5-2]<a href="/2022/07/23/ML-2021-5-2-Transformer%EF%BC%88%E4%B8%8A%EF%BC%89/">Transformer(上)</a></p>
 <ul>
 <li>首先講解seq2seq類模型所可以解決的問題與應用，接下來講解seq2seq的其中一種模型「transformer」</li>
 <li>介紹transformer的大架構圖，以及transformer encoder的分解步驟</li>
@@ -1311,7 +1585,7 @@
 </li>
 </ul>
 <hr>
-<p><a href="/2022/07/24/ML-2021-5-3-Transformer%EF%BC%88%E4%B8%8B%EF%BC%89/">5-3 Transformer（下）</a></p>
+<p>[5-3]<a href="/2022/07/24/ML-2021-5-3-Transformer%EF%BC%88%E4%B8%8B%EF%BC%89/">Transformer（下）</a></p>
 <ul>
 <li>接續5-2，介紹原始Transformer decoder之詳細步驟，以及計算loss的方式</li>
 <li>介紹為何transformer的loss function要用cross entropy，而不能直接用如BLEU等等判別算法，並說明他們兩者之間並不一定正相關</li>
@@ -1325,7 +1599,7 @@
 <h2 id="Ch6：Generation-Generative-Adversarial-Network-GAN"><a href="#Ch6：Generation-Generative-Adversarial-Network-GAN" class="headerlink" title="Ch6：Generation  (Generative Adversarial Network, GAN)"></a>Ch6：Generation  (Generative Adversarial Network, GAN)</h2><ul>
 <li><a target="_blank" rel="noopener" href="https://speech.ee.ntu.edu.tw/~hylee/ml/ml2022-course-data/Machine%20Learning%20HW6.pdf">PPT連結</a></li>
 </ul>
-<p><a href="/2022/07/27/ML-2021-6-1-%E7%94%9F%E6%88%90%E5%BC%8F%E5%B0%8D%E6%8A%97%E7%B6%B2%E8%B7%AF-%E4%B8%80-%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E4%BB%8B%E7%B4%B9/">6-1 生成式對抗網路(一) – 基本概念介紹</a></p>
+<p>[6-1]<a href="/2022/07/27/ML-2021-6-1-%E7%94%9F%E6%88%90%E5%BC%8F%E5%B0%8D%E6%8A%97%E7%B6%B2%E8%B7%AF-%E4%B8%80-%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E4%BB%8B%E7%B4%B9/">生成式對抗網路(一) – 基本概念介紹</a></p>
 <ul>
 <li>介紹GAN的訓練過程、用途、基本原理</li>
 <li>GAN變種非常多</li>
@@ -1335,7 +1609,7 @@
 <p>關鍵字：<br>  discriminator、generator、Train GAN process、GAN zoo</p>
 </blockquote>
 <hr>
-<p><a href="/2022/07/28/ML-2021-6-2-%E7%94%9F%E6%88%90%E5%BC%8F%E5%B0%8D%E6%8A%97%E7%B6%B2%E8%B7%AF-%E4%BA%8C-%E7%90%86%E8%AB%96%E4%BB%8B%E7%B4%B9%E8%88%87WGAN/">6-2 生成式對抗網路(二) – 理論介紹與WGAN</a></p>
+<p>[6-2]<a href="/2022/07/28/ML-2021-6-2-%E7%94%9F%E6%88%90%E5%BC%8F%E5%B0%8D%E6%8A%97%E7%B6%B2%E8%B7%AF-%E4%BA%8C-%E7%90%86%E8%AB%96%E4%BB%8B%E7%B4%B9%E8%88%87WGAN/">生成式對抗網路(二) – 理論介紹與WGAN</a></p>
 <ul>
 <li>介紹Discriminator與Generator如何訓練</li>
 <li>true data跟generated data之distribution差距過大，原本的JS GAN discriminator很難evaluate</li>
@@ -1345,7 +1619,7 @@
 <p>關鍵字：<br>  WGAN、Wasserstein distance、1-Lipschitz function(待查)</p>
 </blockquote>
 <hr>
-<p><a href="/2022/07/29/ML-2021-6-3-%E7%94%9F%E6%88%90%E5%BC%8F%E5%B0%8D%E6%8A%97%E7%B6%B2%E8%B7%AF-%E4%B8%89-%E2%80%93-%E7%94%9F%E6%88%90%E5%99%A8%E6%95%88%E8%83%BD%E8%A9%95%E4%BC%B0%E8%88%87%E6%A2%9D%E4%BB%B6%E5%BC%8F%E7%94%9F%E6%88%90/">6-3 生成式對抗網路(三) – 生成器效能評估與條件式生成</a></p>
+<p>[6-3]<a href="/2022/07/29/ML-2021-6-3-%E7%94%9F%E6%88%90%E5%BC%8F%E5%B0%8D%E6%8A%97%E7%B6%B2%E8%B7%AF-%E4%B8%89-%E2%80%93-%E7%94%9F%E6%88%90%E5%99%A8%E6%95%88%E8%83%BD%E8%A9%95%E4%BC%B0%E8%88%87%E6%A2%9D%E4%BB%B6%E5%BC%8F%E7%94%9F%E6%88%90/">生成式對抗網路(三) – 生成器效能評估與條件式生成</a></p>
 <ul>
 <li>續6-2，貼了一些關於GAN training tips的延伸學習</li>
 <li>GAN + Transformer (GAN in sequence generation)</li>
@@ -1358,7 +1632,7 @@
 <p>關鍵字：<br>    VAE、FLOW-based Model、Mode Collapse、Mode Dropping、Inception score(IS)、Frechet inception distance(FID)、Conditional Generation</p>
 </blockquote>
 <hr>
-<p><a href="/2022/07/29/ML-2021-6-4-%E7%94%9F%E6%88%90%E5%BC%8F%E5%B0%8D%E6%8A%97%E7%B6%B2%E8%B7%AF-%E5%9B%9B-%E2%80%93-Cycle-GAN/">6-4 生成式對抗網路(四) – Cycle GAN</a></p>
+<p>[6-4]<a href="/2022/07/29/ML-2021-6-4-%E7%94%9F%E6%88%90%E5%BC%8F%E5%B0%8D%E6%8A%97%E7%B6%B2%E8%B7%AF-%E5%9B%9B-%E2%80%93-Cycle-GAN/">生成式對抗網路(四) – Cycle GAN</a></p>
 <ul>
 <li>以影像風格轉換為例，說明cycle GAN如何應用在unsupervised learning上面</li>
 <li>reference 可以接受更多風格的非監督式GAN</li>
@@ -1369,7 +1643,8 @@
 <p>關鍵字：<br>  cycle GAN 、GAN unsupervised learning、seq2seq generator unsupervised learning</p>
 </blockquote>
 <hr>
-<h2 id="Ch-6-5-：Recent-Advance-of-Self-supervised-learning-for-NLP"><a href="#Ch-6-5-：Recent-Advance-of-Self-supervised-learning-for-NLP" class="headerlink" title="Ch 6.5 ：Recent Advance of Self-supervised learning for NLP"></a>Ch 6.5 ：Recent Advance of Self-supervised learning for NLP</h2><p><a href="/2022/07/30/ML-2021-X-1-X-2-BERT%E7%B0%A1%E4%BB%8B/">X-1 &amp; X-2 自督導式學習(一、二) – BERT簡介</a></p>
+<h2 id="Ch-6-5-：Recent-Advance-of-Self-supervised-learning-for-NLP"><a href="#Ch-6-5-：Recent-Advance-of-Self-supervised-learning-for-NLP" class="headerlink" title="Ch 6.5 ：Recent Advance of Self-supervised learning for NLP"></a>Ch 6.5 ：Recent Advance of Self-supervised learning for NLP</h2><p><strong>以BERT、GPT為例介紹近期self-supervised learning model的原理與在NLP上的應用</strong></p>
+<p>[X-1 &amp; X-2]<a href="/2022/07/30/ML-2021-X-1-X-2-BERT%E7%B0%A1%E4%BB%8B/">自督導式學習(一、二) – BERT簡介</a></p>
 <ul>
 <li>簡介BERT的訓練(pretrain)方法，以及一些應用</li>
 <li>how to fine-tune BERT in some cases.</li>
@@ -1379,7 +1654,7 @@
 <p>關鍵字：<br>  Fine-tune、pretrain (Next sentence prediction、sentence order prediction(SOP)、masking input)</p>
 </blockquote>
 <hr>
-<p><a href="/2022/08/03/ML-2021-X-3-BERT%E7%9A%84%E5%A5%87%E8%81%9E%E8%BB%BC%E4%BA%8B/">X-3 自督導式學習(三) - BERT的奇聞軼事</a></p>
+<p>[X-3]<a href="/2022/08/03/ML-2021-X-3-BERT%E7%9A%84%E5%A5%87%E8%81%9E%E8%BB%BC%E4%BA%8B/">自督導式學習(三) - BERT的奇聞軼事</a></p>
 <ul>
 <li><p>Why BERT works？ 簡單介紹word embedding</p>
 </li>
@@ -1396,14 +1671,36 @@
 </li>
 </ul>
 <hr>
-<p><a href="/2022/08/04/ML-2021-X-4-GPT%E7%9A%84%E9%87%8E%E6%9C%9B/">X-4 自督導式學習(四) – GPT的野望</a></p>
-<h1 id="2022年正課筆記"><a href="#2022年正課筆記" class="headerlink" title="2022年正課筆記"></a>2022年正課筆記</h1><p><a href="/2022/07/04/ML-2022-1-1-%E6%AD%A3%E8%AA%B2%E5%85%A7%E5%AE%B9%E4%BB%8B%E7%B4%B9/">1-1 正課內容介紹</a></p>
+<p>[X-4]<a href="/2022/08/04/ML-2021-X-4-GPT%E7%9A%84%E9%87%8E%E6%9C%9B/">自督導式學習(四) – GPT的野望</a></p>
+<ul>
+<li>介紹另一個self-supervised learning model：GPT</li>
+<li>GPT的任務目標比起BERT更加有野心：期望能夠輸入task description與問題，就能自己預測出答案</li>
+<li>GPT的訓練方式類似transformer的decoder，給定一個seq，要能預測下一個token是甚麼<blockquote>
+<p>關鍵字：<br>GPT</p>
+</blockquote>
+</li>
+</ul>
+<hr>
+<h2 id="Ch8：Auto-encoder-x2F-Anomaly-Detection"><a href="#Ch8：Auto-encoder-x2F-Anomaly-Detection" class="headerlink" title="Ch8：Auto-encoder&#x2F; Anomaly Detection"></a>Ch8：Auto-encoder&#x2F; Anomaly Detection</h2><p>[8-1]<a href="/2022/08/08/ML-2021-8-1-%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/">自編碼器(上) – 基本概念</a></p>
+<ul>
+<li>介紹auto-encoder的模型，以及它的學習任務</li>
+<li>auto-encoder跟現今cycle GAN的2 generator關係很像</li>
+<li>介紹de-noising auto-encoder，並且分析它與現今的self-supervised learning model(BERT)的相似</li>
+<li>auto-encoding 具備降維壓縮的功能</li>
+</ul>
+<blockquote>
+<p>關鍵字<br>  de-noising auto-encoder、embedding(Representation, Code)、dimention reduction</p>
+</blockquote>
+<hr>
+<p>[8-2]<a href="/2022/08/09/ML-2021-8-2-%E9%A0%98%E7%B5%90%E8%AE%8A%E8%81%B2%E5%99%A8%E8%88%87%E6%9B%B4%E5%A4%9A%E6%87%89%E7%94%A8/">自編碼器(下) – 領結變聲器與更多應用</a></p>
+<hr>
+<h1 id="2022年正課筆記"><a href="#2022年正課筆記" class="headerlink" title="2022年正課筆記"></a>2022年正課筆記</h1><p>[1-1]<a href="/2022/07/04/ML-2022-1-1-%E6%AD%A3%E8%AA%B2%E5%85%A7%E5%AE%B9%E4%BB%8B%E7%B4%B9/">正課內容介紹</a></p>
 <ul>
 <li>介紹各講的重點核心</li>
 <li>$X-y$中的X對應的是第幾講，2021年的編號也同樣，是按造課程網頁的syllabus排的</li>
 </ul>
 <hr>
-<p><a href="/2022/07/04/ML-2022-2-1-%E5%86%8D%E6%8E%A2%E5%AF%B6%E5%8F%AF%E5%A4%A2%E3%80%81%E6%95%B8%E7%A2%BC%E5%AF%B6%E8%B2%9D%E5%88%86%E9%A1%9E%E5%99%A8/">2-1 再探寶可夢、數碼寶貝分類器</a></p>
+<p>[2-1]<a href="/2022/07/04/ML-2022-2-1-%E5%86%8D%E6%8E%A2%E5%AF%B6%E5%8F%AF%E5%A4%A2%E3%80%81%E6%95%B8%E7%A2%BC%E5%AF%B6%E8%B2%9D%E5%88%86%E9%A1%9E%E5%99%A8/">再探寶可夢、數碼寶貝分類器</a></p>
 <hr>
 <h1 id="作業區-有寫的部分orz"><a href="#作業區-有寫的部分orz" class="headerlink" title="作業區(有寫的部分orz)"></a>作業區(有寫的部分orz)</h1><p><a href="/2022/07/11/ML-LEE-2022-hw3/">作業3 - 圖像辨識，使用CNN</a></p>
 <hr>
@@ -1415,268 +1712,6 @@
 <hr>
 <p><a href="/2022/08/04/ML-LEE-2022-hw7/">作業7 - BERT</a></p>
 
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://laxiflora.github.io/2022/07/02/pytorch%E5%85%A5%E9%96%80/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="劉宇承">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="laxiflora的小天地">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | laxiflora的小天地">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/07/02/pytorch%E5%85%A5%E9%96%80/" class="post-title-link" itemprop="url">pytorch入門</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">發表於</span>
-
-      <time title="創建時間：2022-07-02 20:39:19" itemprop="dateCreated datePublished" datetime="2022-07-02T20:39:19+08:00">2022-07-02</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新於</span>
-      <time title="修改時間：2022-08-08 20:10:07" itemprop="dateModified" datetime="2022-08-08T20:10:07+08:00">2022-08-08</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="讀取資料"><a href="#讀取資料" class="headerlink" title="讀取資料"></a>讀取資料</h1><h2 id="需import的套件"><a href="#需import的套件" class="headerlink" title="需import的套件"></a>需import的套件</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">torch.utils.data.Dataset</span><br><span class="line">torch.utils.data.DataLoader</span><br></pre></td></tr></table></figure>
-
-
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">dataset = MyDataset(file)</span><br><span class="line">dataloader = DataLoader(dataset, batch_size, shuffle=<span class="literal">True</span>) //Training用true, Testing用false</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<ul>
-<li><p>MyDataset屬於自定義的類別，定義如下：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">MyDataset</span>(<span class="title class_ inherited__">Dataset</span>):</span><br><span class="line">	<span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self,file</span>):</span><br><span class="line">    	self.data = ...</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__getitem__</span>(<span class="params">self, index</span>):</span><br><span class="line">    	<span class="keyword">return</span> self.data[index]</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__len__</span>(<span class="params">self</span>):</span><br><span class="line">    	<span class="keyword">return</span> <span class="built_in">len</span>(self.data)</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>pytorch裡面的資料大多是以tensor來表示(向量)</p>
-</li>
-<li><p>我們除了讀取資料，也可以自行創建，範例如下</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">x = torch.tensor([1,2],[3,4]) // 得到2x2</span><br><span class="line">x = torch.from_numpy(np.array([1,2],[3,4])) //也可以自numpy轉移矩陣</span><br><span class="line">x  torch.zeros([2,2]) //創建一個shape為(2,2)的全0矩陣</span><br></pre></td></tr></table></figure></li>
-</ul>
-<h1 id="常用函數"><a href="#常用函數" class="headerlink" title="常用函數"></a>常用函數</h1><ul>
-<li><p>transpose : 讓兩個維度之間互換<br>範例</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">x.shape() == (2,3)</span><br><span class="line">x = x.transpose(0,1)</span><br><span class="line">x.shape() == (3,2)</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>x.squeeze(0)：將一個大小為1維度消除</p>
-</li>
-<li><p>相對的，呼叫x.unsqueeze(0)就是增加一個大小&#x3D;1的維度</p>
-</li>
-<li><p>torch.cat：將一個維度連接起來(其餘維度大小需相同)</p>
-</li>
-</ul>
-<h1 id="常見問題"><a href="#常見問題" class="headerlink" title="常見問題"></a>常見問題</h1><ul>
-<li>data type</li>
-<li>運算用的處理器 <code>x = x.to(&#39;...&#39;)</code></li>
-<li></li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://laxiflora.github.io/2022/06/28/Hexo%E4%BD%BF%E7%94%A8%E6%8A%80%E5%B7%A7/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="劉宇承">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="laxiflora的小天地">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | laxiflora的小天地">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/06/28/Hexo%E4%BD%BF%E7%94%A8%E6%8A%80%E5%B7%A7/" class="post-title-link" itemprop="url">Hexo使用技巧</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">發表於</span>
-
-      <time title="創建時間：2022-06-28 21:13:03" itemprop="dateCreated datePublished" datetime="2022-06-28T21:13:03+08:00">2022-06-28</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新於</span>
-      <time title="修改時間：2022-08-08 22:09:15" itemprop="dateModified" datetime="2022-08-08T22:09:15+08:00">2022-08-08</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="目錄"><a href="#目錄" class="headerlink" title="目錄"></a>目錄</h1><p><a href="#%E5%A6%82%E4%BD%95%E5%9C%A8git-repo%E8%A3%A1%E9%9D%A2%E5%8A%A0%E4%B8%8AREADME">如何在get repo裡面加上README ?</a><br><a href="#%E5%A6%82%E4%BD%95%E5%9C%A8hexo%E8%A8%AD%E7%BD%AE%E7%9A%84%E7%B6%B2%E9%A0%81%E6%8F%92%E5%85%A5%E5%9C%96%E7%89%87">如何在hexo設置的網頁插入圖片 ?</a><br><a href="#%E5%A6%82%E4%BD%95%E5%9C%A8hexo%E8%A8%AD%E7%BD%AE%E7%B6%B2%E9%A0%81%E9%8C%A8%E9%BB%9E">如何在hexo設置網頁錨點 ?</a><br><a href="#%E5%A6%82%E4%BD%95%E5%9C%A8hexo%E8%BC%B8%E5%85%A5%E6%95%B8%E5%AD%B8%E5%BC%8F">如何在hexo輸入數學式 ?</a></p>
-<h1 id="如何在git-repo裡面加上README"><a href="#如何在git-repo裡面加上README" class="headerlink" title="如何在git repo裡面加上README"></a>如何在git repo裡面加上README</h1><ul>
-<li>由於hexo會幫你自動把md檔轉成html上傳github，因此直接在_posts裡面新增README是不可行的</li>
-</ul>
-<h2 id="Step1"><a href="#Step1" class="headerlink" title="Step1"></a>Step1</h2><ul>
-<li>到_config.yml裡面找到#Directory子項，在裡面的skip_render補上README.md</li>
-</ul>
-<h2 id="Step2"><a href="#Step2" class="headerlink" title="Step2"></a>Step2</h2><ul>
-<li>完成以後就可以直接在source&#x2F;_posts裡面直接補上README囉~上傳的時候也可以正常顯示了<br><img src="/../images/20220621_4.png"></li>
-</ul>
-<h3 id="附註：如果想備份blog原始檔到github，README應該做在根目錄上而非source內，且兩個README可以獨立存在"><a href="#附註：如果想備份blog原始檔到github，README應該做在根目錄上而非source內，且兩個README可以獨立存在" class="headerlink" title="附註：如果想備份blog原始檔到github，README應該做在根目錄上而非source內，且兩個README可以獨立存在!"></a>附註：如果想備份blog原始檔到github，README應該做在根目錄上而非source內，且兩個README可以獨立存在!</h3><h3 id="回目錄"><a href="#回目錄" class="headerlink" title="(回目錄)"></a><a href="#%E7%9B%AE%E9%8C%84">(回目錄)</a></h3><hr>
-<h1 id="如何在hexo設置的網頁插入圖片"><a href="#如何在hexo設置的網頁插入圖片" class="headerlink" title="如何在hexo設置的網頁插入圖片"></a>如何在hexo設置的網頁插入圖片</h1><ul>
-<li>如果直接在source&#x2F;image放入圖片並且在md連連結的話，會連不上圖片</li>
-<li>可以使用admin套件來協助</li>
-</ul>
-<h2 id="Step1-1"><a href="#Step1-1" class="headerlink" title="Step1"></a>Step1</h2><p>在終端機輸入</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$npm install hexo-admin --save</span><br></pre></td></tr></table></figure>
-<p>來安裝admin套件</p>
-<h2 id="Step2-1"><a href="#Step2-1" class="headerlink" title="Step2"></a>Step2</h2><ul>
-<li>安裝完以後，在localhost狀態下補一個<code>/admin</code>就可以進入admin介面</li>
-<li>在admin介面可以直接看到你的所有貼文，按下筆進入編輯，在這頁面下直接貼上圖片即可</li>
-</ul>
-<p><img src="/../images/20220628_1.png"></p>
-<ul>
-<li>在貼上成功以後會出現<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">![upload successful](\\images\yourPicName.png\)</span><br></pre></td></tr></table></figure>
-請把<code>\</code>改成<code>/</code>並且把<code>\\</code>改成<code>../</code>即可 (Win11，其他系統可能改法不同，請依照系統特性修改)</li>
-</ul>
-<h3 id="回目錄-1"><a href="#回目錄-1" class="headerlink" title="(回目錄)"></a><a href="#%E7%9B%AE%E9%8C%84">(回目錄)</a></h3><hr>
-<h1 id="如何在hexo設置網頁錨點"><a href="#如何在hexo設置網頁錨點" class="headerlink" title="如何在hexo設置網頁錨點"></a>如何在hexo設置網頁錨點</h1><p>markdown語法為：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[連結文字](#你要連結的標題名稱)</span><br></pre></td></tr></table></figure>
-<ul>
-<li>碰上空格需要以-代替</li>
-<li>如果碰上.或是()，依照各編輯器與網站，處理方法不同<ul>
-<li>有些編輯器直接忽略即可</li>
-<li>有些編輯器(如本站)同樣用-代替(複數.跟()相連也只需要一個-)，若遇到結尾有)可以忽略</li>
-</ul>
-</li>
-<li>以錨定標題『有夠 歪七扭八)標()題)』為例，語法為<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[嘗試看看吧!](#有夠-歪七扭八-標-題)</span><br></pre></td></tr></table></figure>
-<a href="#%E6%9C%89%E5%A4%A0-%E6%AD%AA%E4%B8%83%E6%89%AD%E5%85%AB-%E6%A8%99-%E9%A1%8C">嘗試看看吧!</a></li>
-</ul>
-<h3 id="有夠-歪七扭八-標-題"><a href="#有夠-歪七扭八-標-題" class="headerlink" title="有夠 歪七扭八)標()題)"></a>有夠 歪七扭八)標()題)</h3><h3 id="回目錄-2"><a href="#回目錄-2" class="headerlink" title="(回目錄)"></a><a href="#%E7%9B%AE%E9%8C%84">(回目錄)</a></h3><hr>
-<h1 id="如何在hexo輸入數學式"><a href="#如何在hexo輸入數學式" class="headerlink" title="如何在hexo輸入數學式"></a>如何在hexo輸入數學式</h1><p>原本以為這只是小問題，結果卻搞了我整整半天…原生hexo渲染器對於LaTex支援性太差了…這點輸HackMD</p>
-<h2 id="法一：hexo-renderer-marked-hexo-math"><a href="#法一：hexo-renderer-marked-hexo-math" class="headerlink" title="法一：hexo-renderer-marked + hexo-math"></a>法一：hexo-renderer-marked + hexo-math</h2><p><a target="_blank" rel="noopener" href="https://www.tzingtao.com/2019/06/21/Math-Equations-in-Hexo/">參考資料來源</a><br><a target="_blank" rel="noopener" href="https://github.com/hexojs/hexo-math">hexo-math頁面</a></p>
-<ul>
-<li>Hexo預設的renderer是不支持直接在md中使用<code>$...$</code>的，一般來說推薦的工具是hexo-math，直接在終端機輸入以下指令即可安裝<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo-math --save</span><br></pre></td></tr></table></figure></li>
-<li>然而雖然我們可以直接在md檔中用$…$輸入LaTex表達式，但因為”&quot;屬於特殊符號，都會先被markdown先行解析，因此我們每次要使用到\都需要先在前面打一個\來避免他被吃掉(\)</li>
-<li>依照官方文件建議，我們可以使用hexo-math指定的標籤<code>『&#123;% math %&#125; ... &#123;% endmath %&#125;』</code>來包住數學式，這樣我們就可以防止數學式的\符號被markdown randerer影響<ul>
-<li>這麼做的好處是寫表達式不用一個一個去處理\，但是壞處就是在對於沒有支援hexo-math的地方使用這樣的標籤會導致相容性出問題(而且那陀標籤很笨重)，使網頁跑版。</li>
-</ul>
-</li>
-</ul>
-<p>PS. 與法三相對，是選擇跟renderer規則和平共處的做法(不改裝pandoc或改主題的前提下)，現在回來看這做法好像不錯orz…</p>
-<h2 id="法二：hexo-renderer-markdown-it-markdown-it-latex2img"><a href="#法二：hexo-renderer-markdown-it-markdown-it-latex2img" class="headerlink" title="法二：hexo-renderer-markdown-it + markdown-it-latex2img"></a>法二：hexo-renderer-markdown-it + markdown-it-latex2img</h2><p><a target="_blank" rel="noopener" href="https://github.com/MakerGYT/markdown-it-latex2img#hexo">markdown-it-latex2img頁面</a><br><a target="_blank" rel="noopener" href="https://github.com/hexojs/hexo-renderer-markdown-it">hexo-renderer-markdown-it頁面</a></p>
-<ul>
-<li>相比於官方原始的renderer，這個版本的渲染器支援更多功能</li>
-<li>markdown-it-laten2img是一個plugin，用於支援LaTex的文字格式</li>
-<li>若採用這個方法，需要先移除原版的renderer<br>指令如下:<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">npm uni hexo-renderer-marked --save</span><br><span class="line">npm i hexo-renderer-markdown-it --save</span><br><span class="line">npm i markdown-it-latex2img --save</span><br></pre></td></tr></table></figure>
-安裝完以後，到<code>_config.yml</code>中補這段：<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#markdown setting for hexo-renderer-markdown-it</span></span><br><span class="line"><span class="attr">markdown:</span></span><br><span class="line">  <span class="attr">plugins:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">markdown-it-latex2img</span></span><br></pre></td></tr></table></figure>
-就可以了<br>PS. 目前已知問題：改用這個renderer會導致錨點功能失效！(因為整個渲染器被改掉，可能導致原始的一些符號渲染成其他符號而讓原本的文本失效!)<br>PPS. 因為後來連admin插件都不能用，原本的圖片連結都失效了，不得已只好放棄這個做法</li>
-</ul>
-<h2 id="法三："><a href="#法三：" class="headerlink" title="法三："></a>法三：</h2><p>筆者處理這個問題的時候弄到頭昏腦脹…直接貼別人的教學網誌<br><a target="_blank" rel="noopener" href="https://nighting4le.com/2020/12/05/hexoWithLatex/">請參照這篇網誌</a></p>
-<h4 id="目前已知問題："><a href="#目前已知問題：" class="headerlink" title="目前已知問題："></a>目前已知問題：</h4><ul>
-<li>因為有改到渲染escape的規則，所以會導致有些東西失靈(同前面法2的原因)</li>
-<li>&lt;detail&gt;不可使用</li>
-<li>\也不再會被丟入特殊字元中 (這是為了配合LaTex裡面動不動就需要用到\，所以必須把\的保留字移除)<ul>
-<li>這樣做的壞處是(、)、.、\、\n、\t、&lt;&gt;、[]等等特殊符號不可跟某些需要用到這些符號的指令混用了</li>
-<li>ex: 不能在連結內打[]</li>
-</ul>
-</li>
-</ul>
-<p>目前這樣設置只是折衷，不可能兼顧方便性與相容性(打$$可以切LaTex inline)、又兼顧全面性(\的保留字依然適用)，只能說，當有些保留字<br>衝突的時候真的就只能犧牲一者(所以你在我的網誌裡面會看不到toggle list，因為\被無視了XD，請善用錨點功能)</p>
-<h2 id="更新：最後反璞歸真只用hexo-renderer-marked-hexo-math-居然可以用-而且-不會被無視…-雖然我不知道發生甚麼但總之他動了…orz"><a href="#更新：最後反璞歸真只用hexo-renderer-marked-hexo-math-居然可以用-而且-不會被無視…-雖然我不知道發生甚麼但總之他動了…orz" class="headerlink" title="更新：最後反璞歸真只用hexo-renderer-marked + hexo-math 居然可以用$$而且\不會被無視… 雖然我不知道發生甚麼但總之他動了…orz"></a>更新：最後反璞歸真只用hexo-renderer-marked + hexo-math 居然可以用$$而且\不會被無視… 雖然我不知道發生甚麼但總之他動了…orz</h2><p><img src="/../images/20220701_3.png" alt="upload successful"></p>
-<h2 id="法四"><a href="#法四" class="headerlink" title="法四"></a>法四</h2><p>直接使用hexo next theme…</p>
-<h2 id="目前設法"><a href="#目前設法" class="headerlink" title="目前設法:"></a>目前設法:</h2><ul>
-<li>使用hexo next theme</li>
-<li>安裝hexo-math</li>
-<li>使用原始的renderer</li>
-<li>在<code>_config.next.yml</code>裡面找到math，enable mathjax，且every_page&#x3D; true</li>
-</ul>
-<p>Note: 如果用Katex會跑版，然後如果用mathjax配上hexo-renderer-markdown-it會讓圖片的_(或其他字元)被渲染器被吃掉導致無法顯示<br>參考資料：<a target="_blank" rel="noopener" href="https://theme-next.js.org/docs/third-party-services/math-equations">hexo-next官方文件</a></p>
-<h3 id="回目錄-3"><a href="#回目錄-3" class="headerlink" title="(回目錄)"></a><a href="#%E7%9B%AE%E9%8C%84">(回目錄)</a></h3><hr>
-<!-- ## 法二：使用 -->
-<!-- 附註給自己
-目前使用法1 -->
       
     </div>
 

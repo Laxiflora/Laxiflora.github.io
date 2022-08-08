@@ -125,7 +125,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">32</span>
+          <span class="site-state-item-count">34</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
@@ -160,6 +160,335 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://laxiflora.github.io/2022/07/28/ML-2021-6-2-%E7%94%9F%E6%88%90%E5%BC%8F%E5%B0%8D%E6%8A%97%E7%B6%B2%E8%B7%AF-%E4%BA%8C-%E7%90%86%E8%AB%96%E4%BB%8B%E7%B4%B9%E8%88%87WGAN/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="劉宇承">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="laxiflora的小天地">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | laxiflora的小天地">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2022/07/28/ML-2021-6-2-%E7%94%9F%E6%88%90%E5%BC%8F%E5%B0%8D%E6%8A%97%E7%B6%B2%E8%B7%AF-%E4%BA%8C-%E7%90%86%E8%AB%96%E4%BB%8B%E7%B4%B9%E8%88%87WGAN/" class="post-title-link" itemprop="url">ML_2021_6-2 生成式對抗網路(二) - 理論介紹與WGAN</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2022-07-28 00:53:06" itemprop="dateCreated datePublished" datetime="2022-07-28T00:53:06+08:00">2022-07-28</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新於</span>
+      <time title="修改時間：2022-08-08 20:10:07" itemprop="dateModified" datetime="2022-08-08T20:10:07+08:00">2022-08-08</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="訓練的目標"><a href="#訓練的目標" class="headerlink" title="訓練的目標"></a>訓練的目標</h1><ul>
+<li>訓練到底要min&#x2F;max甚麼東西呢?<br><img src="/../images/20220728_1.png"></li>
+</ul>
+<p>一維的範例</p>
+<p><img src="/../images/20220728_2.png"></p>
+<ul>
+<li><p>要找的最佳化G參數就是<br>$$<br>G^* &#x3D; arg\ min_GDiv(P_G,P_{data})<br>$$</p>
+</li>
+<li><p>其中Div()表示兩個distribution之間的距離(相似度)公式</p>
+</li>
+<li><p>問題在不知道怎麼計算divergence</p>
+</li>
+<li><p>GAN可以在只有Sample的情況下，估計出div()是多少</p>
+<ul>
+<li>需要從$P_G、P_{data}$取樣，$P_{data}$取自圖庫，而$P_G$則取自generator產生的圖片<br>    - 這部分就要交給Discriminator，他要max一個objective function，公式有很多種</li>
+</ul>
+</li>
+</ul>
+<h2 id="JS-divergence"><a href="#JS-divergence" class="headerlink" title="JS divergence"></a>JS divergence</h2><p>公式如下(我們要取Max)<br>    $$<br>    V(G,D) &#x3D; E_{y\ from\ P_{data}}[logD(y)] + E_{y\ from\ P_G}[log(1-D(y)]<br>    $$</p>
+<ul>
+<li>我們會需要來自data的D(y)越大越好，來自G的D(y)越小越好</li>
+</ul>
+<p>Note: 若加上一點自由度，簡化上述公式，可以得到<br>$$<br>J^D &#x3D; -D(x) + D(G(z)), for\ all\ D(x),\ D(G(z))\  \in \ [0,1]<br>$$<br>且生成器的損失函數：<br>$$<br>J^G &#x3D; -J^D<br>$$<br>因為他們之間彼此對抗，所以他們兩者之間的損失只差一個負號，稱為min-max GAN</p>
+<p><img src="/../images/20220729_1.png"></p>
+<ul>
+<li>其實 $D^*$ 等同於(-1) x cross entropy<ul>
+<li>早年這麼設計的理由是因為，希望objective function可以跟二元分類扯上關係</li>
+</ul>
+</li>
+</ul>
+<p><img src="/../images/20220728_3.png"></p>
+<ul>
+<li><p><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1406.2661">參考</a></p>
+</li>
+<li><p>small divergence，data跟G的圖很像，則hard to discrininate，則small max V(D,G)</p>
+</li>
+<li><p>因為$max_D\ V(D,G)$與JS divergence有關聯，所以我們可以把Div()換掉，變成<br>$$<br>G^* &#x3D; arg\ min_G [max_DV(G,D)] \\\<br>D^* &#x3D; arg\ max_DV(D,G)<br>$$<br>&#x2F;&#x2F;D的max objetive value跟JS divergence有關</p>
+</li>
+</ul>
+<h2 id="其他的divergence"><a href="#其他的divergence" class="headerlink" title="其他的divergence"></a>其他的divergence</h2><ul>
+<li>當然，我們也可以用不同的divergence<ul>
+<li>對於不同的divergence，用甚麼樣的objective function，<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1606.00709">這篇論文有詳細解釋</a><br><img src="/../images/20220728_4.png"></li>
+</ul>
+</li>
+</ul>
+<h1 id="訓練GAN的小技巧"><a href="#訓練GAN的小技巧" class="headerlink" title="訓練GAN的小技巧"></a>訓練GAN的小技巧</h1><h2 id="JS-divergence-的問題"><a href="#JS-divergence-的問題" class="headerlink" title="JS divergence 的問題"></a>JS divergence 的問題</h2><ul>
+<li><p>$P_G、P_{data}$重疊的地方往往很少</p>
+<ul>
+<li>pf1. 圖片是高維空間裡面，低維的manifold<br>    	- 就像在一個平面空間中的兩條線一樣，重合的地方很少<br>    	- 在高維空間內隨便sample的點都不會是圖片<br>    	- 所以他們相交的部分幾乎可以忽略</li>
+<li>pf2.若$P_G、P_{data}$sample的點不夠多，很容易劃出一個界線把他們切開<br>-&gt; $P_G、P_{data}$重疊範圍非常少</li>
+</ul>
+</li>
+<li><p>若兩個分布沒有重疊的地方，算出來的Div就會永遠都是log 2，看不出差距<br><img src="/../images/20220728_5.png"></p>
+</li>
+</ul>
+<h2 id="WGAN"><a href="#WGAN" class="headerlink" title="WGAN"></a>WGAN</h2><ul>
+<li>換一個衡量divergense來衡量2 distribution之相似度</li>
+</ul>
+<h3 id="Wasserstein-distance"><a href="#Wasserstein-distance" class="headerlink" title="Wasserstein distance"></a>Wasserstein distance</h3><ul>
+<li><p>假設一個distribution P為一坨土，而另一個distribution Q為目的地</p>
+</li>
+<li><p>把土堆P挪到Q所需要的移動距離平均就是Wasserstein distance<br><img src="/../images/pasted-34.png"></p>
+</li>
+<li><p>因為可能的挪法很多，所以d會有不同</p>
+<ul>
+<li>定義: 窮舉所有的moving plan，找出最小的移動距離當作wasserstein distance<ul>
+<li>計算麻煩</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>假設我們能計算Wasserstein distance，帶來的優點:</p>
+<ul>
+<li>就可以解決JS divergence看不出上圖的好壞比較的問題  <br><img src="/../images/20220728_7.png"></li>
+</ul>
+</li>
+</ul>
+<h3 id="Evaluate-Wasserstein-distance"><a href="#Evaluate-Wasserstein-distance" class="headerlink" title="Evaluate Wasserstein distance"></a>Evaluate Wasserstein distance</h3><ul>
+<li>解下面的Optimization問題(下圖)，解出來就會是Wasserstein distance<br><img src="/../images/20220728_9.png"><br>[、]是期望值，D(x)就是剛剛的D(y)</li>
+<li>D必須是1-Lipschitz function (Discriminator不可變化劇烈)<ul>
+<li>如果沒有這個constraint，則D的training不會收斂<br>    - 讓D保持smooth強迫D(x)變成無窮與負無窮</li>
+<li>基本上就是保證real跟generated的data距離不會太遠</li>
+</ul>
+</li>
+</ul>
+<p><img src="/../images/pasted-35.png"></p>
+<h3 id="how-to-確保這個式子可用"><a href="#how-to-確保這個式子可用" class="headerlink" title="how to 確保這個式子可用"></a>how to 確保這個式子可用</h3><ul>
+<li><p>原始GAN方法</p>
+<ul>
+<li>強迫network的parameters w bound在[c,-c]<br>    - 在梯度下降的para更新後，若w&gt;c , w&#x3D;c ; if w&lt;-c , w &#x3D; -c<br>    - 可能可以讓function平滑一點，但沒有解決問題</li>
+</ul>
+</li>
+<li><p>有一篇 paper : improved WGAN 做的處理方法:</p>
+<ul>
+<li>在real data取sample，在fake data取一個sample，在中間再取一個sample，這個sample的梯度需要接近1 (?)</li>
+</ul>
+</li>
+</ul>
+<p>      <br><img src="/../images/pasted-36.png"></p>
+<ul>
+<li>相關方法很多，可以多查查<ul>
+<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1802.05957">Spectral Norm</a><ul>
+<li>Keep gradient norm在哪都 &lt; 1</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="Q-amp-A"><a href="#Q-amp-A" class="headerlink" title="Q &amp; A"></a>Q &amp; A</h4><p>Q1: 在discriminator訓練時，可否加入GAN以往的輸出</p>
+<p>A1: 可。實務上跑的時候不會真的讓discriminator被maximize，太花時間，所以通常幾個iteration後就會轉換到generator</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://laxiflora.github.io/2022/07/27/ML-2021-6-1-%E7%94%9F%E6%88%90%E5%BC%8F%E5%B0%8D%E6%8A%97%E7%B6%B2%E8%B7%AF-%E4%B8%80-%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E4%BB%8B%E7%B4%B9/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="劉宇承">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="laxiflora的小天地">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | laxiflora的小天地">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2022/07/27/ML-2021-6-1-%E7%94%9F%E6%88%90%E5%BC%8F%E5%B0%8D%E6%8A%97%E7%B6%B2%E8%B7%AF-%E4%B8%80-%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E4%BB%8B%E7%B4%B9/" class="post-title-link" itemprop="url">ML_2021_6-1 生成式對抗網路(一) - 基本概念介紹</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2022-07-27 22:52:40" itemprop="dateCreated datePublished" datetime="2022-07-27T22:52:40+08:00">2022-07-27</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新於</span>
+      <time title="修改時間：2022-08-08 20:10:07" itemprop="dateModified" datetime="2022-08-08T20:10:07+08:00">2022-08-08</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p><img src="/../images/20220727_4.png"></p>
+<ul>
+<li>到目前為止的network都是一個function</li>
+<li>這次則是把network當作generator使用<ul>
+<li>現在的network會加入一個new variable z，現在network就有兩筆輸入了</li>
+</ul>
+</li>
+<li>z由某個simple distribution生成(distribution必須夠簡單 ex. uniform)</li>
+<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1406.2661">初代GAN</a></li>
+</ul>
+<h1 id="Why-需要輸出是一個分布"><a href="#Why-需要輸出是一個分布" class="headerlink" title="Why 需要輸出是一個分布"></a>Why 需要輸出是一個分布</h1><ul>
+<li>以video prediction「小精靈」為例說明<ul>
+<li>給定previous frames，輸出預測下一個frame會出現的畫面</li>
+<li>但是在類似畫面下，有時候小精靈往左轉，有時候他往右轉，導致分裂(機器選擇兩面討好，這樣對兩個case的loss最小)<br>    -&gt; 讓機器的輸出不再單一，而是一個機率性的分佈  <br><img src="/../images/pasted-32.png"></li>
+</ul>
+</li>
+</ul>
+<p>    </p>
+<p>在機器的輸出需要創造性的時候(同一輸入可能有多種輸出)，就會需要distribution<br>    - ex. 繪圖、寫文章、對話</p>
+<h1 id="Generative-Adversarial-Network-GAN"><a href="#Generative-Adversarial-Network-GAN" class="headerlink" title="Generative Adversarial Network(GAN)"></a>Generative Adversarial Network(GAN)</h1><ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/hindupuravinash/the-gan-zoo">有很多種變形</a></li>
+</ul>
+<h2 id="Anime-face-ganeration"><a href="#Anime-face-ganeration" class="headerlink" title="Anime face ganeration"></a>Anime face ganeration</h2><ul>
+<li>先把x輸入拿掉，並假設z輸入是normal distribution</li>
+<li>其實二次元人物的臉(圖片)就只是一個高維向量</li>
+<li>輸入的distribution複雜性其實影響不大，因generator會想辦法把它變複雜</li>
+</ul>
+<h2 id="Discriminator"><a href="#Discriminator" class="headerlink" title="Discriminator"></a>Discriminator</h2><ul>
+<li>在GAN中會有這樣一個神經網路，用於判別輸出的東西是否真實</li>
+<li>輸入是產生的圖片，而輸出則是一種純量[0.1]</li>
+<li>可用CNN、transformer…等都可以</li>
+</ul>
+<h2 id="Basic-Idea-of-GAN"><a href="#Basic-Idea-of-GAN" class="headerlink" title="Basic Idea of GAN"></a>Basic Idea of GAN</h2><p>示意圖:<br><img src="/../images/20220728_6.png"></p>
+<ul>
+<li><p>就像物競天擇的演化一樣，discriminator會去除掉得分低的GAN成品，而GAN成品就會「天擇」成discriminator比較能接受的情況</p>
+</li>
+<li><p>但是discriminator也會進化，讓GAN必須再繼續進行進化</p>
+</li>
+<li><p>discriminator與generator通常互相視為敵人<br>GAN版示意圖(毛圖注意)<br><img src="/../images/20220727_8.png"></p>
+</li>
+</ul>
+<h2 id="Algorithm"><a href="#Algorithm" class="headerlink" title="Algorithm"></a>Algorithm</h2><ol>
+<li><p>Init gen and discriminator</p>
+</li>
+<li><p>固定住Generator (G)，輸入一陀random sampled vector，吐出成品，更新discriminator (D)</p>
+<ul>
+<li>拿一些「ground truth」 (ex. 真正的二次元人物)，互相比較相似度，並且更新D</li>
+<li>對D來說這是一個分類問題，或是regression問題 (正確圖片標1，錯的標0)，總之就是看個人想怎麼做</li>
+</ul>
+</li>
+<li><p>固定D，更新G，G要練習把D的acc升到最高(去欺騙D)</p>
+<ul>
+<li>把兩個neural network接起來，就會變成「輸入是一個向量，而輸出會是一個分數」，所以現在情況等同於maximize score (gradient ascent)<br>    - 當然固定D，所以「評分系統」不可變動</li>
+</ul>
+</li>
+<li><p>LOOP，反覆訓練G、D<br><img src="/../images/pasted-33.png"></p>
+</li>
+</ol>
+<hr>
+<h2 id="現代GAN"><a href="#現代GAN" class="headerlink" title="現代GAN"></a>現代GAN</h2><ul>
+<li><p><a target="_blank" rel="noopener" href="https://www.gwern.net/Faces">StyleGAN</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1710.10196">Progressive GAN</a></p>
+</li>
+<li><p>GAN可以產生沒看過的人臉，做一些內插<br><img src="/../images/20220728_10.png"></p>
+</li>
+<li><p>下一堂講解theory behind GAN</p>
+</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1513,280 +1842,6 @@
 </ul>
 </li>
 <li>其實有Network架構(Spatial Transformer Layer)可以解決這個問題，請Ref.<a target="_blank" rel="noopener" href="https://youtu.be/SoCywZ1hZak">這個影片</a></li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://laxiflora.github.io/2022/07/07/ML-2021-2-6-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%BA%94/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="劉宇承">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="laxiflora的小天地">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | laxiflora的小天地">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/07/07/ML-2021-2-6-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%BA%94/" class="post-title-link" itemprop="url">ML_2021_2-6 類神經網路訓練不起來怎麼辦(五)</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">發表於</span>
-
-      <time title="創建時間：2022-07-07 16:34:18" itemprop="dateCreated datePublished" datetime="2022-07-07T16:34:18+08:00">2022-07-07</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新於</span>
-      <time title="修改時間：2022-08-08 20:10:07" itemprop="dateModified" datetime="2022-08-08T20:10:07+08:00">2022-08-08</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <ul>
-<li>簡短介紹Batch Normalization的技術</li>
-<li>另一種直接改變error surface的技術(相對於動態lr，一種改善訓練的方法)</li>
-</ul>
-<p><img src="/../images/20220707_1.png" alt="upload successful"></p>
-<ul>
-<li>考慮以下模型，當$x_1$輸出很小、$x_2$輸出很大的時候，就會產生error surface橢圓的問題</li>
-<li>因為$x_1$小，就算$w_1$變化很大，y的變化量也不會很大(因為相乘);$x_2$則相反</li>
-<li>考慮可以把$x_1、x_2$相同的數值範圍<br><img src="/../images/20220707_2.png" alt="upload successful"></li>
-</ul>
-<h1 id="Feature-Normalization"><a href="#Feature-Normalization" class="headerlink" title="Feature Normalization"></a>Feature Normalization</h1><h2 id="其中一種normalization做法"><a href="#其中一種normalization做法" class="headerlink" title="其中一種normalization做法"></a>其中一種normalization做法</h2><ul>
-<li>對多筆feature vector的同一dimention做標準化<br><img src="/../images/pasted-11.png"></li>
-<li>標準化以後，該dim的平均值&#x3D;0，$\sigma$ &#x3D; 1</li>
-<li>像這樣就可以製造比較平衡的error surface，方便optimization作業</li>
-</ul>
-<h2 id="Case：In-deep-learning"><a href="#Case：In-deep-learning" class="headerlink" title="Case：In deep learning"></a>Case：In deep learning</h2><ul>
-<li>因為深度學習有多個層，雖然在一開始我們把x做了標準化，但是在經過一層layer計算以後，數值又失去了標準化，故我們需要進行多次的標準化</li>
-<li>標準化要放在激發函數前後的影響並不大<br><img src="/../images/pasted-12.png"></li>
-<li>以上圖為例，我們需要對z再度進行標準化，公式如下(feature&#x3D;3的case)<br><img src="/../images/20220707_4.png" alt="upload successful"><br>則可以得到<br>$$\tilde{z}^i &#x3D; \frac{z^i-\mu}{\sigma}$$<br>後續層也依此類推</li>
-<li>這個feature標準化的過程使得所有feature之間有了關聯性 -&gt; 這是一個network<br><img src="/../images/20220707_5.png" alt="upload successful"></li>
-</ul>
-<h2 id="Case：training-in-batch-approach"><a href="#Case：training-in-batch-approach" class="headerlink" title="Case：training in batch approach?"></a>Case：training in batch approach?</h2><ul>
-<li>這樣的標準化流程會跟著batch(一組batch內部做標準化)跑，不是所有feature納進來標準化</li>
-<li>這樣的作法稱作batch normalization<ul>
-<li>問題來了，我們會需要足夠大的batch size才能做一個好的標準化(誤差會比較小)<br><img src="/../images/20220707_6.png"></li>
-</ul>
-</li>
-<li>$\beta、\gamma$是模型的另外兩個參數，透過學習得到</li>
-<li>為啥需要這兩個參數?<ul>
-<li>因為標準化會保證$\tilde{z}$之平均值 &#x3D; 0，這樣的結果有可能會對模型產生一些負面影響，所以我們需要$\beta、\gamma$兩個參數來讓數值變成比較貼合模型需求</li>
-<li>問題：這樣不就又破壞掉標準化平衡了嗎?<ul>
-<li>我們初始設定$\gamma &#x3D; 1 , \beta &#x3D; 0$，讓他們初始為真的標準化</li>
-<li>讓模型來決定值該怎麼分步</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<h3 id="Batch-normalization-testing-data"><a href="#Batch-normalization-testing-data" class="headerlink" title="Batch normalization - testing data"></a>Batch normalization - testing data</h3><ul>
-<li>剛剛講的都是training的情況下</li>
-<li>testing又稱inference</li>
-<li>當真的是線上模型時，我們必須每一筆資料進來就進行預測，不能用batch</li>
-<li>當數據只有一筆，怎麼做normalization($\mu&#x3D;? , \sigma&#x3D;?$)</li>
-<li>實作上的解法(pytorch)：<ul>
-<li>在training若有用這個技術，每次batch算出來的$\mu_i , \sigma_i$就會記錄下來再做以下處理  <br><img src="/../images/pasted-13.png"></li>
-</ul>
-</li>
-</ul>
-<p>在實際test時，就代入<br>$$\tilde{z} &#x3D; \frac{z-\bar{u}}{\bar{\sigma}}<br>$$</p>
-<ul>
-<li>Batch normalization的實際測試結果，<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1502.03167">連結</a><br><img src="/../images/20220707_7.png"></li>
-<li>紅色線是有做batch normalization</li>
-<li>粉色線，使用sigmoid function</li>
-<li>其他線，就是lr乘上$x$倍</li>
-<li>黑色沒有用BN，用inception</li>
-<li>收斂速度更快，但結果差不多</li>
-</ul>
-<h2 id="How-does-Batch-Normalization-help-optimization"><a href="#How-does-Batch-Normalization-help-optimization" class="headerlink" title="How does Batch Normalization help optimization?"></a>How does Batch Normalization help optimization?</h2><ul>
-<li><p>下面這篇論文的作者發明這個詞”Internal covariate shift”</p>
-</li>
-<li><p>根據<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1805.11604">這篇論文</a>所認為有以下可能<br><img src="/../images/pasted-14.png"></p>
-</li>
-<li><p>我們做參數update，將A變成A’，B變成B’，但是B的變動是根據之前算出來的a作為input，當整體更新了以後，B’要面對的input卻不再是a，而是經過A’算出來的a’，故導致仍舊失準</p>
-<ul>
-<li>而Batch normalization的作法，是讓a跟a’有相似的分布(similar statistics)，故誤差會比較接近</li>
-</ul>
-</li>
-<li><p>但是Experimental result並不支持這個緣故(打臉)</p>
-<ul>
-<li>打臉者認為實驗下來，a跟a’的分布都差不多，而且不管分布是不是差很多，影響都不大，於是這個假說是錯的(不是batch normalization的關鍵)</li>
-<li>不過實驗跟理論依然證明，Batch normalization依然會改變error surface的地貌<br><img src="/../images/20220707_9.png"></li>
-<li>此人認為batch normalization的發現可能是偶然(意料之外)的，但無論如何這是有用的方法<br>    - normalization有一堆方法，參考如下<br><img src="/../images/20220707_10.png"></li>
-</ul>
-</li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://laxiflora.github.io/2022/07/06/ML-2021-2-5-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E5%9B%9B/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="劉宇承">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="laxiflora的小天地">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | laxiflora的小天地">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/07/06/ML-2021-2-5-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E5%9B%9B/" class="post-title-link" itemprop="url">ML_2021_2-5 類神經網路訓練不起來怎麼辦(四)</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">發表於</span>
-
-      <time title="創建時間：2022-07-06 22:20:08" itemprop="dateCreated datePublished" datetime="2022-07-06T22:20:08+08:00">2022-07-06</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新於</span>
-      <time title="修改時間：2022-08-08 20:10:07" itemprop="dateModified" datetime="2022-08-08T20:10:07+08:00">2022-08-08</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <ul>
-<li>這是如何分類的短版本，長版本連結如下:<br><a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=fZAZUYEeIMg">連結1</a><br><a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=hSXFuypLukA">連結2</a></li>
-<li>這裡直接講分類是怎麼做的</li>
-</ul>
-<h1 id="Classification-as-Regression"><a href="#Classification-as-Regression" class="headerlink" title="Classification as Regression?"></a>Classification as Regression?</h1><p>Regression長這樣<br><img src="/../images/pasted-7.png"></p>
-<ul>
-<li>那classification怎麼看得像regression呢？</li>
-<li>我們讓輸出的y(原本是一種類別)變成編號，跟$\hat{y}$比對</li>
-<li>但這樣會有問題，class 1 跟 class 2 也不同類(loss &#x3D; 1)，但他們的loss會小於class 1 跟 class 3的錯誤預測(loss &#x3D; 2)</li>
-<li>常見的做法是把class用one-hot vector來表示</li>
-<li>當然，這樣我們就會希望output的y是一個向量而非純量 $\rightarrow$ 我們可以用多組的weight去做多次輸出，如下圖<br><img src="/../images/pasted-8.png"></li>
-<li>我們通常會算出一個y以後，先做一個softmax(y)得到y’才去比較</li>
-</ul>
-<h2 id="Softmax-activate-function"><a href="#Softmax-activate-function" class="headerlink" title="Softmax activate function"></a>Softmax activate function</h2><p>公式如下<br>$$<br>y_i’ &#x3D; \frac{exp(y_i)}{\sum_{j}exp(y_i)}<br>$$<br>圖例<br><img src="/../images/pasted-9.png"><br>softmax有兩個特徵：<br>$$<br>1&gt;y_i&gt;0 \\\<br>\sum_iy_i’ &#x3D; 1<br>$$</p>
-<ul>
-<li>其實就是把$y_i$的各自機率算出來，若y&lt;0則機率~0</li>
-</ul>
-<h2 id="why-add-softmax-at-last-layer-in-classification"><a href="#why-add-softmax-at-last-layer-in-classification" class="headerlink" title="why add softmax at last layer in classification?"></a>why add softmax at last layer in classification?</h2><ul>
-<li>可以參考原版錄影，因為解釋較長</li>
-<li>騙小孩的說法是，因為機率是0到1之間，所以我們可以把y做softmax讓他normalize</li>
-</ul>
-<h3 id="Note"><a href="#Note" class="headerlink" title="Note :"></a>Note :</h3><ul>
-<li>Sigmoid就是2 class版的softmax(Ref.深度學習的數學地圖)</li>
-</ul>
-<h1 id="分類模型的loss-function"><a href="#分類模型的loss-function" class="headerlink" title="分類模型的loss function"></a>分類模型的loss function</h1><ul>
-<li>我們仍然可以採用MSE來計算</li>
-<li>但更常用的作法是用cross entropy</li>
-</ul>
-<h2 id="cross-entropy-loss-function"><a href="#cross-entropy-loss-function" class="headerlink" title="cross entropy loss function"></a>cross entropy loss function</h2><p>公式如下<br>$$<br>e &#x3D; - \sum_i\hat{y}_ilny_i’<br>$$</p>
-<ul>
-<li>最小值就是當$y &#x3D; \hat{y}$</li>
-<li>minimize cross entropy &#x3D; maximize likelihood</li>
-<li>基本上softmax是被跟cross entropy綁在一起的，因為向性很高</li>
-<li>所以如果用cross entropy當loss，那模型最後一層自動就會補上softmax當激發函數(pytorch)</li>
-</ul>
-<h2 id="用optimizer的角度來證實cross-entropy優於MSE"><a href="#用optimizer的角度來證實cross-entropy優於MSE" class="headerlink" title="用optimizer的角度來證實cross entropy優於MSE"></a>用optimizer的角度來證實cross entropy優於MSE</h2><ul>
-<li><a target="_blank" rel="noopener" href="https://speech.ee.ntu.edu.tw/~tlkagk/courses/MLDS_2015_2/Lecture/Deep%20More%20(v2).ecm.mp4/index.html">用數學證明的方式說明</a>請參考過去影片</li>
-<li>以下用舉例的方式說明</li>
-<li>已知一個模型如下圖<br><img src="/../images/pasted-10.png"><br>則MSE跟cross entropy的表現如下</li>
-</ul>
-<p><img src="/../images/20220706_15.png" alt="upload successful"></p>
-<ul>
-<li><p>用MSE的前提下，因為點就卡在高loss了，周圍很平坦，很難用梯度下降找到更好的點</p>
-</li>
-<li><p>這是一個透過改變loss function來改變整個error surface的例子</p>
-</li>
-<li><p>loss function的定義是有可能影響訓練難度的</p>
-</li>
 </ul>
 
       
