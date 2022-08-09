@@ -125,7 +125,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">34</span>
+          <span class="site-state-item-count">36</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
@@ -160,6 +160,426 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://laxiflora.github.io/2022/07/29/ML-2021-6-4-%E7%94%9F%E6%88%90%E5%BC%8F%E5%B0%8D%E6%8A%97%E7%B6%B2%E8%B7%AF-%E5%9B%9B-%E2%80%93-Cycle-GAN/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="劉宇承">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="laxiflora的小天地">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | laxiflora的小天地">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2022/07/29/ML-2021-6-4-%E7%94%9F%E6%88%90%E5%BC%8F%E5%B0%8D%E6%8A%97%E7%B6%B2%E8%B7%AF-%E5%9B%9B-%E2%80%93-Cycle-GAN/" class="post-title-link" itemprop="url">ML_2021_6-4 生成式對抗網路(四) – Cycle GAN</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2022-07-29 16:57:34" itemprop="dateCreated datePublished" datetime="2022-07-29T16:57:34+08:00">2022-07-29</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新於</span>
+      <time title="修改時間：2022-08-08 20:10:07" itemprop="dateModified" datetime="2022-08-08T20:10:07+08:00">2022-08-08</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="Learning-from-unpaired-data"><a href="#Learning-from-unpaired-data" class="headerlink" title="Learning from unpaired data"></a>Learning from unpaired data</h1><ul>
+<li>把GAN用在unsupervised learning</li>
+<li>如何用沒標註的資料做semi-supervised learning<ul>
+<li>2021 HW3,HW5都有用到<br>    	- 不過他們仍然需要一些paired data</li>
+</ul>
+</li>
+</ul>
+<h2 id="影像風格轉換"><a href="#影像風格轉換" class="headerlink" title="影像風格轉換"></a>影像風格轉換</h2><ul>
+<li><p>以影像風格轉換，要把三次元真人的圖片轉成二次元的輸出，不可能先幫3次元訓練資料畫一個二次元的圖片來pair，所以任何一筆成對資料都沒有</p>
+</li>
+<li><p>我們可否把輸入的真人圖片變成一個distribution，輸出的圖片也是一個distribution呢?<br><img src="/../images/pasted-39.png"></p>
+</li>
+</ul>
+<h3 id="First-approach"><a href="#First-approach" class="headerlink" title="First approach"></a>First approach</h3><ul>
+<li><p>套用原本GAN的想法，只要能從x domain sample即可</p>
+<ul>
+<li>從domain x sample，輸出以後跟y domain做discriminator，最後輸出向量<br><img src="/../images/pasted-40.png"></li>
+</ul>
+</li>
+<li><p>問題：</p>
+<ul>
+<li>generator可以只訓練通過discriminator的照片，然後完全忽略輸入<ul>
+<li>所以我們需要condition，但又因為沒有paired data，我們不能用condition GAN</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>-&gt; 既然這樣，就用兩次GAN，看輸出能不能還原原本的圖片 -&gt; 使用cycle GAN</p>
+<h1 id="Cycle-GAN"><a href="#Cycle-GAN" class="headerlink" title="Cycle GAN"></a>Cycle GAN</h1><p>同樣以影像風格轉換為例(輸入3次元人臉，輸出二次元人臉)</p>
+<ul>
+<li><p>在原本的GAN網路中再新增一個GAN，把第一個generator的輸出丟進第二個generator的輸入，第二個GAN用於產生跟原始的輸入x盡量相似的圖片
+     </p>
+</li>
+<li><p>即讓$G_{x \rightarrow y}越接近G_{y\rightarrow x}$越好<br><img src="/../images/20220729_13.png"></p>
+</li>
+<li><p>問題2: 機器有沒有可能亂學，「串通作弊」呢</p>
+<ul>
+<li>EX: 機器gen1學到真人戴眼鏡，就會把眼鏡拿掉變成痣；gen2則學到看到二次元痣，就把痣拿掉換回眼鏡</li>
+<li>EX2: gen1跟gen2互相對稱旋轉圖片</li>
+</ul>
+</li>
+<li><p>不過在實作上這個問題發生率不高，因為network is lazy，看到眼鏡就輸出眼鏡了</p>
+</li>
+</ul>
+<p><img src="/../images/20220729_14.png"></p>
+<ul>
+<li><p>相反來說，我們也會需要一個discriminator來看$G_{y\rightarrow x}$(就是生成的3次元頭像是否跟原始圖像很像)</p>
+</li>
+<li><p>如上圖，這兩個合起來就會是cycle GEN</p>
+</li>
+</ul>
+<h1 id="其他做影像風格轉換的GAN"><a href="#其他做影像風格轉換的GAN" class="headerlink" title="其他做影像風格轉換的GAN"></a>其他做影像風格轉換的GAN</h1><ul>
+<li><p>Disco GAN</p>
+</li>
+<li><p>Dual GAN</p>
+</li>
+<li><p>Cycle GAN</p>
+<ul>
+<li>這三個想法幾乎一模一樣，只是團隊不同</li>
+</ul>
+</li>
+<li><p>StarGAN則是可以在多種風格間轉換(Cycle只能兩種風格)</p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1907.10830">進階版GAN</a>，以及應用他的<a target="_blank" rel="noopener" href="https://selfie2anime.com/">網站</a></p>
+</li>
+</ul>
+<h1 id="文字風格轉換"><a href="#文字風格轉換" class="headerlink" title="文字風格轉換"></a>文字風格轉換</h1><ul>
+<li><p>輸入一個句子，輸出另一個句子 (此例是把負面句子變成正面句子)</p>
+<ul>
+<li>依樣畫葫蘆，收集一堆負面&#x2F;正面的句子(同樣沒有成對資料)</li>
+</ul>
+</li>
+<li><p>套用Cycle GAN作法</p>
+</li>
+</ul>
+<p><img src="/../images/pasted-41.png"></p>
+<ul>
+<li><p>問題: 文字的相似度如何計算?<br>  自行研究</p>
+</li>
+<li><p>輸出如果是文字接給discriminator會有問題，需要用RL做</p>
+</li>
+</ul>
+<h2 id="文字風格轉換應用-除了負面轉正面的句子"><a href="#文字風格轉換應用-除了負面轉正面的句子" class="headerlink" title="文字風格轉換應用(除了負面轉正面的句子)"></a>文字風格轉換應用(除了負面轉正面的句子)</h2><ol>
+<li>Unsupervised Abstractive Summarization (摘要練習)<ul>
+<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1810.02851">https://arxiv.org/abs/1810.02851</a></li>
+</ul>
+</li>
+<li>Unsupervised Translation (翻譯) <ul>
+<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1710.04087">https://arxiv.org/abs/1710.04087</a></li>
+<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1710.11041">https://arxiv.org/abs/1710.11041</a></li>
+</ul>
+</li>
+<li>Unsupervised ASR (語音辨識)<ul>
+<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1804.00316">https://arxiv.org/abs/1804.00316</a></li>
+<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1812.09323">https://arxiv.org/abs/1812.09323</a></li>
+<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1904.04100">https://arxiv.org/abs/1904.04100</a></li>
+</ul>
+</li>
+</ol>
+<p>    
+    </p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://laxiflora.github.io/2022/07/29/ML-2021-6-3-%E7%94%9F%E6%88%90%E5%BC%8F%E5%B0%8D%E6%8A%97%E7%B6%B2%E8%B7%AF-%E4%B8%89-%E2%80%93-%E7%94%9F%E6%88%90%E5%99%A8%E6%95%88%E8%83%BD%E8%A9%95%E4%BC%B0%E8%88%87%E6%A2%9D%E4%BB%B6%E5%BC%8F%E7%94%9F%E6%88%90/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="劉宇承">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="laxiflora的小天地">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | laxiflora的小天地">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2022/07/29/ML-2021-6-3-%E7%94%9F%E6%88%90%E5%BC%8F%E5%B0%8D%E6%8A%97%E7%B6%B2%E8%B7%AF-%E4%B8%89-%E2%80%93-%E7%94%9F%E6%88%90%E5%99%A8%E6%95%88%E8%83%BD%E8%A9%95%E4%BC%B0%E8%88%87%E6%A2%9D%E4%BB%B6%E5%BC%8F%E7%94%9F%E6%88%90/" class="post-title-link" itemprop="url">ML_2021_6-3 生成式對抗網路(三) – 生成器效能評估與條件式生成</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2022-07-29 15:24:39" itemprop="dateCreated datePublished" datetime="2022-07-29T15:24:39+08:00">2022-07-29</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新於</span>
+      <time title="修改時間：2022-08-08 20:10:07" itemprop="dateModified" datetime="2022-08-08T20:10:07+08:00">2022-08-08</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <ul>
+<li>GAN的訓練仍然困難，gen跟dis有一個卡住了，就整個卡住了<ul>
+<li>Generator跟Discriminator需要互相match each other</li>
+</ul>
+</li>
+</ul>
+<h1 id="More-training-GEN-tips"><a href="#More-training-GEN-tips" class="headerlink" title="More training GEN tips"></a>More training GEN tips</h1><p><img src="/../images/20220729_2.png"></p>
+<h1 id="GAN-for-Sequence-generation"><a href="#GAN-for-Sequence-generation" class="headerlink" title="GAN for Sequence generation"></a>GAN for Sequence generation</h1><ul>
+<li><p>前面講的都是影像的GAN</p>
+</li>
+<li><p>Decoder變成了generator</p>
+</li>
+<li><p>Decoder的輸出一樣丟入discriminator訓練，產生分數<br><img src="/../images/pasted-37.png"></p>
+</li>
+<li><p>問題在於，decoder不能用梯度下降去train</p>
+<ul>
+<li>微不出decoder weight變化對discriminator的影響（distribution不變）<br><img src="/../images/20220729_3.png"></li>
+</ul>
+</li>
+<li><p>碰到很難train的地方，可以用用看RL</p>
+<ul>
+<li>RL很難train，且GAN也很難train，不好用</li>
+</ul>
+</li>
+<li><p>完整的GAN課程：<a target="_blank" rel="noopener" href="https://www.youtube.com/playlist?list=PLJV_el3uVTsMq6JEFPW35BCiOQTsoqwNw">連結</a></p>
+</li>
+<li><p>More generative models: VAE、FLOW-based Model</p>
+</li>
+</ul>
+<h1 id="可否用supervised-learning做"><a href="#可否用supervised-learning做" class="headerlink" title="可否用supervised learning做"></a>可否用supervised learning做</h1><ul>
+<li>直接把正確的圖片變成vector，作為ground truth（訓練目標）<ul>
+<li>直接放入隨機向量來生成圖片</li>
+</ul>
+</li>
+<li>可以這樣做，但是向量不能亂取，相關文章：<ul>
+<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1707.05776">Generative Latent Optimization (GLO)</a></li>
+<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2007.02798">Gradient Origin Networks</a></li>
+</ul>
+</li>
+</ul>
+<h1 id="Quality-of-GAN"><a href="#Quality-of-GAN" class="headerlink" title="Quality of GAN"></a>Quality of GAN</h1><ul>
+<li><p>如何衡量GAN的好壞</p>
+</li>
+<li><p>以往都是直接真人去看效果，但可能不客觀且價格昂貴</p>
+</li>
+<li><p>在某些任務的確可以衡量</p>
+<ul>
+<li>（作業6）提供一個動畫，看GAN能抓出幾張是人臉</li>
+</ul>
+</li>
+<li><p>分類系統，把GAN輸出的影像作為分類系統的輸入，讓這個系統分類</p>
+<ul>
+<li>Ex. GAN產生班馬，給分類系統分類該圖像是否班馬類</li>
+<li>當分類越集中，則GAN的輸出「可能」越好</li>
+<li>問題：Mode Collapse</li>
+</ul>
+</li>
+</ul>
+<h2 id="Mode-Collapse"><a href="#Mode-Collapse" class="headerlink" title="Mode Collapse"></a>Mode Collapse</h2><ul>
+<li>可能GAN輸出的圖片來來去去就那幾張，過度單一，但那些圖片都剛好分類成功</li>
+<li>GAN知道discriminter的盲點了，就集中攻擊這個點<br><img src="/../images/pasted-38.png"></li>
+<li>上圖的人臉過度單一</li>
+<li>目前暫時無解，但看得出來</li>
+</ul>
+<h2 id="Mode-Dropping"><a href="#Mode-Dropping" class="headerlink" title="Mode Dropping"></a>Mode Dropping</h2><ul>
+<li>GAN輸出的圖片看起來有一些變化性，看不出問題</li>
+<li>但可能輸出的圖片只是真實圖片的一小個子集</li>
+<li>不容易偵測出來</li>
+</ul>
+<h2 id="Diversity"><a href="#Diversity" class="headerlink" title="Diversity"></a>Diversity</h2><ul>
+<li>衡量GAN輸出的多樣性分布</li>
+</ul>
+<p><img src="/images/20220729_5.png" alt="upload successful"></p>
+<ul>
+<li><p>與quality差別在於，quality衡量只看一張圖片，分類越集中越好</p>
+</li>
+<li><p>diversity則是看一堆圖片，輸出的平均越均衡，代表多樣性越好</p>
+</li>
+<li><p>Inception score(IS)：若good quality, diversity，則large IS</p>
+</li>
+<li><p>但作業不會用inception score</p>
+<ul>
+<li>輸出都是人臉，對於IS來說diversity會很小</li>
+</ul>
+</li>
+<li><p>作業採用Frechet inception distance(FID)</p>
+<ul>
+<li>把輸出丟入CNN，再把進入softmax前的那個vector拿出來作為輸入</li>
+<li>假設真實圖片跟產生的圖片都是gaussian distribution</li>
+<li>對他們算Frechet inception distance<ul>
+<li>越小品質越高</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>問題：需要很多samples，且不知道輸出分佈是否為gaussian</p>
+<ul>
+<li>所以不能只看這個，作業會FID跟IS都參考<br><img src="/images/20220729_6.png"></li>
+</ul>
+</li>
+<li><p>有時候，FID很好（低）而且人臉也做得很真實，也未必是一個很好的model</p>
+<ul>
+<li>memory GAN: 如果這個GAN可能是直接照抄訓練資料的，剛好符合diversity跟classification</li>
+<li>可否比對訓練資料跟輸出的相似度？<ul>
+<li>也可能GAN剛好輸出都是輸入資料的左右反轉，相似度又比不出來<br>-&gt; GAN的evaluation仍為可深入研究的題目</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1802.03446">目前的GAN evaluation的作法列舉</a></p>
+</li>
+</ul>
+<h1 id="Conditional-Generation"><a href="#Conditional-Generation" class="headerlink" title="Conditional Generation"></a>Conditional Generation</h1><ul>
+<li><p>到目前為止GAN都只講隨機的輸入</p>
+</li>
+<li><p>若給定一個x(條件)，產生y</p>
+<ul>
+<li>Text to image任務<br><img src="/../images/20220729_8.png"></li>
+</ul>
+</li>
+<li><p>根據Sample的z不同，會產生滿足x條件的不同輸出</p>
+</li>
+</ul>
+<h2 id="Discriminator"><a href="#Discriminator" class="headerlink" title="Discriminator"></a>Discriminator</h2><ul>
+<li>必須也知道文字敘述的條件，不然GAN只會產生清晰圖片，忽略條件</li>
+<li>Discriminator除了看圖片是否好，還要看是否吻合條件</li>
+</ul>
+<p><img src="/images/20220729_9.png"></p>
+<ul>
+<li><p>text-image的training data通常會需要成對的資料(condition,image)</p>
+</li>
+<li><p>但是這樣通常訓練的結果不會很好</p>
+<ul>
+<li>還是要mix一些label &#x3D; 0(故意塞錯的) 的資料（清晰圖片+錯誤描述）<br><img src="/../images/20220729_10.png"></li>
+</ul>
+</li>
+</ul>
+<h2 id="conditional-GAN其他應用"><a href="#conditional-GAN其他應用" class="headerlink" title="conditional GAN其他應用"></a>conditional GAN其他應用</h2><h3 id="sound-to-image"><a href="#sound-to-image" class="headerlink" title="sound to image"></a>sound to image</h3><ul>
+<li><p>給聲音，然後畫出圖片</p>
+<ul>
+<li>給sound一些label其實不難收集，可以爬影片然後get sound以及相關畫面</li>
+<li>(sound, “a dog barking sound”)</li>
+<li>(sound, “river sound”)<br><img src="/../images/20220729_12.png"></li>
+</ul>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://wjohn1483.github.io/audio_to_scene/index.html">參考網站</a></p>
+</li>
+</ul>
+<h3 id="talking-head-generation"><a href="#talking-head-generation" class="headerlink" title="talking head generation"></a>talking head generation</h3><p><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1905.08233">相關文獻</a></p>
+<h3 id="image-to-image"><a href="#image-to-image" class="headerlink" title="image to image"></a>image to image</h3><p><img src="/../images/20220729_11.png"></p>
+<ul>
+<li><p>Conditional GAN也可以做image translation（輸入圖片，輸出吻合條件的圖片）</p>
+<ul>
+<li>pix2pix</li>
+</ul>
+</li>
+<li><p>老樣子，image 2 image用supervisied learning，可能會學習到類似的情況下，圖片輸入很多種，導致輸出模糊（同GAN一開始小精靈的例子）</p>
+<ul>
+<li>所以還是要用GAN<ul>
+<li>但GAN可能還是會有想像力過度豐富的問題</li>
+<li>兩者需要同時使用</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://arxiv.org/avs/1611.07004">相關文獻</a></p>
+</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1432,416 +1852,6 @@
 <li>q,k內積的過程稱為Dot-product Attention</li>
 <li>兩個vector之間的關聯越大，則 $\alpha$ 越大</li>
 <li>上面步驟講到的都是encoder</li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://laxiflora.github.io/2022/07/11/ML-LEE-2022-hw3/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="劉宇承">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="laxiflora的小天地">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | laxiflora的小天地">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/07/11/ML-LEE-2022-hw3/" class="post-title-link" itemprop="url">ML_LEE_2022_hw3</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">發表於</span>
-
-      <time title="創建時間：2022-07-11 21:24:56" itemprop="dateCreated datePublished" datetime="2022-07-11T21:24:56+08:00">2022-07-11</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新於</span>
-      <time title="修改時間：2022-08-08 20:10:07" itemprop="dateModified" datetime="2022-08-08T20:10:07+08:00">2022-08-08</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p><a target="_blank" rel="noopener" href="https://www.kaggle.com/c/ml2022spring-hw3b">作業題目</a></p>
-<h1 id="可進行的目標"><a href="#可進行的目標" class="headerlink" title="可進行的目標"></a>可進行的目標</h1><h2 id="Data-augmentation-training"><a href="#Data-augmentation-training" class="headerlink" title="Data augmentation (training)"></a>Data augmentation (training)</h2><ul>
-<li><p>搜尋torchvision.transform，<a target="_blank" rel="noopener" href="https://pytorch.org/vision/stable/transforms.html">docs</a></p>
-</li>
-<li><p><a target="_blank" rel="noopener" href="https://chih-sheng-huang821.medium.com/03-pytorch-dataaug-a712a7a7f55e">有用的文章：Pytorch提供之torchvision data augmentation技巧</a></p>
-</li>
-<li><p>transform.randomRotate   ,   resize等等</p>
-</li>
-<li><p>最後必須要toTensor，model只吃pytorch的tensor不吃PIL library的</p>
-</li>
-</ul>
-<h2 id="Adv-Data-augmentation-mixed-up-training"><a href="#Adv-Data-augmentation-mixed-up-training" class="headerlink" title="Adv. Data augmentation - mixed up (training)"></a>Adv. Data augmentation - mixed up (training)</h2><ul>
-<li><p>mixup (把兩個影像混再一起，變成多重label)</p>
-</li>
-<li><p>cross entropy loss function需要重寫</p>
-</li>
-</ul>
-<h2 id="Module-selection-搜尋torchvision-models"><a href="#Module-selection-搜尋torchvision-models" class="headerlink" title="Module selection (搜尋torchvision.models)"></a>Module selection (搜尋torchvision.models)</h2><ul>
-<li><p>AlexNet</p>
-</li>
-<li><p>VGG系列</p>
-</li>
-<li><p>ResNet</p>
-</li>
-<li><p>SqueezeNet</p>
-</li>
-</ul>
-<h2 id="Cross-validation"><a href="#Cross-validation" class="headerlink" title="Cross validation"></a>Cross validation</h2><ul>
-<li><p>每次訓練更換dataset</p>
-</li>
-<li><p>ensemble</p>
-</li>
-</ul>
-<p><img src="/../images/20220711_1.png" alt="upload successful"></p>
-<hr>
-<p>以下是我對這作業除了Base sample code以外所做的變化，針對上述目標，有做的我才會列出來</p>
-<h1 id="First-Approach"><a href="#First-Approach" class="headerlink" title="First Approach"></a>First Approach</h1><p>Note: 因為這次作業放在kaggle上寫&amp;跑，而kaggle設計在結束比賽之前不能公開notebook，所以不能內嵌frame&#x3D; &#x3D;，下面只能先直接貼上code代替</p>
-<!--<iframe src="https://codepen.io/gretema/embed/eYOjPJx?height=265&theme-id=default&default-tab=html,result" width="100%" height="300" frameborder="0" loading="lazy" allowfullscreen></iframe> -->
-<h2 id="Data-argumentation"><a href="#Data-argumentation" class="headerlink" title="Data argumentation"></a>Data argumentation</h2><ul>
-<li>改動trains transform，新增兩個處理，一個是讓照片有0.6的可能水平翻轉，另一個則是把它做normalization<ul>
-<li>針對個別batch算出mean,std做normalization的方法我沒找到，目前直接套網路上常用的3 channel RGB圖之平均值當參數 (mean &#x3D; [0.5,0.5,0.5] std &#x3D; [0.1, 0.1, 0.1])<br>    - 這樣做觸犯1個問題，我的normalization是單一標準對所有data做，還是對每個batch單獨這樣做？在這個case沒差，不過這是因為數字寫死，normalization做的實在有夠醜&#x3D; &#x3D;<br>    - 觸犯另一個問題是，我的layer之間有沒有再進行一次normalization呢？有待釐清<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">mean = [0.5, 0.5, 0.5]</span><br><span class="line">std = [0.1, 0.1, 0.1]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">train_tfm = transforms.Compose([</span><br><span class="line">    # Resize the image into a fixed shape (height = width = 128)</span><br><span class="line">    transforms.Resize((128, 128)),</span><br><span class="line">    # You may add some transforms here.</span><br><span class="line">    transforms.RandomHorizontalFlip(p=0.6),</span><br><span class="line">    # ToTensor() should be the last one of the transforms.</span><br><span class="line">    transforms.ToTensor(),</span><br><span class="line">    transforms.Normalize(mean,std),</span><br><span class="line">])</span><br></pre></td></tr></table></figure></li>
-</ul>
-</li>
-</ul>
-<h2 id="Module-selection"><a href="#Module-selection" class="headerlink" title="Module selection"></a>Module selection</h2><ul>
-<li>這裡我直接選用VGG11取代原本的自訂模型Classifier</li>
-</ul>
-<h2 id="Result"><a href="#Result" class="headerlink" title="Result"></a>Result</h2><ul>
-<li>跑了至少100 epoch，結果training acc達到0.97，validate acc卻只有0.1x而且不再有更好結果，明顯的overfitting &#x3D; &#x3D;</li>
-<li>可能要考慮加入cross validation</li>
-<li>可能是data augmentation太弱？</li>
-<li>可能是VGG11模型太強(彈性過高)</li>
-<li>我耍笨不小心把訓練的過程輸出洗掉了，沒有圖片QQ</li>
-</ul>
-<hr>
-<h1 id="Second-Approach"><a href="#Second-Approach" class="headerlink" title="Second Approach"></a>Second Approach</h1><h2 id="Module-Selection"><a href="#Module-Selection" class="headerlink" title="Module Selection"></a>Module Selection</h2><ul>
-<li>單純的把VGG11模型改回Classification</li>
-</ul>
-<h2 id="Result-1"><a href="#Result-1" class="headerlink" title="Result"></a>Result</h2><ul>
-<li>看起來好像沒什麼變化，看來不是VGG模型導致overfitting</li>
-<li>可能是normalization的部分出問題了，接下來嘗試把normalization改掉，用VGG train看看<ul>
-<li>如果這樣成功的話，只能說應該是normalization把數字改成詭異的形狀了，算是一種人為mismatch吧<br><img src="/../images/20220711_2.png"></li>
-</ul>
-</li>
-</ul>
-<hr>
-<h1 id="Third-Approach"><a href="#Third-Approach" class="headerlink" title="Third Approach"></a>Third Approach</h1><h2 id="Transform"><a href="#Transform" class="headerlink" title="Transform"></a>Transform</h2><ul>
-<li>移除normalization</li>
-</ul>
-<h2 id="Result-2"><a href="#Result-2" class="headerlink" title="Result"></a>Result</h2><ul>
-<li><p>acc爆增回正常範圍了，看來真的是normalization的鍋qwq<br><img src="/../images/20220711_3.png"></p>
-</li>
-<li><p>上面這是最高紀錄，valid acc 有70%，位於epoch 32，我後來一直跑到epoch 52都沒看到更好的分數，就先卡掉了(看起來進medium概率近乎於零&#x3D; &#x3D;)<br><img src="/../images/20220712_4.png"></p>
-</li>
-<li><p>不過雖然70%比起之前的acc是大躍進，距離medium仍有一段距離，training acc也到達瓶頸，看起來是需要提高data augmentation的時候了</p>
-</li>
-</ul>
-<h1 id="Forth-Approach"><a href="#Forth-Approach" class="headerlink" title="Forth Approach"></a>Forth Approach</h1><ul>
-<li>偷偷參考了一下<a target="_blank" rel="noopener" href="https://github.com/Joshuaoneheart/ML2022_all_A_plus/blob/main/hw3.md">學長</a>的筆記，發現新招數「AutoAugmentation」，適用在Transform內</li>
-<li>這招的原理來自於<a target="_blank" rel="noopener" href="https://arxiv.org/pdf/1805.09501.pdf">這篇論文</a>，可以從data裡面學到如何排Transform Augment</li>
-<li>同時也從學長的筆記學到，因為code裡面有用BatchNorm2d (batch Normalization)，所以batchSize大一點會比較有利<ul>
-<li>這好像就是元兇嗎orz，多做一次norm<br>    - 不過我只有在助教寫的Classification有看到norm，因為用的是VGG11，所以不確定是否仍然有用norm(沒看源碼XD)</li>
-</ul>
-</li>
-</ul>
-<h2 id="Transform-1"><a href="#Transform-1" class="headerlink" title="Transform"></a>Transform</h2><ul>
-<li>新增<code>transforms.AutoAugment()</code></li>
-<li>新增<code>transforms.RandomRotation(degrees = 32)  //rotate+-32度</code></li>
-</ul>
-<h2 id="BatchSize"><a href="#BatchSize" class="headerlink" title="BatchSize"></a>BatchSize</h2><ul>
-<li>修改為96</li>
-</ul>
-<h2 id="Result-3"><a href="#Result-3" class="headerlink" title="Result"></a>Result</h2><ul>
-<li>這次讓他跑了一整晚，充分認識到kaggel save&amp;run的重要性&#x3D; &#x3D;</li>
-<li>直接掛網頁按run all如果網頁停止回應或是閒置過久就沒了</li>
-<li>這次訓練時間大約10hr，仍然沒有得到最終結果-&gt;網頁爆了<br><img src="/../images/20220712_1.png"></li>
-<li>練到了291 epoch，感覺valid的acc就上不去了… 只能止步medium嗎</li>
-</ul>
-<hr>
-<h1 id="Fifth-Approach"><a href="#Fifth-Approach" class="headerlink" title="Fifth Approach"></a>Fifth Approach</h1><ul>
-<li>最後又重跑了一次training &#x3D; &#x3D;，沒有作任何更動，GPU quota還有18 hr 希望夠用…</li>
-</ul>
-<h2 id="Result-Finale"><a href="#Result-Finale" class="headerlink" title="Result (Finale)"></a>Result (Finale)</h2><p><img src="/../images/20220712_2.png"><br>&#x3D; &#x3D;凸</p>
-<ul>
-<li>最終在epoch 389的時候終止了，最好的epoch在252，其實已經很接近當初的150 patience了</li>
-<li>好在best model parameters有保存下來，接下來就是load model之後直接predict了</li>
-</ul>
-<h2 id="最終成果"><a href="#最終成果" class="headerlink" title="最終成果"></a>最終成果</h2><p><img src="/../images/20220712_3.png"><br><a target="_blank" rel="noopener" href="https://www.kaggle.com/code/laxiflora/ml2022hw3-sample-code-training-predictin">Notebook連結</a></p>
-<h1 id="心得"><a href="#心得" class="headerlink" title="心得"></a>心得</h1><p>這次作業是CNN的範例題，這次的圖像辨識題真的讓人思考到了如何去優化他，助教提供的sample code省去了start from scratch的痛苦，讓我們能專注在實作理論的部分</p>
-<p>其實很多的技術(Batch normalization、crossEntropy+softmax、data Batch等等)都已經被函數包進去一次做好了，正常的時候是不會發現到他們的存在，這或許也間接印證了他們是十分有效提高命中率的方法吧。而真的需要實作的part其實不多，比較難的是要去翻出他們的document一一認識他們的結構並理解功能，這才是最難的部分</p>
-<p>助教的sample code寫得蠻精美的，甚至有看出在自訂結構其實有保留空間讓學生自行切分training set跟valid set(可能是用於做cross validation用的)，考量到讓學生改進而保留空間，真的厲害！除了實作理論與閱讀結構以外，最重要的估計就是看懂這個訓練過程的資料結構了吧~</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://laxiflora.github.io/2022/07/09/ML-2021-3-1-%E5%8D%B7%E7%A9%8D%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="劉宇承">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="laxiflora的小天地">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | laxiflora的小天地">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/07/09/ML-2021-3-1-%E5%8D%B7%E7%A9%8D%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF/" class="post-title-link" itemprop="url">ML_2021_3-1 卷積神經網路</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">發表於</span>
-
-      <time title="創建時間：2022-07-09 16:13:09" itemprop="dateCreated datePublished" datetime="2022-07-09T16:13:09+08:00">2022-07-09</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新於</span>
-      <time title="修改時間：2022-08-08 20:10:07" itemprop="dateModified" datetime="2022-08-08T20:10:07+08:00">2022-08-08</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <ul>
-<li>network架構的其中一種變形:CNN</li>
-<li>此講專注在CNN專門用在影像上的講解(目前也普遍用在影像)</li>
-</ul>
-<h1 id="Image-classification-Version-1"><a href="#Image-classification-Version-1" class="headerlink" title="Image classification - Version 1"></a>Image classification - Version 1</h1><ul>
-<li>我們需要假設圖片輸入的大小都是固定的<ul>
-<li>如果大小不一，就得要rescale</li>
-</ul>
-</li>
-<li>是classification問題，所以輸出one-hot vector (向量的長度代表你能分出多少種類別)</li>
-</ul>
-<h2 id="如何把影像當作輸入"><a href="#如何把影像當作輸入" class="headerlink" title="如何把影像當作輸入"></a>如何把影像當作輸入</h2><ul>
-<li>一張圖片其實是一個3維的Tensor (RGB)<ul>
-<li>Tensor(長跟寬)，並有3個Channel</li>
-</ul>
-</li>
-<li>我們把3維的Tensor拉直，成為一個向量 (這也是為何影像大小需要相同)</li>
-</ul>
-<h2 id="Train-with-fully-connected-network？"><a href="#Train-with-fully-connected-network？" class="headerlink" title="Train with fully connected network？"></a>Train with fully connected network？</h2><ul>
-<li>如果我們依然使用fully connected network來訓練，又假設neuron取1000個，則一個100x100的圖片輸入，會產生$100<em>100</em>3(彩色)<em>1000 &#x3D; 3</em>10^7$個weight，是一個巨大的數字，大幅增加了overfitting的風險 (彈性過大)<br><img src="/../images/20220709_1.png"></li>
-<li>不採用全連接層，以下透過一些觀察來嘗試簡化這個網路</li>
-</ul>
-<h2 id="Observation-1"><a href="#Observation-1" class="headerlink" title="Observation 1"></a>Observation 1</h2><ul>
-<li>對於圖片辨識，我們要做的是針對圖片裡面找到一些關鍵的部位 (ex. 鳥嘴、眼睛、翅膀)</li>
-<li>每個neuron並不需要看過整張圖片(即，不用fully connected)</li>
-<li>我們可以讓每個neuron只看特定的區塊就好</li>
-</ul>
-<h3 id="Simplification-1-typical-settig"><a href="#Simplification-1-typical-settig" class="headerlink" title="Simplification 1 - typical settig"></a>Simplification 1 - typical settig</h3><ul>
-<li><p>CNN會設定一個『Receptive Field』，每個neuron讀取一個他負責的區塊<br><img src="/../images/20220709_2.png"></p>
-</li>
-<li><p>Receptive Field可以重疊</p>
-</li>
-<li><p>Different neuron是可以有不同的receptive field的</p>
-</li>
-<li><p>上述案例裡面，就是3x3的kernel size</p>
-</li>
-<li><p>通常會有一排(64、128等)個neuron去守備他</p>
-</li>
-<li><p>不同的receptive field之間的距離差距稱為『stride』</p>
-</li>
-<li><p>通常receptive field都會高度重疊</p>
-</li>
-<li><p>如果一個receptive field關注的範圍超出圖片範圍，就需要把外面的值補值(補0、補平均等)，稱為『padding』</p>
-</li>
-<li><p>Receptive fields cover the whole image</p>
-</li>
-</ul>
-<h2 id="Observation-2"><a href="#Observation-2" class="headerlink" title="Observation 2"></a>Observation 2</h2><ul>
-<li>當一個特殊部位落在不同的receptive field內怎麼處理?</li>
-</ul>
-<h3 id="Simplification-2-typical-setting"><a href="#Simplification-2-typical-setting" class="headerlink" title="Simplification 2 -typical setting"></a>Simplification 2 -typical setting</h3><p><img src="/../images/20220709_3.png"></p>
-<ul>
-<li>我們可以讓一些neuron採用共用參數(Parameter sharing)，讓他們的參數都一模一樣</li>
-<li>因為輸入(receptive field)不一樣，所以各自的輸出也不會相同</li>
-<li>可能rf1的第一個neuron跟rf2的第一個neuron共用參數，rf1的第二個跟rf2的第二個neuron共參… etc</li>
-<li>這些共用的參數稱為『Filter』<br><img src="/../images/20220709_4.png"></li>
-</ul>
-<h2 id="Benefit-of-Convolutional-layer"><a href="#Benefit-of-Convolutional-layer" class="headerlink" title="Benefit of Convolutional layer"></a>Benefit of Convolutional layer</h2><ul>
-<li>根據上述的觀察，我們成功讓CNN network針對相片輸入的訓練更加簡化<br><img src="/../images/20220709_5.png"></li>
-<li>Convolutional layer的model bias會比較大，但CNN是專門為影像設計的network<br>PS. 這邊為何CNN bias會比較大，以及為何這樣不好，可以再google一下</li>
-</ul>
-<hr>
-<h1 id="另一個說明CNN的版本"><a href="#另一個說明CNN的版本" class="headerlink" title="另一個說明CNN的版本"></a>另一個說明CNN的版本</h1><h2 id="Convolutional-layer"><a href="#Convolutional-layer" class="headerlink" title="Convolutional layer"></a>Convolutional layer</h2><ul>
-<li><p>所謂Convolutional Layer，裡面有很多的Filter，裡面都有一個3x3xchannel維的tensor</p>
-</li>
-<li><p>每一個filter都是要抓取某個pattern</p>
-</li>
-<li><p>以下假設是channel &#x3D; 1(黑白照片)</p>
-</li>
-<li><p>我們把各個rf跟filter做內積，得出各值<br><img src="/../images/20220709_6.png"></p>
-</li>
-<li><p>接下來把所有pattern對各filter一樣的計算</p>
-</li>
-<li><p>這內積出來的一群數字稱為『Feature map』，再這個例子中，我們有64個filter，則我們的feature map會有64組(channels)數字，每組有4x4個數字</p>
-</li>
-<li><p>接下來進到第二層的convolution，我們的filter必須變成3x3x<em>64</em>，因為上一層輸出了64個channel，相對於第一層只有一個channel，第二層會出現64個channel</p>
-</li>
-</ul>
-<h4 id="Note"><a href="#Note" class="headerlink" title="Note:"></a>Note:</h4><ul>
-<li>隨著捲積層的深入，我們觀察的圖片pattern會越來越大</li>
-<li>繼續上面的例子，如果我們的filter之rf一樣是看3x3大小的話，因為我們的feature map中的3x3大小實際上是對應到圖片裡面的5x5大小(跟stride有關)，所以其實層數越高，我們一次考慮的範圍會越大！<br><img src="/../images/20220709_7.png"></li>
-</ul>
-<h2 id="Comparison-of-2-version"><a href="#Comparison-of-2-version" class="headerlink" title="Comparison of 2 version"></a>Comparison of 2 version</h2><ul>
-<li>第一個版本的共用參數，就是第二版本的filter(本slide忽略bias)</li>
-<li>把一個filter掃過一張圖片，稱作『convolves over』<ul>
-<li>例句(?)： each filter convolves over the input image<br><img src="/../images/pasted-15.png"></li>
-</ul>
-</li>
-</ul>
-<p><img src="/../images/20220709_8.png"></p>
-<h2 id="Observation-3"><a href="#Observation-3" class="headerlink" title="Observation 3"></a>Observation 3</h2><ul>
-<li>如果我們把一張大圖片縮小、拿掉odd columns，圖片還是不會有所影響(看起來差不多)，稱為subsampling -&gt; pooling</li>
-<li>Pooling 本身沒有參數，沒有任何東西要learn，有些人稱他為一種激發函數</li>
-<li>pooling就是把圖片像素分組，然後從裡面只選一個像素留下，簡化圖片像素大小</li>
-<li>下圖為示意圖<br><img src="/../images/20220709_9.png"></li>
-<li>過度pooling仍會傷害訓練效益</li>
-</ul>
-<hr>
-<h1 id="The-whole-CNN"><a href="#The-whole-CNN" class="headerlink" title="The whole CNN"></a>The whole CNN</h1><p><img src="/../images/20220709_10.png"></p>
-<ul>
-<li>做完卷積層以後要做flatten</li>
-<li>flatten就是把矩陣數值拉直</li>
-<li>flatten完以後扔進fully connected layer訓練完，配個softmax(分類)，就是一個經典的CNN network</li>
-</ul>
-<h1 id="Application-GO"><a href="#Application-GO" class="headerlink" title="Application: GO"></a>Application: GO</h1><ul>
-<li><p>我們用一個19x19的向量來描述一個棋盤，把它扔進network以後輸出next move應該在的位置</p>
-</li>
-<li><p>下圍棋可以是一個類別分類問題</p>
-</li>
-<li><p>這個問題也可以用fully-connected network解決</p>
-</li>
-<li><p>但用CNN效果更好-&gt; 棋盤可以看做一個19x19來描述</p>
-</li>
-<li><p>每個棋盤格的channel有48個(這格可能被叫吃等等)</p>
-</li>
-<li><p>這意味著圍棋與影像有許多相似特性</p>
-<ul>
-<li>可以只看小區塊(alpha go: 5x5)<br>    - Same pattern appear in different regions (雙叫吃等等)</li>
-</ul>
-</li>
-<li><p>棋盤可否用pooling ? 因為每格都很重要(精細度高) -&gt; Alpha Go有沒有用呢?
-  </p>
-</li>
-<li><p>李宏毅教你畫重點XD：學著幫論文畫重點，抓critical terms<br><img src="/../images/20220709_11.png"></p>
-</li>
-<li><p>alpha go 正文沒有提到神經網路結構，這是在附件找到的</p>
-<ol>
-<li>視為19x19x48的image</li>
-<li>zero pads(padding補0至23x23)</li>
-<li>有k個filter(競賽用的go，filter &#x3D; 192)</li>
-<li>filter的kernel size &#x3D; 5x5</li>
-<li>stride &#x3D; 1</li>
-<li>用到rectifier nonlinearity(ReLU)</li>
-<li>2~12層都有做zero padding至21x21，filter數同，kernel size &#x3D; 3x3，stride &#x3D; 1</li>
-<li>最後apply softmax function<br><img src="/../images/20220709_12.png"></li>
-</ol>
-</li>
-<li><p>alpha go 沒有用pooling!!</p>
-</li>
-</ul>
-<hr>
-<h1 id="Hen重要的Notes"><a href="#Hen重要的Notes" class="headerlink" title="Hen重要的Notes:"></a>Hen重要的Notes:</h1><ul>
-<li>語音上、文字處理上，文獻上的方法要仔細看，CNN的receptive field設計會特別為他們特化，這裡講的單純是影像的</li>
-<li>CNN並不能處理影像放大縮小(Scaling)旋轉(Rotation)的問題… (向量問題)<ul>
-<li>為此我們需要data augmentation</li>
-</ul>
-</li>
-<li>其實有Network架構(Spatial Transformer Layer)可以解決這個問題，請Ref.<a target="_blank" rel="noopener" href="https://youtu.be/SoCywZ1hZak">這個影片</a></li>
 </ul>
 
       
