@@ -21,15 +21,22 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"laxiflora.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":true,"version":"8.12.3","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/js/config.js"></script>
 
-    <meta property="og:type" content="article">
+    <meta name="description" content="Global explanation 「What does a cat(specific class) look like」 本課程以convolution network做圖片分類為例，講述各種global explainable approach  觀察各Convolution layer中，filter關注什麼pattern 假設給定一張特定圖片，則我們每次捲積，都會出現一個feature">
+<meta property="og:type" content="article">
 <meta property="og:title" content="ML_2021_9-2 機器心中的貓長什麼樣子?">
 <meta property="og:url" content="https://laxiflora.github.io/2022/08/10/ML-2021-9-2-%E6%A9%9F%E5%99%A8%E5%BF%83%E4%B8%AD%E7%9A%84%E8%B2%93%E9%95%B7%E4%BB%80%E9%BA%BC%E6%A8%A3%E5%AD%90/index.html">
 <meta property="og:site_name" content="laxiflora的小天地">
+<meta property="og:description" content="Global explanation 「What does a cat(specific class) look like」 本課程以convolution network做圖片分類為例，講述各種global explainable approach  觀察各Convolution layer中，filter關注什麼pattern 假設給定一張特定圖片，則我們每次捲積，都會出現一個feature">
 <meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220811_1.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220811_2.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220811_3.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220811_4.png">
 <meta property="article:published_time" content="2022-08-09T18:57:37.000Z">
-<meta property="article:modified_time" content="2022-08-09T18:57:37.942Z">
+<meta property="article:modified_time" content="2022-08-11T11:32:45.297Z">
 <meta property="article:author" content="劉宇承">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://laxiflora.github.io/images/20220811_1.png">
 
 
 <link rel="canonical" href="https://laxiflora.github.io/2022/08/10/ML-2021-9-2-%E6%A9%9F%E5%99%A8%E5%BF%83%E4%B8%AD%E7%9A%84%E8%B2%93%E9%95%B7%E4%BB%80%E9%BA%BC%E6%A8%A3%E5%AD%90/">
@@ -102,7 +109,7 @@
 
   <aside class="sidebar">
 
-    <div class="sidebar-inner sidebar-overview-active">
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
       <ul class="sidebar-nav">
         <li class="sidebar-nav-toc">
           文章目錄
@@ -115,6 +122,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Global-explanation"><span class="nav-number">1.</span> <span class="nav-text">Global explanation</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A7%80%E5%AF%9F%E5%90%84Convolution-layer%E4%B8%AD%EF%BC%8Cfilter%E9%97%9C%E6%B3%A8%E4%BB%80%E9%BA%BCpattern"><span class="nav-number">1.1.</span> <span class="nav-text">觀察各Convolution layer中，filter關注什麼pattern</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%8F%E9%81%8Eclassifier-output%E8%A7%80%E5%AF%9F"><span class="nav-number">1.2.</span> <span class="nav-text">透過classifier output觀察</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Constraint-from-generator"><span class="nav-number">1.2.1.</span> <span class="nav-text">Constraint from generator</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%8F%E9%81%8E%E4%BB%BF%E4%BD%9C%E4%B8%80%E5%80%8B%E9%A1%9E%E4%BC%BC%E6%88%90%E6%95%88%E7%9A%84%E7%B0%A1%E6%98%93model%E4%BE%86%E8%A7%A3%E9%87%8B"><span class="nav-number">1.3.</span> <span class="nav-text">透過仿作一個類似成效的簡易model來解釋</span></a></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -127,7 +135,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">36</span>
+          <span class="site-state-item-count">39</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
@@ -203,6 +211,13 @@
 
       <time title="創建時間：2022-08-10 02:57:37" itemprop="dateCreated datePublished" datetime="2022-08-10T02:57:37+08:00">2022-08-10</time>
     </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新於</span>
+      <time title="修改時間：2022-08-11 19:32:45" itemprop="dateModified" datetime="2022-08-11T19:32:45+08:00">2022-08-11</time>
+    </span>
 
   
 </div>
@@ -214,7 +229,47 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        
+        <h1 id="Global-explanation"><a href="#Global-explanation" class="headerlink" title="Global explanation"></a>Global explanation</h1><ul>
+<li>「What does a cat(specific class) look like」</li>
+<li>本課程以convolution network做圖片分類為例，講述各種global explainable approach</li>
+</ul>
+<h2 id="觀察各Convolution-layer中，filter關注什麼pattern"><a href="#觀察各Convolution-layer中，filter關注什麼pattern" class="headerlink" title="觀察各Convolution layer中，filter關注什麼pattern"></a>觀察各Convolution layer中，filter關注什麼pattern</h2><ul>
+<li><p>假設給定一張特定圖片，則我們每次捲積，都會出現一個feature map</p>
+<ul>
+<li>觀察這個feature map，如果有某個filter裡面的值偏大，可以判定這張圖有某些pattern是由該filter分析</li>
+</ul>
+</li>
+<li><p>不過現在我們不會知道要輸入什麼圖片，要怎麼知道該filter是注意在什麼pattern呢？ $\rightarrow$ 製造一張圖片X*</p>
+</li>
+<li><p>我們把X做為要學習的參數，作為模型的輸入，目標是要maximize該input在經過convolution以後，對應的filter的feature map的各元素值，算式如下<br>$$<br>X^* &#x3D; arg\ max_{X}\sum_i{\sum_j{a_{ij}}}<br>$$<br>其中，使右式最大的自訂圖片X稱為X* (gradient ascent)</p>
+</li>
+</ul>
+<p><img src="/../images/20220811_1.png"><br>以數字辨識為例，這是每個filter想觀察的重點，可以發現有些filter著重注意橫線，有些filter在意協直線等等，看起來非常合理</p>
+<h2 id="透過classifier-output觀察"><a href="#透過classifier-output觀察" class="headerlink" title="透過classifier output觀察"></a>透過classifier output觀察</h2><ul>
+<li><p>找出一種輸入Ｘ，讓第i類別類別$y_i$的分數越高越好</p>
+<ul>
+<li>這種做法無用，只會看到一堆雜訊<br><img src="/../images/20220811_2.png"></li>
+</ul>
+</li>
+<li><p>一種做法是，再加入一個分類器R，用於判定$X^*$到底有多像一個數字</p>
+</li>
+</ul>
+<p>$$<br>X^* &#x3D; arg\ max_{X}\ y_i+R(X) \\\<br>R(X)&#x3D;-\sum_{i,j}|X_{ij}|<br>$$</p>
+<p>這種作法很多需要regularization terms(Constraint)、hyperparameter tuning，並不簡單<br><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1506.06579">範例論文</a></p>
+<h3 id="Constraint-from-generator"><a href="#Constraint-from-generator" class="headerlink" title="Constraint from generator"></a>Constraint from generator</h3><ul>
+<li>train 一個image generator，輸入z以後輸出一個圖片，再把這個圖片丟入image classifier，找出能讓$y_i$最大的值$z^*$<br><img src="/../images/20220811_3.png"><br>$$<br>z^* &#x3D; arg\ max_{z}\ y_i+R(X) \\\<br>R(X)&#x3D;-\sum_{i,j}|X_{ij}|<br>$$</li>
+</ul>
+<p><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1612.00005">範例論文</a></p>
+<p>找出z以後，則我們可以透過Generator來告訴大家，我們所產生的這些圖片會讓電腦容易辨認成這個class</p>
+<blockquote>
+<p>電腦真實想法或許不重要，但希望有辦法可以讓解讀出來的東西可以說服人類</p>
+</blockquote>
+<h2 id="透過仿作一個類似成效的簡易model來解釋"><a href="#透過仿作一個類似成效的簡易model來解釋" class="headerlink" title="透過仿作一個類似成效的簡易model來解釋"></a>透過仿作一個類似成效的簡易model來解釋</h2><p><img src="/../images/20220811_4.png"></p>
+<p>問題是，簡易的模型如何能模仿neural network的決策？<br>$\rightarrow$ 只模仿一部分區域的行為</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://youtu.be/K1mWgthGS-A">LIME(Local Interpretable Model-agnostoc Explanations)</a></li>
+</ul>
+
     </div>
 
     
@@ -232,6 +287,9 @@
                 </a>
             </div>
             <div class="post-nav-item">
+                <a href="/2022/08/11/ML-2021-10-1-%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/" rel="next" title="ML_2021_10-1 基本概念">
+                  ML_2021_10-1 基本概念 <i class="fa fa-chevron-right"></i>
+                </a>
             </div>
           </div>
     </footer>

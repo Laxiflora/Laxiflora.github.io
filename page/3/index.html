@@ -125,7 +125,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">36</span>
+          <span class="site-state-item-count">39</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
@@ -160,6 +160,438 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://laxiflora.github.io/2022/07/22/Efficient-Transformers-A-Survey%E7%AD%86%E8%A8%98/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="劉宇承">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="laxiflora的小天地">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | laxiflora的小天地">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2022/07/22/Efficient-Transformers-A-Survey%E7%AD%86%E8%A8%98/" class="post-title-link" itemprop="url">Efficient Transformers:A Survey筆記</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2022-07-22 14:53:52" itemprop="dateCreated datePublished" datetime="2022-07-22T14:53:52+08:00">2022-07-22</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新於</span>
+      <time title="修改時間：2022-08-08 20:10:07" itemprop="dateModified" datetime="2022-08-08T20:10:07+08:00">2022-08-08</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <ul>
+<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2009.06732">論文原文連結</a></li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/263031249">翻譯版連結</a></li>
+</ul>
+<p>本篇論文主要介紹Transformer的各種變體，以及他的優缺點</p>
+<h1 id="What-is-Transformer"><a href="#What-is-Transformer" class="headerlink" title="What is Transformer?"></a>What is Transformer?</h1><ul>
+<li>Transformer採用了Self-attention技術，並屏棄了以往對於序列資料所採用的RNN</li>
+<li>序列資料得以考慮全局性，不再像RNN那樣是序列依賴性</li>
+<li>Transformer可以看作是CNN，只是每一個vector考慮的依賴性是整張圖片（把一個sequence鋪成平面，每一個vector視為一個pixel，vector維數&#x3D;channel）</li>
+</ul>
+<h2 id="Transformer的問題"><a href="#Transformer的問題" class="headerlink" title="Transformer的問題"></a>Transformer的問題</h2><ul>
+<li>目前的計算複雜度過高，是$O(n^2)$，使得transformer難以在輕模型下使用</li>
+<li>目前為了解決transformer過度肥大的問題，出現了許多的變種</li>
+</ul>
+<h2 id="Dense-Transformer"><a href="#Dense-Transformer" class="headerlink" title="Dense Transformer"></a>Dense Transformer</h2><ul>
+<li>transformer的起源</li>
+<li>待補</li>
+</ul>
+<h2 id="Sparse-Attaention"><a href="#Sparse-Attaention" class="headerlink" title="Sparse Attaention"></a>Sparse Attaention</h2><ul>
+<li>這裡開始是為了降低複雜度而延伸的變種</li>
+<li>限制self-attention的參考範圍，使全面參考變成部分參考</li>
+<li></li>
+</ul>
+<h3 id="Fixed-patterns-FP"><a href="#Fixed-patterns-FP" class="headerlink" title="Fixed patterns(FP)"></a>Fixed patterns(FP)</h3><ul>
+<li>參考範圍作為hyper-parameter存在，是訓練前先決定好的固定值</li>
+<li>常見方法有<ul>
+<li>Blockwise pattern : 把輸入序列切成block(batch)，複雜度降為$O(B^2)$，變成$(\frac{N}{B}*B^2)$<ul>
+<li>導致序列不連貫，效果”可能”有限</li>
+</ul>
+</li>
+<li>Strided pattern : 變得真的非常像CNN，採用滑動kernel的的方式，每個vector只attention自己的那塊kernel<ul>
+<li>建立在假設NLP在多數情況下都是具備局部相關的前提下，免去過度參考太遠的vector所浪費的計算</li>
+</ul>
+</li>
+<li>Compressed pattern : 超級無敵像CNN(欸)，用把vector壓成平面的角度會更好思考，其實就是pooling，把幾個token池化，變成一個vector後才做attention，個人認為複雜度會降為$O(\frac{N^2}{kernel_size})$</li>
+</ul>
+</li>
+</ul>
+<h3 id="Learnable-patterns-LP"><a href="#Learnable-patterns-LP" class="headerlink" title="Learnable patterns(LP)"></a>Learnable patterns(LP)</h3><ul>
+<li>相對於ＦＰ，ＬＰ是把參考範圍也作為weight給機器去學習</li>
+<li>比如routing transformer是對token向量進行k-means來將整體序列切成多個子序列</li>
+</ul>
+<h3 id="Memory"><a href="#Memory" class="headerlink" title="Memory"></a>Memory</h3><p>這裡看不太懂，先貼原文</p>
+<p>memory乍一听好像有点让人摸不着头脑，其实想法也很简单。最开始是在19年的set transformer上使用。一般来说做multihead self-attention时，Q&#x3D;K&#x3D;V&#x3D;X（X为输入序列，长度为n），而在set transformer中，作者先单独设置了m个向量（m是超参数），然后这m个向量与X做multihead attention，得到m个临时向量（这些个临时变量我们就称作“temporary memory”），接着把X与这m个临时向量再做一次multihead attention得到输出。这个过程其实就是利用这m个向量将输入序列X的信息先通过attention进行压缩，再通过attention还原，达到抽取输入序列的特征的目的。但是在压缩编码解码的过程中肯定会有信息损失，所以后来的改进方法是引入全局记忆，即设置一些token，它们可以与所有的token进行注意力交互，比如bert的[CLS]，由于这些token的数目远小于序列长度，因此也不会给计算带来负担，而且往往携带了整个输入序列的信息，这就是我们可以在bert上用[CLS]作文本分类任务的原因。</p>
+<h3 id="Low-rank-methods"><a href="#Low-rank-methods" class="headerlink" title="Low rank methods"></a>Low rank methods</h3><ul>
+<li>Attention matrix在經過softmax轉化以後會是不滿秩的(存在linear dependent,rank !&#x3D; N)，所以我們可以把矩陣降維</li>
+<li>k,v向量可以因此映射到kxd維，因為k為hyper-parameter，複雜度可降至 $O(nk)$</li>
+<li>範例：linformer</li>
+<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2006.04768">相關論文</a></li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://laxiflora.github.io/2022/07/13/ML-2021-4-2-%E8%87%AA%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%A9%9F%E5%88%B6%EF%BC%88%E4%B8%8B%EF%BC%89/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="劉宇承">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="laxiflora的小天地">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | laxiflora的小天地">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2022/07/13/ML-2021-4-2-%E8%87%AA%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%A9%9F%E5%88%B6%EF%BC%88%E4%B8%8B%EF%BC%89/" class="post-title-link" itemprop="url">ML_2021_4-2 自注意力機制（下）</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2022-07-13 16:30:46" itemprop="dateCreated datePublished" datetime="2022-07-13T16:30:46+08:00">2022-07-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新於</span>
+      <time title="修改時間：2022-08-08 20:10:07" itemprop="dateModified" datetime="2022-08-08T20:10:07+08:00">2022-08-08</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <ul>
+<li>延續上篇的內容，b其實可以水平同時計算</li>
+</ul>
+<h2 id="線性代數的角度理解"><a href="#線性代數的角度理解" class="headerlink" title="線性代數的角度理解"></a>線性代數的角度理解</h2><p><img src="/../images/pasted-18.png"></p>
+<p><img src="/../images/pasted-19.png"><br>把它延展到$\alpha_{4,4}$</p>
+<p><img src="/../images/20220713_7.png"></p>
+<ul>
+<li>之後再對A做softmax(或其他激發函數)得到A’</li>
+</ul>
+<p><img src="/../images/20220713_8.png"></p>
+<h3 id="總圖"><a href="#總圖" class="headerlink" title="總圖"></a>總圖</h3><p><img src="/../images/20220713_9.png"></p>
+<ul>
+<li>上圖中只有$W^{q,k,v}$training data訓練</li>
+</ul>
+<h2 id="Multi-head-self-attention"><a href="#Multi-head-self-attention" class="headerlink" title="Multi-head self-attention"></a>Multi-head self-attention</h2><ul>
+<li>可以把q,k,v產生多個<br><img src="/../images/pasted-20.png"></li>
+</ul>
+<h2 id="Positional-encoding"><a href="#Positional-encoding" class="headerlink" title="Positional encoding"></a>Positional encoding</h2><ul>
+<li>每一個vector出現在sequence的不同位置可能會有不同的意義</li>
+<li>前述之計算並無考慮到相對位置，大家算法都一樣，也都有全部平等的計算</li>
+<li>為每一個位置設置一個vector $e^i$，再把這個vector加上$a^i$</li>
+<li>$e^i$可以透過某個function產生，也可能是hand-crafted</li>
+<li>或也可以是learn by data</li>
+<li>仍然是尚待研究的主題</li>
+</ul>
+<h2 id="Self-attention應用"><a href="#Self-attention應用" class="headerlink" title="Self-attention應用"></a>Self-attention應用</h2><ul>
+<li>Bert（NLP）</li>
+<li>transformer</li>
+</ul>
+<h2 id="Truncated-self-attention"><a href="#Truncated-self-attention" class="headerlink" title="Truncated self-attention"></a>Truncated self-attention</h2><ul>
+<li>當sequence很大，我們的attention matrix會非常大</li>
+<li>一次訓練的時候不要看所有sequence，看某一段就好</li>
+</ul>
+<h2 id="Self-attention-for-image"><a href="#Self-attention-for-image" class="headerlink" title="Self-attention for image"></a>Self-attention for image</h2><ul>
+<li>相片也可以看作是一個vector set，ex. 給定一個5x10 pixel的彩色圖片<ul>
+<li>把channel當作一個vector(RGB)</li>
+<li>則一張圖片是一個5x10的vector set</li>
+</ul>
+</li>
+<li>Self-attention GAN</li>
+<li>DETR</li>
+</ul>
+<h3 id="Self-attention-v-s-CNN"><a href="#Self-attention-v-s-CNN" class="headerlink" title="Self-attention v.s CNN"></a>Self-attention v.s CNN</h3><ul>
+<li>CNN會考慮receptive field</li>
+<li>self-attention則是會考慮整張圖（整個vector set的vector）<br><img src="/../images/20220713_10.png"></li>
+<li>self-attention可以說是複雜版、更自由的ＣＮＮ</li>
+<li>receptive field變成可學習、控制的大小(truncated self attention)<ul>
+<li>Ref. CNN章節<br><img src="/../images/20220713_11.png"></li>
+</ul>
+</li>
+<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1911.93584">這篇論文</a>用嚴謹的數學證明CNN $\subset$ self-attention</li>
+<li>Ref.一開始的章節，我們知道更flexible的模型需要更多training data<br><img src="/../images/20220713_12.png"></li>
+</ul>
+<h3 id="Self-attention-v-s-RNN"><a href="#Self-attention-v-s-RNN" class="headerlink" title="Self-attention v.s RNN"></a>Self-attention v.s RNN</h3><ul>
+<li>RNN不再講到，因為self-attention大多可取代</li>
+<li>RNN也是處理input是sequence的情況<ul>
+<li>第一個vector做RNN，輸出丟FC，產生輸出，也加入第二個vector丟入RNN…<br><img src="/../images/pasted-22.png"></li>
+</ul>
+</li>
+<li>RNN不可以平行處理，self-attention可以</li>
+<li>RNN難以考慮全面（左右更好），self-attention則可以（天涯若壁鄰）</li>
+<li>Self-attention加上一些東西以後，其實也能變成RNN(<a target="_blank" rel="noopener" href="https://arxiv.org/abs/2006.16236">ref.</a>)</li>
+</ul>
+<h3 id="Self-attention-for-graph"><a href="#Self-attention-for-graph" class="headerlink" title="Self-attention for graph"></a>Self-attention for graph</h3><ul>
+<li>因為edge，所以我們知道哪兩個節點之間會有關聯性</li>
+<li>Attention matrix可以只計算有相連的部分就好<br><img src="/../images/20220713_14.png"></li>
+<li>這算是一種Graph neural network (GNN)</li>
+</ul>
+<h4 id="GNN-REF"><a href="#GNN-REF" class="headerlink" title="GNN REF."></a>GNN REF.</h4><p><a target="_blank" rel="noopener" href="https://youtu.be/eybCCtNKwzA">影片1</a></p>
+<p><a target="_blank" rel="noopener" href="https://youtu.be/M9ht8vsVEw8">影片2</a></p>
+<h2 id="結論"><a href="#結論" class="headerlink" title="結論"></a>結論</h2><ul>
+<li>Self-attention有很多種變形</li>
+<li>他的缺點是計算量過大(廣義版CNN…汗)</li>
+<li>self-attention最早用於transformer<ul>
+<li>有時候叫transformer其實就是指self-attention</li>
+</ul>
+</li>
+<li>performance跟speed的平衡</li>
+<li>介紹各式各樣的transformers的變形：<a target="_blank" rel="noopener" href="https://arxiv.org/abs/2009.06732">Efficient Transformers: A survey</a><br><img src="/../images/20220713_15.png"></li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://laxiflora.github.io/2022/07/13/ML-2021-4-1-%E8%87%AA%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%A9%9F%E5%88%B6%EF%BC%88%E4%B8%8A%EF%BC%89/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="劉宇承">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="laxiflora的小天地">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | laxiflora的小天地">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2022/07/13/ML-2021-4-1-%E8%87%AA%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%A9%9F%E5%88%B6%EF%BC%88%E4%B8%8A%EF%BC%89/" class="post-title-link" itemprop="url">ML_2021_4-1 自注意力機制（上）</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2022-07-13 10:33:00" itemprop="dateCreated datePublished" datetime="2022-07-13T10:33:00+08:00">2022-07-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新於</span>
+      <time title="修改時間：2022-08-08 20:10:07" itemprop="dateModified" datetime="2022-08-08T20:10:07+08:00">2022-08-08</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <ul>
+<li>至今為止，我們network input 都是一個vector</li>
+<li>那如果輸入是可變動的一排向量（sequence）呢？</li>
+</ul>
+<h2 id="Vector-set-as-input"><a href="#Vector-set-as-input" class="headerlink" title="Vector set as input"></a>Vector set as input</h2><ul>
+<li>長度不一的句子就是一個範例</li>
+<li>關於word embedding如何得到，可以參考<a target="_blank" rel="noopener" href="https://youtu.be/X7PH3NuYW0Q">這個影片</a></li>
+<li>現在的文字基本上都是被word embedding過，而句子就是一連串了文字向量</li>
+<li>一段聲音訊號也是一個範例（25 millisecond），一個向量稱為『frame』</li>
+<li>一個graph也是一連串的向量<ul>
+<li>Drug discovery中一個分子，可以看做一個graph</li>
+<li>社群媒體中，人（節點）可以是一個向量，ex.性別、年齡、工作等等</li>
+</ul>
+</li>
+</ul>
+<h2 id="What-is-the-output"><a href="#What-is-the-output" class="headerlink" title="What is the output?"></a>What is the output?</h2><h3 id="Type-1-本課專注"><a href="#Type-1-本課專注" class="headerlink" title="Type 1 (本課專注)"></a>Type 1 (本課專注)</h3><ul>
+<li>每一個vector都會有一個label</li>
+<li>POS tagging（詞性標注），每一個詞彙都要對應一個詞性</li>
+<li>語音，每一段frame都會有一個Pheonic</li>
+<li>Social network，對每一個人可能會有一種廣告投放方式</li>
+</ul>
+<h3 id="Type-2-hw4"><a href="#Type-2-hw4" class="headerlink" title="Type 2 (hw4)"></a>Type 2 (hw4)</h3><ul>
+<li>一整個sequence輸出一個label</li>
+<li>Sentiment analysis: 機器去判讀一段句字是正面的還是負面</li>
+<li>給定一段音訊，分辨它是哪個人說的</li>
+</ul>
+<h3 id="Type-3"><a href="#Type-3" class="headerlink" title="Type 3"></a>Type 3</h3><ul>
+<li>不知道輸出幾個label</li>
+<li>稱為sequence to sequence(seq2seq)</li>
+</ul>
+<h2 id="Sequence-labeling"><a href="#Sequence-labeling" class="headerlink" title="Sequence labeling"></a>Sequence labeling</h2><ul>
+<li>對於每個向量，要做一個label</li>
+</ul>
+<h3 id="First-approach"><a href="#First-approach" class="headerlink" title="First approach"></a>First approach</h3><ul>
+<li>直接用fully connect network</li>
+<li>問題出現：同樣輸入就會有同樣輸出，但是不能保證兩個vector之間是否有關連</li>
+<li>需要consider the context</li>
+</ul>
+<h3 id="Second-approach"><a href="#Second-approach" class="headerlink" title="Second approach"></a>Second approach</h3><ul>
+<li>直接給fully connected network整個window (hw2就是這樣做的)<br><img src="/../images/20220713_1.png"></li>
+<li>問題：如果今天的任務是得要考慮整個sequence怎辦<ul>
+<li>sequence長度有長有短，window大小要變動，而且運算量非常大又導致overfitting</li>
+</ul>
+</li>
+</ul>
+<h3 id="Third-approach"><a href="#Third-approach" class="headerlink" title="Third approach"></a>Third approach</h3><ul>
+<li>採用Self-attention技術，先把向量加工再個別丟入全連階層<br><img src="/../images/20220713_2.png" alt="upload successful"></li>
+<li>黑框框向量表示考慮過前後文的加工向量</li>
+<li>Self-attention可以有很多層</li>
+<li>經典論文：<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1706.03762">Attention is all you need</a><ul>
+<li>Transformer</li>
+</ul>
+</li>
+<li>Self-attention內部結構如下：<br><img src="/../images/20220713_3.png"></li>
+<li>找出relevant vectors in a sequence，關聯度以$\alpha$表示</li>
+<li>計算$\alpha$比較常見的做法是做內積，兩個向量各自乘一個矩陣($W^q、W^k等$)以後再做內積<ul>
+<li>之後課程先只用這個方法</li>
+</ul>
+</li>
+</ul>
+<h2 id="How-to-apply"><a href="#How-to-apply" class="headerlink" title="How to apply"></a>How to apply</h2><p><img src="/../images/pasted-17.png"></p>
+<ul>
+<li>$q^1$表示輸入向量$a^1$對$W^q$矩陣相乘的結果</li>
+<li>$k^i$則表示內積的另一個算子，表示$a^i * W^k$以後的結果</li>
+<li>softmax不一定是唯一解，只是常見（用他沒有理由）</li>
+<li>得出$\alpha’$以後，繼續根據他抽取sequence中重要的資訊<br><img src="/../images/20220713_5.png"></li>
+<li>最後再把$\alpha’$乘上$W^v$，一個向量得到的分數越高，則越可能會dominate抽取出的結果</li>
+</ul>
+<p><a target="_blank" rel="noopener" href="https://medium.com/ching-i/transformer-attention-is-all-you-need-c7967f38af14">參考文章</a></p>
+<ul>
+<li>q:query，就是輸入的vector，用於與k做內積來判斷相似性</li>
+<li>k:key，指序列中的所有詞向量</li>
+<li>v:value，指實際的序列內容</li>
+<li>q,k內積的過程稱為Dot-product Attention</li>
+<li>兩個vector之間的關聯越大，則 $\alpha$ 越大</li>
+<li>上面步驟講到的都是encoder</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1234,366 +1666,6 @@
     
     <div class="post-body" itemprop="articleBody">
           
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://laxiflora.github.io/2022/07/04/ML-2021-2-2-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%B8%80/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="劉宇承">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="laxiflora的小天地">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | laxiflora的小天地">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/07/04/ML-2021-2-2-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%B8%80/" class="post-title-link" itemprop="url">ML_2021_2-2 類神經網路訓練不起來怎麼辦(一)</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">發表於</span>
-
-      <time title="創建時間：2022-07-04 22:22:35" itemprop="dateCreated datePublished" datetime="2022-07-04T22:22:35+08:00">2022-07-04</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新於</span>
-      <time title="修改時間：2022-08-08 20:10:07" itemprop="dateModified" datetime="2022-08-08T20:10:07+08:00">2022-08-08</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <ul>
-<li><p>這裡只討論optimazion失靈的時候，如何把梯度下降做得更好</p>
-<h2 id="為何opti會失敗（grad）？"><a href="#為何opti會失敗（grad）？" class="headerlink" title="為何opti會失敗（grad）？"></a>為何opti會失敗（grad）？</h2><ul>
-<li>gradient decent&#x3D;0，使參數無法再更新</li>
-<li>點卡在local minima or saddle point(稱為卡在critical point)</li>
-</ul>
-<h3 id="分辨critical-point是saddle-point-or-local-minima"><a href="#分辨critical-point是saddle-point-or-local-minima" class="headerlink" title="分辨critical point是saddle point or local minima"></a>分辨critical point是saddle point or local minima</h3><ul>
-<li>雖然我們無法知道loss function長怎樣，但可以用泰勒展開式逼近</li>
-<li>給定一組參數$\theta’$</li>
-<li>則使用tayler series approximation<br>原式為<br>$$<br>f(x) &#x3D; f(a) + \frac{f’(a)}{1!}(x-a) + \frac{f’’(a)}{2!}(x-a)^2 + ….<br>$$<br>我們取到2次微分，代入$x &#x3D; \theta及a &#x3D; \theta’$得到<br>$$<br>L(\theta) \sim L(\theta’)^Tg + \frac{1}{2}(\theta - \theta’)^TH(\theta - \theta’)<br>,其中 g &#x3D; \nabla L(\theta’)(請參考上週)<br>$$</li>
-</ul>
-</li>
-</ul>
-<p><img src="/../images/20220704_1.png"></p>
-<ul>
-<li><p>其實g就是$L(\theta’)$對$\theta_i$的一階微分，Hessian是$L(\theta’)$對$\theta_{ij}$做二次微分</p>
-</li>
-<li><p>因為critical point的時候g &#x3D; 0，所以我們要考慮H(也就是2次微分的部分)來分辨是哪種問題，2次微分可以看出地貌<br>把Hessian部分拉出來討論<br><img src="/../images/20220704_3.png"><br>要如何確認滿足哪個原因呢?</p>
-<ul>
-<li>線性代數：正定、負定、均非 (看H的eigen value)</li>
-</ul>
-<h3 id="範例說明"><a href="#範例說明" class="headerlink" title="範例說明"></a>範例說明</h3></li>
-<li><p>給定一個模型$y &#x3D; w_1w_2x$，資料僅有一筆，$f(1)$時其label &#x3D; 1，且w1w2之間不具有任何激發函數，loss function採用MSE</p>
-</li>
-<li><p>則x&#x3D;1時透過爆搜我們可以得出下面的error surface(偷偷看正解圖)<br><img src="/../images/20220704_2.png"></p>
-</li>
-<li><p>其中鞍點的四周都是高牆，無法離開</p>
-</li>
-<li><p>局部最小點則是在範圍內找不到更低的點</p>
-</li>
-<li><p>但假設我們不知道這個error surface，我們可以應用上面的方法來測定他是哪個問題，根據MSE公式我們得出<br>$$<br>L &#x3D; (\hat{y}-w_1w_2x)^2 &#x3D; (1-w_1w_2)^2<br>$$<br>對他們做微分可以得到(注意chain rule)<br>$$<br>g &#x3D; \frac{\partial L}{\partial w_1} &#x3D; 2(1-w_1w_2)(-w_2)<br>$$<br>$$<br>g &#x3D; \frac{\partial L}{\partial w_2} &#x3D; 2(1-w_1w_2)(-w_1)<br>$$<br>代入g&#x3D;0，可以發現當$w_1 &#x3D; w_2 &#x3D; 0$，有critical point<br>接下來要確認他們是哪個問題，就繼續再做微分:<br><img src="/../images/20220704_5.png"><br>代入剛剛的$w_1 &#x3D; w_2 &#x3D; 0$得到<br>$$<br>H &#x3D;  <br>\left[<br>\begin{matrix}<br>     0 &amp;&amp; -2 \\\ -2 &amp;&amp; 0<br>\end{matrix}<br>\right] \tag{3}<br>$$<br>抓H的eigen values來知道他是哪個point</p>
-</li>
-</ul>
-<h2 id="case-saddle-point"><a href="#case-saddle-point" class="headerlink" title="case: saddle point"></a>case: saddle point</h2><ul>
-<li>我們可以藉由H來得到參數該移動的方向<br>令$\lambda$是H的一個eigen value, u為$\lambda$的其中一個eigen vector<br>則<br>$$<br>v^THv &#x3D; u^THu &#x3D; u^T(\lambda u) &#x3D; \lambda \vert \vert u \vert \vert^2<br>$$<br>若今天$\lambda &lt; 0$則必定$u^THu&lt;0$，回顧剛剛的式子<br>$$<br>L(\theta) \sim L(\theta’)^Tg + \frac{1}{2}(\theta - \theta’)^TH(\theta - \theta’)<br>$$<br>可以知道$L(\theta)必定&gt;L(\theta’)$<br><img src="/../images/20220704_6.png"><br>我們只要將$\theta’沿著u的方向更新u得到\theta$，就可以再次降低loss</li>
-</ul>
-<h3 id="範例說明-1"><a href="#範例說明-1" class="headerlink" title="範例說明"></a>範例說明</h3><ul>
-<li>延續剛剛的例子，我們知道$H的\lambda_1 &#x3D; 2, \lambda_2 &#x3D;-2$，屬於saddle point(非正定與負定)</li>
-<li>取$\lambda_2 &#x3D; -2 , u &#x3D; (1,1)$，則把$\theta &#x3D; (0,0)+(1,1)$，就可以逃出saddle point</li>
-<li>實務上不易使用，因為要做出2次微分且還需要用到找出該矩陣的eigen value，計算量過大 (還有別招可以用)</li>
-</ul>
-<h2 id="Saddle-point-vs-Local-Minima"><a href="#Saddle-point-vs-Local-Minima" class="headerlink" title="Saddle point vs. Local Minima"></a>Saddle point vs. Local Minima</h2><ul>
-<li>在三維的密閉石棺中，在更高維度未必是密閉的</li>
-<li>在低維度的local minima中，是否只是高維中的saddle point? </li>
-<li>當參數超級多，是否極度有可能local minima其實只是saddle point? (假說)</li>
-<li>在實作中，絕大多數的模型，critical point所在點中，幾乎找不到所有eigen value均&gt;0的範例，表示我們幾乎不可能找到完全的local minima</li>
-<li>定義一個數值”Minimum ratio &#x3D; $\frac{正\lambda數}{\lambda數}$”，表示你的critical point有多像local minima</li>
-<li>所以我們可以知道，通常一個模型train到loss卡住，極高可能是卡在一個saddle point</li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://laxiflora.github.io/2022/07/04/ML-2021-2-1-%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E4%BB%BB%E5%8B%99%E6%94%BB%E7%95%A5/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="劉宇承">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="laxiflora的小天地">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | laxiflora的小天地">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/07/04/ML-2021-2-1-%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E4%BB%BB%E5%8B%99%E6%94%BB%E7%95%A5/" class="post-title-link" itemprop="url">ML_2021_2-1 機器學習任務攻略</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">發表於</span>
-
-      <time title="創建時間：2022-07-04 22:20:49" itemprop="dateCreated datePublished" datetime="2022-07-04T22:20:49+08:00">2022-07-04</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新於</span>
-      <time title="修改時間：2022-08-08 20:10:07" itemprop="dateModified" datetime="2022-08-08T20:10:07+08:00">2022-08-08</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h2 id="機器學習任務攻略"><a href="#機器學習任務攻略" class="headerlink" title="機器學習任務攻略"></a>機器學習任務攻略</h2><p><img src="/../images/202200703_7.png"><br>  - 當有一個模型的表現不佳，有時候不一定是overfitting的問題<br>  - 問題來源可能有數種<br>    - Model Bias：模型本身的彈性不足，值域過小導致找不到最佳解<br>    - Optimization Issue：模型的彈性是夠的，也就是$f^*(x)$存在，只是因為optimizer不給力，始終無法把$\theta$帶到loss更小的地方</p>
-<h2 id="如何分辨是model-bias-issue-or-Optimization-issue"><a href="#如何分辨是model-bias-issue-or-Optimization-issue" class="headerlink" title="如何分辨是model bias issue or Optimization issue?"></a>如何分辨是model bias issue or Optimization issue?</h2><p>  - 以下圖為例<br><img src="/../images/20220703_1.png"></p>
-<ul>
-<li>通常我們會認為這是模型overfitting了，才會導致層數增加反倒命中率下降</li>
-<li>overfitting固然有可能，但它不是唯一的可能性，我們應該要從訓練資料的loss下手<br><img src="/../images/20220703_2.png"></li>
-<li>可以發現就算是訓練資料，56層的loss也是大於20層的，故排除overfitting的可能</li>
-<li>至於模型彈性這個可能也可以排除，因為56層的複雜度&gt;20層，故56層的loss只可能比20層還小，若是顛倒的話表示應該不是模型彈性問題，而是optimizer的鍋</li>
-</ul>
-<hr>
-<ul>
-<li>若是發現類似優化器的問題，可以試試看先跑一些比較淺層的model或是簡易的model(如linear regression)，先觀察得出來的結果</li>
-<li>再跑深度的model，比較他們的結果，若深度的結果沒比較好，可以考慮換optimizer<br>原因樹狀圖(?<br><img src="/../images/20220703_3.png"></li>
-</ul>
-<h2 id="Overfitting的成因"><a href="#Overfitting的成因" class="headerlink" title="Overfitting的成因"></a>Overfitting的成因</h2><p><img src="/../images/20220703_4.png"></p>
-<ol>
-<li>若訓練資料不足，模型彈性過高也可能導致overfitting(增加training data最有效)<ul>
-<li>data augmentation也是一種方法(ex.圖片翻轉作為新資料)</li>
-</ul>
-</li>
-<li>降低模型的彈性也可以降低這個可能</li>
-<li>採用一些技巧<ul>
-<li>Early stopping</li>
-<li>Regularization</li>
-<li>Dropout</li>
-<li>Less features</li>
-</ul>
-</li>
-</ol>
-<h2 id="衡量模型"><a href="#衡量模型" class="headerlink" title="衡量模型"></a>衡量模型</h2><ul>
-<li>或許某個model在所有model裡面test成績最突出，但它未必會真的是最好的模型(運氣問題)<br><img src="/../images/20220703_5.png"></li>
-<li>極端範例，一個模型剛好隨機出了最好的結果</li>
-<li>所以testing set有分public跟private，避免一直上傳模型賭出最好成績</li>
-</ul>
-<h3 id="N-fold-Cross-Validation"><a href="#N-fold-Cross-Validation" class="headerlink" title="N-fold Cross Validation"></a>N-fold Cross Validation</h3><ul>
-<li>把train set切成3份，2份是training data，1份是val data</li>
-<li>交叉身分去訓練n次</li>
-</ul>
-<p><img src="/../images/20220703_6.png" alt="upload successful"></p>
-<h4 id="data-mismatch"><a href="#data-mismatch" class="headerlink" title="data mismatch"></a>data mismatch</h4><ul>
-<li>training data 跟 testing data有不同分布</li>
-<li>ex. 機器學習2020年觀看人數預測2021年觀看人數，很高可能會mismatch</li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://laxiflora.github.io/2022/07/04/ML-2022-1-1-%E6%AD%A3%E8%AA%B2%E5%85%A7%E5%AE%B9%E4%BB%8B%E7%B4%B9/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="劉宇承">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="laxiflora的小天地">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | laxiflora的小天地">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/07/04/ML-2022-1-1-%E6%AD%A3%E8%AA%B2%E5%85%A7%E5%AE%B9%E4%BB%8B%E7%B4%B9/" class="post-title-link" itemprop="url">ML_2022_1-1 正課內容介紹</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">發表於</span>
-
-      <time title="創建時間：2022-07-04 22:19:15" itemprop="dateCreated datePublished" datetime="2022-07-04T22:19:15+08:00">2022-07-04</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新於</span>
-      <time title="修改時間：2022-08-08 20:10:07" itemprop="dateModified" datetime="2022-08-08T20:10:07+08:00">2022-08-08</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="正課內容介紹"><a href="#正課內容介紹" class="headerlink" title="正課內容介紹"></a>正課內容介紹</h1><h3 id="Supervised-Learning"><a href="#Supervised-Learning" class="headerlink" title="Supervised Learning"></a>Supervised Learning</h3><h3 id="Self-supervised-Learning"><a href="#Self-supervised-Learning" class="headerlink" title="Self-supervised Learning"></a>Self-supervised Learning</h3><ul>
-<li>在訓練之前先做基本功(Pre-Train)</li>
-<li>訓練集就不需要label了</li>
-<li>比如在網路上先爬相關資料</li>
-<li>以分類圖片為例，實際分類圖片的過程稱為(Downstream)</li>
-<li>Pre-trained model(又稱Foundation Model)就好像OS，Downstream就像APP<ul>
-<li>最出名的模型就是BERT</li>
-</ul>
-</li>
-</ul>
-<h3 id="Lec6-GAN"><a href="#Lec6-GAN" class="headerlink" title="Lec6 : GAN"></a>Lec6 : GAN</h3><ul>
-<li>一般函數需要大量成對的X與Y來讓他們配對</li>
-<li>現今只需要大量的X，就可自行產生Y</li>
-</ul>
-<h3 id="Lac12-Reinforcement-Learning"><a href="#Lac12-Reinforcement-Learning" class="headerlink" title="Lac12 : Reinforcement Learning"></a>Lac12 : Reinforcement Learning</h3><ul>
-<li>當資料很難以標註時使用 (ex.學會下圍棋)</li>
-</ul>
-<h2 id="進階課題"><a href="#進階課題" class="headerlink" title="進階課題"></a>進階課題</h2><h3 id="Lac8-Anomaly-Detection"><a href="#Lac8-Anomaly-Detection" class="headerlink" title="Lac8 : Anomaly Detection"></a>Lac8 : Anomaly Detection</h3><ul>
-<li>過擬合等問題</li>
-</ul>
-<h3 id="Lac9-Explainable-AI-可解釋性AI"><a href="#Lac9-Explainable-AI-可解釋性AI" class="headerlink" title="Lac9 : Explainable AI (可解釋性AI)"></a>Lac9 : Explainable AI (可解釋性AI)</h3><ul>
-<li>不只是知道答案，還要讓機器知道為甚麼</li>
-<li>EX.PNG與JPG輸入的問題ww</li>
-</ul>
-<h3 id="Lac10-Model-Attack"><a href="#Lac10-Model-Attack" class="headerlink" title="Lac10 : Model Attack"></a>Lac10 : Model Attack</h3><ul>
-<li>在圖片加入一點點雜訊，讓圖片難以識別</li>
-<li>介紹攻擊技術與防禦可能性</li>
-</ul>
-<h3 id="Lac11-Domain-Adaptation"><a href="#Lac11-Domain-Adaptation" class="headerlink" title="Lac11 : Domain Adaptation"></a>Lac11 : Domain Adaptation</h3><ul>
-<li>當訓練資料與測試資料的分布不相似</li>
-<li>EX. 手寫數字辨識，黑白與彩色的差別</li>
-</ul>
-<h3 id="Lac13-Network-Compression-模型壓縮"><a href="#Lac13-Network-Compression-模型壓縮" class="headerlink" title="Lac13 : Network Compression(模型壓縮)"></a>Lac13 : Network Compression(模型壓縮)</h3><ul>
-<li>在嵌入式、小硬體跑ML</li>
-</ul>
-<h3 id="Lac14-Life-long-Learning"><a href="#Lac14-Life-long-Learning" class="headerlink" title="Lac14 : Life-long Learning"></a>Lac14 : Life-long Learning</h3><ul>
-<li>機器能像人一樣一直學習所有技術</li>
-<li>挑戰有哪些</li>
-</ul>
-<h3 id="Lac15-Meta-Learning-學習如何學習"><a href="#Lac15-Meta-Learning-學習如何學習" class="headerlink" title="Lac15 : Meta Learning(學習如何學習)"></a>Lac15 : Meta Learning(學習如何學習)</h3><ul>
-<li>以往都是人設計學習演算法給機器</li>
-<li>讓機器從大量學習任務裡面發明更好的演算法</li>
-<li>Few-shot Learning通常與他相關</li>
-</ul>
-
       
     </div>
 

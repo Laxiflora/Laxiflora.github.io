@@ -125,7 +125,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">36</span>
+          <span class="site-state-item-count">39</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
@@ -160,6 +160,462 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://laxiflora.github.io/2022/08/04/ML-2021-X-4-GPT%E7%9A%84%E9%87%8E%E6%9C%9B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="劉宇承">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="laxiflora的小天地">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | laxiflora的小天地">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2022/08/04/ML-2021-X-4-GPT%E7%9A%84%E9%87%8E%E6%9C%9B/" class="post-title-link" itemprop="url">ML_2021_X-4 GPT的野望</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2022-08-04 01:19:27" itemprop="dateCreated datePublished" datetime="2022-08-04T01:19:27+08:00">2022-08-04</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新於</span>
+      <time title="修改時間：2022-08-08 23:51:10" itemprop="dateModified" datetime="2022-08-08T23:51:10+08:00">2022-08-08</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="GPT的任務"><a href="#GPT的任務" class="headerlink" title="GPT的任務"></a>GPT的任務</h1><p><a target="_blank" rel="noopener" href="https://talktotransformer.com/">GPT模型demo</a></p>
+<p>給定一個seq，要能預測出下一個出現的token是甚麼<br>    ex. ground truth是台灣大學，則給定\\&lt;BOS&gt;、台，就要能預測灣</p>
+<p>有點像transformer的decoder，只知道之前的內容。</p>
+<ul>
+<li><p>因為GPT具備predict next token的能力，所以也可以用來做GAN</p>
+</li>
+<li><p>GPT的形象是獨角獸</p>
+</li>
+</ul>
+<h1 id="How-to-use-GPT"><a href="#How-to-use-GPT" class="headerlink" title="How to use GPT"></a>How to use GPT</h1><ul>
+<li><p>GPT也可以跟BERT用一樣的做法，拿出來用以後直接接一個簡單的classifier</p>
+</li>
+<li><p>原文論文不是這樣用(可能是fine-tune都有問題)</p>
+</li>
+<li><p>原文的訓練方式有點類似學測的模擬題目<br><img src="/../images/20220808_1.png"><br> 給定樣本題與正確答案，希望他能做出類似的答案，也就是要能看懂題目要幹嘛，並給出答案</p>
+</li>
+<li><p>從翻譯當例子，就是告訴它「Translate english to Chinese」(task description)後，再給幾個範例</p>
+<ul>
+<li>cheese -&gt; 起司 (examples)<br>    - sea -&gt; 海洋</li>
+</ul>
+<p>  <br>  並叫它繼續填空</p>
+<ul>
+<li>plush -&gt;  ___  (prompt)</li>
+</ul>
+</li>
+<li><p>這樣的做法類似「few-shot learning」，但沒有用到gradient descent</p>
+<ul>
+<li>few-shot，表示給定的樣本數很少</li>
+<li>原文作者給它命名為「in-context learning」</li>
+</ul>
+</li>
+<li><p>這種學法很有野心，但目前命中率不高(40~50%，175B parameters)</p>
+</li>
+</ul>
+<p><a target="_blank" rel="noopener" href="https://youtu.be/DOG1L9lvsDY">相關細節</a></p>
+<h2 id="Beyond-Text"><a href="#Beyond-Text" class="headerlink" title="Beyond Text"></a>Beyond Text</h2><p>除了剛剛的翻譯例子以外，GPT還有很多用途</p>
+<p>在語音、CV等等領域也有所應用，留待深入研究</p>
+<ul>
+<li>BERT也可以做語音版的，語音也可以填空與預測<ul>
+<li>老師有帶領實驗室合作，開發相關的資料庫任務組：superb (語音版的GLUE)</li>
+</ul>
+</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://laxiflora.github.io/2022/08/03/ML-2021-X-3-BERT%E7%9A%84%E5%A5%87%E8%81%9E%E8%BB%BC%E4%BA%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="劉宇承">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="laxiflora的小天地">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | laxiflora的小天地">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2022/08/03/ML-2021-X-3-BERT%E7%9A%84%E5%A5%87%E8%81%9E%E8%BB%BC%E4%BA%8B/" class="post-title-link" itemprop="url">ML_2021_X-3 BERT的奇聞軼事</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2022-08-03 01:33:10" itemprop="dateCreated datePublished" datetime="2022-08-03T01:33:10+08:00">2022-08-03</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新於</span>
+      <time title="修改時間：2022-08-08 22:00:39" itemprop="dateModified" datetime="2022-08-08T22:00:39+08:00">2022-08-08</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <ul>
+<li><p>明明只學填空，為何BERT有用?</p>
+</li>
+<li><p>you shall know a word by the company it keeps</p>
+</li>
+<li><p>詞向量並非是BERT為祖先</p>
+<ul>
+<li>BERT(contextualized word embedding) 、 CBOW(word embedding)</li>
+</ul>
+</li>
+<li><p>BERT會把各個詞彙變成一個詞向量，詞義越相近的詞彙，則他們的向量相似度會更像<br><img src="/../images/20220803_4.png"></p>
+</li>
+</ul>
+<hr>
+<h1 id="BERT是否真的看得懂文章？"><a href="#BERT是否真的看得懂文章？" class="headerlink" title="BERT是否真的看得懂文章？"></a>BERT是否真的看得懂文章？</h1><ul>
+<li><p>基於語言學假設，知道詞彙的意思要看他的前後文</p>
+</li>
+<li><p>但BERT真的只拿詞彙的前後文當判別依據嗎？</p>
+<ul>
+<li>拿BERT做DNA分類</li>
+</ul>
+</li>
+<li><p>把DNA序列(A,T,C,G)變成好幾個英文詞彙(隨機對)然後直接丟入BERT 做fine-tune training</p>
+<ul>
+<li>BERT pretrained by English</li>
+<li>ex. ATTACG -&gt; He She She He It Us</li>
+</ul>
+</li>
+<li><p>出乎意料的用有pretrain的BERT命中率比直接用隨機參數的transformer encoder模型還高 (<a target="_blank" rel="noopener" href="https://arxiv.org/abs/2103.07162">Reference</a>)</p>
+<ul>
+<li>這個實驗可以發現就算這整串文章毫無邏輯，BERT也可以表現的比完全隨機還好，表示機器就算看不懂文章，也學到了某些東西<br>    - 關於BERT學習過程仍待研究</li>
+</ul>
+</li>
+</ul>
+<p>    <br>關於BERT的研究(變形)</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://youtu.be/1_gRK9EIQpc">BERT(上)</a></li>
+<li><a target="_blank" rel="noopener" href="https://youtu.be/Bywo7m6ySlk">BERT(下)</a></li>
+</ul>
+<hr>
+<h1 id="Multi-lingual-BERT"><a href="#Multi-lingual-BERT" class="headerlink" title="Multi-lingual BERT"></a>Multi-lingual BERT</h1><p> <b><em>Train BERT with different languages</em></b></p>
+<ul>
+<li><p>用多國語言訓練(pretrain)BERT，就可以解中文的資料集</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1909.09587">相關論文實驗</a></li>
+<li>多語言BERT模型的表現是最好的</li>
+</ul>
+</li>
+<li><p>或許對於不同語言之間差異不大? (仍有待研究)</p>
+<ul>
+<li>ex. 兔跟rabbit相近、游跟swim相近</li>
+</ul>
+</li>
+</ul>
+<p> 老師的lab一開始也是嘗試train自己的multi-lingual BERT以查清BERT學習的方法</p>
+<ul>
+<li>實驗結果顯示multi-lingual BERT需要的dataset很大<br><img src="/../images/20220803_1.png"><br><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2010.10938">Reference</a></li>
+</ul>
+<hr>
+<ul>
+<li>但是既然語言特性並非BERT的學習重點，為何不會輸入中文，吐出日文?<ul>
+<li>表示BERT還是會注意語言之間的差異</li>
+<li>那如果抵銷掉語言之間的差異呢？</li>
+</ul>
+</li>
+</ul>
+<p>    <br>   <br><img src="/../images/20220803_2.png"></p>
+<ul>
+<li>老師的lab實際把英文丟入BERT模型內，再加上一個向量，這個向量是英文與中文詞向量平均之間的差距，可以得出輸入英文，輸出中文的填空結果</li>
+</ul>
+<p><img src="/../images/20220803_3.png"></p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://laxiflora.github.io/2022/07/30/ML-2021-X-1-X-2-BERT%E7%B0%A1%E4%BB%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="劉宇承">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="laxiflora的小天地">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | laxiflora的小天地">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2022/07/30/ML-2021-X-1-X-2-BERT%E7%B0%A1%E4%BB%8B/" class="post-title-link" itemprop="url">ML_2021_X-1&X-2 BERT簡介</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2022-07-30 16:23:44" itemprop="dateCreated datePublished" datetime="2022-07-30T16:23:44+08:00">2022-07-30</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新於</span>
+      <time title="修改時間：2022-08-09 16:58:50" itemprop="dateModified" datetime="2022-08-09T16:58:50+08:00">2022-08-09</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <ul>
+<li><p>芝麻街家族與模型有很多關聯<br><img src="/../images/20220730_1.png"></p>
+</li>
+<li><p>BERT有340M個parameters，非常巨大</p>
+</li>
+<li><p>下面課程主要講BERT與GPT系列</p>
+<blockquote>
+<p>BERT 就是transformer encoder</p>
+</blockquote>
+</li>
+</ul>
+<hr>
+<h1 id="BERT-learning-technique"><a href="#BERT-learning-technique" class="headerlink" title="BERT learning technique"></a>BERT learning technique</h1><h2 id="Semi-supervised"><a href="#Semi-supervised" class="headerlink" title="Semi-supervised?"></a>Semi-supervised?</h2><pre><code>- BERT用在下游任務需要labeled data做一些fine-tune，是supervised learning
+- BERT pretrain過程卻不需要labeled data，是unsupervised learning
+</code></pre>
+<p>$\rightarrow$ 所以合起來稱為semi-supervised</p>
+<h2 id="Self-supervised"><a href="#Self-supervised" class="headerlink" title="Self-supervised?"></a>Self-supervised?</h2><ul>
+<li>雖然是supervised learning，但是卻不需要人工標記，這種方法將訓練資料本身作為label</li>
+<li>我們會切割一部分的資料x’作為輸入，一部分的資料x’’則做為label<ul>
+<li>在沒有資料的情況下，自己想辦法supervised (故在人工方面可以看做是一種unsupervised)</li>
+</ul>
+</li>
+<li>BERT的pretrain任務，就是self-supervised learning</li>
+</ul>
+<h1 id="Pretrain-Self-supervised-learning"><a href="#Pretrain-Self-supervised-learning" class="headerlink" title="Pretrain(Self-supervised learning)"></a>Pretrain(Self-supervised learning)</h1><ul>
+<li></li>
+<li>不同於supervised，self-supervised的資料沒有標註，我們會切割一部分的資料x’作為輸入，一部分的資料x’’則做為label<ul>
+<li>在沒有資料的情況下，自己想辦法supervised (是一種unsupervised)</li>
+</ul>
+</li>
+</ul>
+<h3 id="Pretrain任務1：masking-input"><a href="#Pretrain任務1：masking-input" class="headerlink" title="Pretrain任務1：masking input"></a>Pretrain任務1：masking input</h3><pre><code>- 會隨機把input sequence中隨機一個vector蓋掉，稱為masking input，然後讓BERT去訓練猜中原本蓋掉的詞(token)是甚麼
+- mask / random
+- 很像分類問題，類別量 = token總數
+- BERT出來會有一個linear的matrix，做完softmax以後輸出  
+</code></pre>
+<p><img src="/../images/pasted-44.png"></p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1810.04805">reference</a></li>
+</ul>
+<h3 id="Pretrain任務2：Next-sentence-prediction"><a href="#Pretrain任務2：Next-sentence-prediction" class="headerlink" title="Pretrain任務2：Next sentence prediction"></a>Pretrain任務2：Next sentence prediction</h3><pre><code>- 任取兩個sequence，在開頭跟句子之間加入分隔符號
+</code></pre>
+<p>    - BERT要訓練去辨認這兩個例子是否相接<br>    - 這招不是很有效，<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1907.11692">Robustly optimized BERT approach</a><br>    	- 一種可能是這個任務過於簡單</p>
+<ul>
+<li>另外一招：sentence order prediction(SOP)<ul>
+<li>2句子本來就接在一起但亂序，要分辨誰是前面誰是後面</li>
+<li>在<a target="_blank" rel="noopener" href="https://arxiv.org/avs/1909.11942">ALBERT</a>中使用</li>
+</ul>
+</li>
+</ul>
+<h2 id="How-to-use-BERT"><a href="#How-to-use-BERT" class="headerlink" title="How to use BERT"></a>How to use BERT</h2><ul>
+<li>BERT雖然只做上述兩個訓練，但【卻可以使用在不同的任務上面 (downstream tasks)】<ul>
+<li>針對不同任務，BERT仍需要做一點微調(一些些的labeled data)，稱為<b><em>Fine-Tune</em></b></li>
+</ul>
+</li>
+<li>我們會讓BERT去做各種任務(任務集)取各種任務的成績以後平均<ul>
+<li>一個訓練的集合：<a target="_blank" rel="noopener" href="https://gluebenchmark.com/">general Language Understanding Evaluation(GLUE)</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="BERT-表現in-GLUE"><a href="#BERT-表現in-GLUE" class="headerlink" title="BERT 表現in GLUE"></a>BERT 表現in GLUE</h2><p><img src="/../images/20220802_1.png"></p>
+<ul>
+<li>1.0的基準線是人類的成績(指標不一定是正確率)</li>
+</ul>
+<h2 id="BERT實務"><a href="#BERT實務" class="headerlink" title="BERT實務"></a>BERT實務</h2><h3 id="Case-1"><a href="#Case-1" class="headerlink" title="Case 1"></a>Case 1</h3><ul>
+<li>輸入一個sequence，輸出一個class (ex. sentiment analysis)<br><img src="/../images/20220802_2.png"></li>
+<li>使用pretrained data後，BERT的參數已經被初始化了(一個會做填空題的BERT)，而線性層則是仍然要隨機初始化</li>
+</ul>
+<h3 id="Case-2"><a href="#Case-2" class="headerlink" title="Case 2"></a>Case 2</h3><ul>
+<li><p>輸入一個sequence，輸出一樣長度的sequence (詞性標註 POS tagging)<br><img src="/../images/20220802_3.png"></p>
+</li>
+<li><p>處理過程同case 1</p>
+</li>
+</ul>
+<h3 id="Case-3"><a href="#Case-3" class="headerlink" title="Case 3"></a>Case 3</h3><ul>
+<li>輸入兩個句子，輸出一個類別 (NLI)<ul>
+<li>NLI : 從前提要能推出假設</li>
+</ul>
+</li>
+</ul>
+<p><img src="/../images/20220802_4.png"></p>
+<h3 id="Case-4-作業7"><a href="#Case-4-作業7" class="headerlink" title="Case 4 (作業7)"></a>Case 4 (作業7)</h3><ul>
+<li>問答系統：給機器讀文章，問他問題要能回應</li>
+<li>但是機器只能從文章中給出答案(抓取文章的特定序列)<ul>
+<li>輸出兩個正整數</li>
+</ul>
+</li>
+</ul>
+<p><img src="/../images/20220802_5.png"></p>
+<ul>
+<li><p>輸入的形狀跟case 3很像，只是後面改成文章，前面改成問題<br><img src="/../images/20220802_6.png"></p>
+</li>
+<li><p>黃色向量輸出分別對橘、藍vector做內積，然後過softmax</p>
+</li>
+<li><p>答案會是($d_i,d_j)$，其中i來自橘色，j來自藍色</p>
+</li>
+</ul>
+<h2 id="Training-BERT-is-challenging"><a href="#Training-BERT-is-challenging" class="headerlink" title="Training BERT is challenging"></a>Training BERT is challenging</h2><ul>
+<li><p>google訓練最早的BERT的時候用了3 billions words</p>
+</li>
+<li><p>訓練非常花時間，但是微調很快(colab GPU約1 hr)</p>
+</li>
+<li><p>既然BERT都已經被訓練過了，為何還會有人想要重新訓練他?</p>
+<ul>
+<li>實際上訓練BERT的過程中，BERT到底學到了甚麼仍有待研究<br>    - 為了<a target="_blank" rel="noopener" href="https://arxiv.org/abs/2010.02480">學習BERT的胚胎學</a>，所以會需要重新訓練</li>
+</ul>
+</li>
+</ul>
+<h2 id="如果今天要解的任務是seq2seq呢"><a href="#如果今天要解的任務是seq2seq呢" class="headerlink" title="如果今天要解的任務是seq2seq呢"></a>如果今天要解的任務是seq2seq呢</h2><ul>
+<li><p>BERT只有pretrain encoder，有沒有辦法pretrain decoder？ 可以。</p>
+</li>
+<li><p>Encoder看到corrupted的data，decoder則是要想辦法把他還原</p>
+<ul>
+<li>弄壞資料的方法：旋轉、空白、mask…<br><img src="/../images/20220802_7.png"></li>
+</ul>
+</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1421,438 +1877,6 @@
 <li><p>因為transformer雖然可以考慮sequence的全局性，但對於自己的重視程度較為有限，而CNN則可以對局部性的特徵著重關注，兩者混合起來可以達到互補提高準確性的效果。</p>
 </li>
 </ol>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://laxiflora.github.io/2022/07/22/Efficient-Transformers-A-Survey%E7%AD%86%E8%A8%98/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="劉宇承">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="laxiflora的小天地">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | laxiflora的小天地">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/07/22/Efficient-Transformers-A-Survey%E7%AD%86%E8%A8%98/" class="post-title-link" itemprop="url">Efficient Transformers:A Survey筆記</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">發表於</span>
-
-      <time title="創建時間：2022-07-22 14:53:52" itemprop="dateCreated datePublished" datetime="2022-07-22T14:53:52+08:00">2022-07-22</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新於</span>
-      <time title="修改時間：2022-08-08 20:10:07" itemprop="dateModified" datetime="2022-08-08T20:10:07+08:00">2022-08-08</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <ul>
-<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2009.06732">論文原文連結</a></li>
-<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/263031249">翻譯版連結</a></li>
-</ul>
-<p>本篇論文主要介紹Transformer的各種變體，以及他的優缺點</p>
-<h1 id="What-is-Transformer"><a href="#What-is-Transformer" class="headerlink" title="What is Transformer?"></a>What is Transformer?</h1><ul>
-<li>Transformer採用了Self-attention技術，並屏棄了以往對於序列資料所採用的RNN</li>
-<li>序列資料得以考慮全局性，不再像RNN那樣是序列依賴性</li>
-<li>Transformer可以看作是CNN，只是每一個vector考慮的依賴性是整張圖片（把一個sequence鋪成平面，每一個vector視為一個pixel，vector維數&#x3D;channel）</li>
-</ul>
-<h2 id="Transformer的問題"><a href="#Transformer的問題" class="headerlink" title="Transformer的問題"></a>Transformer的問題</h2><ul>
-<li>目前的計算複雜度過高，是$O(n^2)$，使得transformer難以在輕模型下使用</li>
-<li>目前為了解決transformer過度肥大的問題，出現了許多的變種</li>
-</ul>
-<h2 id="Dense-Transformer"><a href="#Dense-Transformer" class="headerlink" title="Dense Transformer"></a>Dense Transformer</h2><ul>
-<li>transformer的起源</li>
-<li>待補</li>
-</ul>
-<h2 id="Sparse-Attaention"><a href="#Sparse-Attaention" class="headerlink" title="Sparse Attaention"></a>Sparse Attaention</h2><ul>
-<li>這裡開始是為了降低複雜度而延伸的變種</li>
-<li>限制self-attention的參考範圍，使全面參考變成部分參考</li>
-<li></li>
-</ul>
-<h3 id="Fixed-patterns-FP"><a href="#Fixed-patterns-FP" class="headerlink" title="Fixed patterns(FP)"></a>Fixed patterns(FP)</h3><ul>
-<li>參考範圍作為hyper-parameter存在，是訓練前先決定好的固定值</li>
-<li>常見方法有<ul>
-<li>Blockwise pattern : 把輸入序列切成block(batch)，複雜度降為$O(B^2)$，變成$(\frac{N}{B}*B^2)$<ul>
-<li>導致序列不連貫，效果”可能”有限</li>
-</ul>
-</li>
-<li>Strided pattern : 變得真的非常像CNN，採用滑動kernel的的方式，每個vector只attention自己的那塊kernel<ul>
-<li>建立在假設NLP在多數情況下都是具備局部相關的前提下，免去過度參考太遠的vector所浪費的計算</li>
-</ul>
-</li>
-<li>Compressed pattern : 超級無敵像CNN(欸)，用把vector壓成平面的角度會更好思考，其實就是pooling，把幾個token池化，變成一個vector後才做attention，個人認為複雜度會降為$O(\frac{N^2}{kernel_size})$</li>
-</ul>
-</li>
-</ul>
-<h3 id="Learnable-patterns-LP"><a href="#Learnable-patterns-LP" class="headerlink" title="Learnable patterns(LP)"></a>Learnable patterns(LP)</h3><ul>
-<li>相對於ＦＰ，ＬＰ是把參考範圍也作為weight給機器去學習</li>
-<li>比如routing transformer是對token向量進行k-means來將整體序列切成多個子序列</li>
-</ul>
-<h3 id="Memory"><a href="#Memory" class="headerlink" title="Memory"></a>Memory</h3><p>這裡看不太懂，先貼原文</p>
-<p>memory乍一听好像有点让人摸不着头脑，其实想法也很简单。最开始是在19年的set transformer上使用。一般来说做multihead self-attention时，Q&#x3D;K&#x3D;V&#x3D;X（X为输入序列，长度为n），而在set transformer中，作者先单独设置了m个向量（m是超参数），然后这m个向量与X做multihead attention，得到m个临时向量（这些个临时变量我们就称作“temporary memory”），接着把X与这m个临时向量再做一次multihead attention得到输出。这个过程其实就是利用这m个向量将输入序列X的信息先通过attention进行压缩，再通过attention还原，达到抽取输入序列的特征的目的。但是在压缩编码解码的过程中肯定会有信息损失，所以后来的改进方法是引入全局记忆，即设置一些token，它们可以与所有的token进行注意力交互，比如bert的[CLS]，由于这些token的数目远小于序列长度，因此也不会给计算带来负担，而且往往携带了整个输入序列的信息，这就是我们可以在bert上用[CLS]作文本分类任务的原因。</p>
-<h3 id="Low-rank-methods"><a href="#Low-rank-methods" class="headerlink" title="Low rank methods"></a>Low rank methods</h3><ul>
-<li>Attention matrix在經過softmax轉化以後會是不滿秩的(存在linear dependent,rank !&#x3D; N)，所以我們可以把矩陣降維</li>
-<li>k,v向量可以因此映射到kxd維，因為k為hyper-parameter，複雜度可降至 $O(nk)$</li>
-<li>範例：linformer</li>
-<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2006.04768">相關論文</a></li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://laxiflora.github.io/2022/07/13/ML-2021-4-2-%E8%87%AA%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%A9%9F%E5%88%B6%EF%BC%88%E4%B8%8B%EF%BC%89/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="劉宇承">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="laxiflora的小天地">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | laxiflora的小天地">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/07/13/ML-2021-4-2-%E8%87%AA%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%A9%9F%E5%88%B6%EF%BC%88%E4%B8%8B%EF%BC%89/" class="post-title-link" itemprop="url">ML_2021_4-2 自注意力機制（下）</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">發表於</span>
-
-      <time title="創建時間：2022-07-13 16:30:46" itemprop="dateCreated datePublished" datetime="2022-07-13T16:30:46+08:00">2022-07-13</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新於</span>
-      <time title="修改時間：2022-08-08 20:10:07" itemprop="dateModified" datetime="2022-08-08T20:10:07+08:00">2022-08-08</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <ul>
-<li>延續上篇的內容，b其實可以水平同時計算</li>
-</ul>
-<h2 id="線性代數的角度理解"><a href="#線性代數的角度理解" class="headerlink" title="線性代數的角度理解"></a>線性代數的角度理解</h2><p><img src="/../images/pasted-18.png"></p>
-<p><img src="/../images/pasted-19.png"><br>把它延展到$\alpha_{4,4}$</p>
-<p><img src="/../images/20220713_7.png"></p>
-<ul>
-<li>之後再對A做softmax(或其他激發函數)得到A’</li>
-</ul>
-<p><img src="/../images/20220713_8.png"></p>
-<h3 id="總圖"><a href="#總圖" class="headerlink" title="總圖"></a>總圖</h3><p><img src="/../images/20220713_9.png"></p>
-<ul>
-<li>上圖中只有$W^{q,k,v}$training data訓練</li>
-</ul>
-<h2 id="Multi-head-self-attention"><a href="#Multi-head-self-attention" class="headerlink" title="Multi-head self-attention"></a>Multi-head self-attention</h2><ul>
-<li>可以把q,k,v產生多個<br><img src="/../images/pasted-20.png"></li>
-</ul>
-<h2 id="Positional-encoding"><a href="#Positional-encoding" class="headerlink" title="Positional encoding"></a>Positional encoding</h2><ul>
-<li>每一個vector出現在sequence的不同位置可能會有不同的意義</li>
-<li>前述之計算並無考慮到相對位置，大家算法都一樣，也都有全部平等的計算</li>
-<li>為每一個位置設置一個vector $e^i$，再把這個vector加上$a^i$</li>
-<li>$e^i$可以透過某個function產生，也可能是hand-crafted</li>
-<li>或也可以是learn by data</li>
-<li>仍然是尚待研究的主題</li>
-</ul>
-<h2 id="Self-attention應用"><a href="#Self-attention應用" class="headerlink" title="Self-attention應用"></a>Self-attention應用</h2><ul>
-<li>Bert（NLP）</li>
-<li>transformer</li>
-</ul>
-<h2 id="Truncated-self-attention"><a href="#Truncated-self-attention" class="headerlink" title="Truncated self-attention"></a>Truncated self-attention</h2><ul>
-<li>當sequence很大，我們的attention matrix會非常大</li>
-<li>一次訓練的時候不要看所有sequence，看某一段就好</li>
-</ul>
-<h2 id="Self-attention-for-image"><a href="#Self-attention-for-image" class="headerlink" title="Self-attention for image"></a>Self-attention for image</h2><ul>
-<li>相片也可以看作是一個vector set，ex. 給定一個5x10 pixel的彩色圖片<ul>
-<li>把channel當作一個vector(RGB)</li>
-<li>則一張圖片是一個5x10的vector set</li>
-</ul>
-</li>
-<li>Self-attention GAN</li>
-<li>DETR</li>
-</ul>
-<h3 id="Self-attention-v-s-CNN"><a href="#Self-attention-v-s-CNN" class="headerlink" title="Self-attention v.s CNN"></a>Self-attention v.s CNN</h3><ul>
-<li>CNN會考慮receptive field</li>
-<li>self-attention則是會考慮整張圖（整個vector set的vector）<br><img src="/../images/20220713_10.png"></li>
-<li>self-attention可以說是複雜版、更自由的ＣＮＮ</li>
-<li>receptive field變成可學習、控制的大小(truncated self attention)<ul>
-<li>Ref. CNN章節<br><img src="/../images/20220713_11.png"></li>
-</ul>
-</li>
-<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1911.93584">這篇論文</a>用嚴謹的數學證明CNN $\subset$ self-attention</li>
-<li>Ref.一開始的章節，我們知道更flexible的模型需要更多training data<br><img src="/../images/20220713_12.png"></li>
-</ul>
-<h3 id="Self-attention-v-s-RNN"><a href="#Self-attention-v-s-RNN" class="headerlink" title="Self-attention v.s RNN"></a>Self-attention v.s RNN</h3><ul>
-<li>RNN不再講到，因為self-attention大多可取代</li>
-<li>RNN也是處理input是sequence的情況<ul>
-<li>第一個vector做RNN，輸出丟FC，產生輸出，也加入第二個vector丟入RNN…<br><img src="/../images/pasted-22.png"></li>
-</ul>
-</li>
-<li>RNN不可以平行處理，self-attention可以</li>
-<li>RNN難以考慮全面（左右更好），self-attention則可以（天涯若壁鄰）</li>
-<li>Self-attention加上一些東西以後，其實也能變成RNN(<a target="_blank" rel="noopener" href="https://arxiv.org/abs/2006.16236">ref.</a>)</li>
-</ul>
-<h3 id="Self-attention-for-graph"><a href="#Self-attention-for-graph" class="headerlink" title="Self-attention for graph"></a>Self-attention for graph</h3><ul>
-<li>因為edge，所以我們知道哪兩個節點之間會有關聯性</li>
-<li>Attention matrix可以只計算有相連的部分就好<br><img src="/../images/20220713_14.png"></li>
-<li>這算是一種Graph neural network (GNN)</li>
-</ul>
-<h4 id="GNN-REF"><a href="#GNN-REF" class="headerlink" title="GNN REF."></a>GNN REF.</h4><p><a target="_blank" rel="noopener" href="https://youtu.be/eybCCtNKwzA">影片1</a></p>
-<p><a target="_blank" rel="noopener" href="https://youtu.be/M9ht8vsVEw8">影片2</a></p>
-<h2 id="結論"><a href="#結論" class="headerlink" title="結論"></a>結論</h2><ul>
-<li>Self-attention有很多種變形</li>
-<li>他的缺點是計算量過大(廣義版CNN…汗)</li>
-<li>self-attention最早用於transformer<ul>
-<li>有時候叫transformer其實就是指self-attention</li>
-</ul>
-</li>
-<li>performance跟speed的平衡</li>
-<li>介紹各式各樣的transformers的變形：<a target="_blank" rel="noopener" href="https://arxiv.org/abs/2009.06732">Efficient Transformers: A survey</a><br><img src="/../images/20220713_15.png"></li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://laxiflora.github.io/2022/07/13/ML-2021-4-1-%E8%87%AA%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%A9%9F%E5%88%B6%EF%BC%88%E4%B8%8A%EF%BC%89/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="劉宇承">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="laxiflora的小天地">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | laxiflora的小天地">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/07/13/ML-2021-4-1-%E8%87%AA%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%A9%9F%E5%88%B6%EF%BC%88%E4%B8%8A%EF%BC%89/" class="post-title-link" itemprop="url">ML_2021_4-1 自注意力機制（上）</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">發表於</span>
-
-      <time title="創建時間：2022-07-13 10:33:00" itemprop="dateCreated datePublished" datetime="2022-07-13T10:33:00+08:00">2022-07-13</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新於</span>
-      <time title="修改時間：2022-08-08 20:10:07" itemprop="dateModified" datetime="2022-08-08T20:10:07+08:00">2022-08-08</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <ul>
-<li>至今為止，我們network input 都是一個vector</li>
-<li>那如果輸入是可變動的一排向量（sequence）呢？</li>
-</ul>
-<h2 id="Vector-set-as-input"><a href="#Vector-set-as-input" class="headerlink" title="Vector set as input"></a>Vector set as input</h2><ul>
-<li>長度不一的句子就是一個範例</li>
-<li>關於word embedding如何得到，可以參考<a target="_blank" rel="noopener" href="https://youtu.be/X7PH3NuYW0Q">這個影片</a></li>
-<li>現在的文字基本上都是被word embedding過，而句子就是一連串了文字向量</li>
-<li>一段聲音訊號也是一個範例（25 millisecond），一個向量稱為『frame』</li>
-<li>一個graph也是一連串的向量<ul>
-<li>Drug discovery中一個分子，可以看做一個graph</li>
-<li>社群媒體中，人（節點）可以是一個向量，ex.性別、年齡、工作等等</li>
-</ul>
-</li>
-</ul>
-<h2 id="What-is-the-output"><a href="#What-is-the-output" class="headerlink" title="What is the output?"></a>What is the output?</h2><h3 id="Type-1-本課專注"><a href="#Type-1-本課專注" class="headerlink" title="Type 1 (本課專注)"></a>Type 1 (本課專注)</h3><ul>
-<li>每一個vector都會有一個label</li>
-<li>POS tagging（詞性標注），每一個詞彙都要對應一個詞性</li>
-<li>語音，每一段frame都會有一個Pheonic</li>
-<li>Social network，對每一個人可能會有一種廣告投放方式</li>
-</ul>
-<h3 id="Type-2-hw4"><a href="#Type-2-hw4" class="headerlink" title="Type 2 (hw4)"></a>Type 2 (hw4)</h3><ul>
-<li>一整個sequence輸出一個label</li>
-<li>Sentiment analysis: 機器去判讀一段句字是正面的還是負面</li>
-<li>給定一段音訊，分辨它是哪個人說的</li>
-</ul>
-<h3 id="Type-3"><a href="#Type-3" class="headerlink" title="Type 3"></a>Type 3</h3><ul>
-<li>不知道輸出幾個label</li>
-<li>稱為sequence to sequence(seq2seq)</li>
-</ul>
-<h2 id="Sequence-labeling"><a href="#Sequence-labeling" class="headerlink" title="Sequence labeling"></a>Sequence labeling</h2><ul>
-<li>對於每個向量，要做一個label</li>
-</ul>
-<h3 id="First-approach"><a href="#First-approach" class="headerlink" title="First approach"></a>First approach</h3><ul>
-<li>直接用fully connect network</li>
-<li>問題出現：同樣輸入就會有同樣輸出，但是不能保證兩個vector之間是否有關連</li>
-<li>需要consider the context</li>
-</ul>
-<h3 id="Second-approach"><a href="#Second-approach" class="headerlink" title="Second approach"></a>Second approach</h3><ul>
-<li>直接給fully connected network整個window (hw2就是這樣做的)<br><img src="/../images/20220713_1.png"></li>
-<li>問題：如果今天的任務是得要考慮整個sequence怎辦<ul>
-<li>sequence長度有長有短，window大小要變動，而且運算量非常大又導致overfitting</li>
-</ul>
-</li>
-</ul>
-<h3 id="Third-approach"><a href="#Third-approach" class="headerlink" title="Third approach"></a>Third approach</h3><ul>
-<li>採用Self-attention技術，先把向量加工再個別丟入全連階層<br><img src="/../images/20220713_2.png" alt="upload successful"></li>
-<li>黑框框向量表示考慮過前後文的加工向量</li>
-<li>Self-attention可以有很多層</li>
-<li>經典論文：<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1706.03762">Attention is all you need</a><ul>
-<li>Transformer</li>
-</ul>
-</li>
-<li>Self-attention內部結構如下：<br><img src="/../images/20220713_3.png"></li>
-<li>找出relevant vectors in a sequence，關聯度以$\alpha$表示</li>
-<li>計算$\alpha$比較常見的做法是做內積，兩個向量各自乘一個矩陣($W^q、W^k等$)以後再做內積<ul>
-<li>之後課程先只用這個方法</li>
-</ul>
-</li>
-</ul>
-<h2 id="How-to-apply"><a href="#How-to-apply" class="headerlink" title="How to apply"></a>How to apply</h2><p><img src="/../images/pasted-17.png"></p>
-<ul>
-<li>$q^1$表示輸入向量$a^1$對$W^q$矩陣相乘的結果</li>
-<li>$k^i$則表示內積的另一個算子，表示$a^i * W^k$以後的結果</li>
-<li>softmax不一定是唯一解，只是常見（用他沒有理由）</li>
-<li>得出$\alpha’$以後，繼續根據他抽取sequence中重要的資訊<br><img src="/../images/20220713_5.png"></li>
-<li>最後再把$\alpha’$乘上$W^v$，一個向量得到的分數越高，則越可能會dominate抽取出的結果</li>
-</ul>
-<p><a target="_blank" rel="noopener" href="https://medium.com/ching-i/transformer-attention-is-all-you-need-c7967f38af14">參考文章</a></p>
-<ul>
-<li>q:query，就是輸入的vector，用於與k做內積來判斷相似性</li>
-<li>k:key，指序列中的所有詞向量</li>
-<li>v:value，指實際的序列內容</li>
-<li>q,k內積的過程稱為Dot-product Attention</li>
-<li>兩個vector之間的關聯越大，則 $\alpha$ 越大</li>
-<li>上面步驟講到的都是encoder</li>
-</ul>
 
       
     </div>
