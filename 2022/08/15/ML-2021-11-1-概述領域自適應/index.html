@@ -21,15 +21,23 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"laxiflora.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":true,"version":"8.12.3","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/js/config.js"></script>
 
-    <meta property="og:type" content="article">
+    <meta name="description" content="Train跟testing data之間可能會有不同的分佈 -&gt; domain shift ex. 用黑白圖片訓練數字辨識，但測試資料使用彩色圖片，則命中率會大幅降低 Domain shift的種類 不只是輸入資料的特性不合 可能輸出的資料，其機率分佈不一樣 或是也許在測試資料裡面，雖然圖樣跟訓練資料很像，但是它所代表的意涵卻不一樣  Domain adaptation 可以看作是trans">
+<meta property="og:type" content="article">
 <meta property="og:title" content="ML_2021_11-1 概述領域自適應">
 <meta property="og:url" content="https://laxiflora.github.io/2022/08/15/ML-2021-11-1-%E6%A6%82%E8%BF%B0%E9%A0%98%E5%9F%9F%E8%87%AA%E9%81%A9%E6%87%89/index.html">
 <meta property="og:site_name" content="laxiflora的小天地">
+<meta property="og:description" content="Train跟testing data之間可能會有不同的分佈 -&gt; domain shift ex. 用黑白圖片訓練數字辨識，但測試資料使用彩色圖片，則命中率會大幅降低 Domain shift的種類 不只是輸入資料的特性不合 可能輸出的資料，其機率分佈不一樣 或是也許在測試資料裡面，雖然圖樣跟訓練資料很像，但是它所代表的意涵卻不一樣  Domain adaptation 可以看作是trans">
 <meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220817_1.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220817_2.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220817_3.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220817_5.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/20220817_6.png">
 <meta property="article:published_time" content="2022-08-14T17:58:17.000Z">
-<meta property="article:modified_time" content="2022-08-14T17:58:17.760Z">
+<meta property="article:modified_time" content="2022-08-17T11:31:50.532Z">
 <meta property="article:author" content="劉宇承">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://laxiflora.github.io/images/20220817_1.png">
 
 
 <link rel="canonical" href="https://laxiflora.github.io/2022/08/15/ML-2021-11-1-%E6%A6%82%E8%BF%B0%E9%A0%98%E5%9F%9F%E8%87%AA%E9%81%A9%E6%87%89/">
@@ -102,7 +110,7 @@
 
   <aside class="sidebar">
 
-    <div class="sidebar-inner sidebar-overview-active">
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
       <ul class="sidebar-nav">
         <li class="sidebar-nav-toc">
           文章目錄
@@ -115,6 +123,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Domain-shift%E7%9A%84%E7%A8%AE%E9%A1%9E"><span class="nav-number">1.</span> <span class="nav-text">Domain shift的種類</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Domain-adaptation"><span class="nav-number">2.</span> <span class="nav-text">Domain adaptation</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Case-1-%E6%9C%89target-domain%E7%9A%84labeled%E8%B3%87%E6%96%99%E4%BD%86%E8%B3%87%E6%96%99%E9%87%8F%E5%BE%88%E5%B0%91"><span class="nav-number">2.1.</span> <span class="nav-text">Case 1:有target domain的labeled資料但資料量很少</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Case-2-%E6%9C%89%E4%B8%80%E5%A4%A7%E5%A0%86target-domain%E7%9A%84unlabeled%E8%B3%87%E6%96%99"><span class="nav-number">2.2.</span> <span class="nav-text">Case 2:有一大堆target domain的unlabeled資料</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Domain-Adversarial-training"><span class="nav-number">2.2.1.</span> <span class="nav-text">Domain Adversarial training</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8E%9F%E7%90%86"><span class="nav-number">2.2.1.1.</span> <span class="nav-text">原理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%A8%88%E7%AE%97%E6%96%B9%E6%B3%95"><span class="nav-number">2.2.1.2.</span> <span class="nav-text">計算方法</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Limitation"><span class="nav-number">2.2.2.</span> <span class="nav-text">Limitation</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Case-3%EF%BC%9A%E9%9B%96%E7%84%B6Target-domain-unlabeled-data%E5%BE%88%E5%A4%9A%EF%BC%8C%E4%BD%86Source%E8%B7%9FTarget-domain%E7%9A%84class%E9%9B%86%E5%90%88%E4%B8%8D%E5%90%8C"><span class="nav-number">2.3.</span> <span class="nav-text">Case 3：雖然Target domain unlabeled data很多，但Source跟Target domain的class集合不同</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Case-4%EF%BC%9ATarget-domain-unlabeled-data%E4%B9%9F%E5%BE%88%E5%B0%91"><span class="nav-number">2.4.</span> <span class="nav-text">Case 4：Target domain unlabeled data也很少</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Case-5%EF%BC%9A%E6%88%91%E5%95%A5%E9%83%BD%E4%B8%8D%E7%9F%A5%E9%81%93QQ"><span class="nav-number">2.5.</span> <span class="nav-text">Case 5：我啥都不知道QQ</span></a></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -127,7 +136,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">39</span>
+          <span class="site-state-item-count">41</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
@@ -203,6 +212,13 @@
 
       <time title="創建時間：2022-08-15 01:58:17" itemprop="dateCreated datePublished" datetime="2022-08-15T01:58:17+08:00">2022-08-15</time>
     </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新於</span>
+      <time title="修改時間：2022-08-17 19:31:50" itemprop="dateModified" datetime="2022-08-17T19:31:50+08:00">2022-08-17</time>
+    </span>
 
   
 </div>
@@ -214,7 +230,80 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        
+        <p>Train跟testing data之間可能會有不同的分佈 -&gt; <strong>domain shift</strong></p>
+<p>ex. 用黑白圖片訓練數字辨識，但測試資料使用彩色圖片，則命中率會大幅降低</p>
+<h1 id="Domain-shift的種類"><a href="#Domain-shift的種類" class="headerlink" title="Domain shift的種類"></a>Domain shift的種類</h1><ul>
+<li>不只是輸入資料的特性不合</li>
+<li>可能輸出的資料，其機率分佈不一樣</li>
+<li>或是也許在測試資料裡面，雖然圖樣跟訓練資料很像，但是它所代表的意涵卻不一樣<br><img src="/../images/20220817_1.png"></li>
+</ul>
+<h1 id="Domain-adaptation"><a href="#Domain-adaptation" class="headerlink" title="Domain adaptation"></a>Domain adaptation</h1><ul>
+<li>可以看作是transfer learning的一種</li>
+<li>我們會需要對target domain有一些了解</li>
+</ul>
+<h2 id="Case-1-有target-domain的labeled資料但資料量很少"><a href="#Case-1-有target-domain的labeled資料但資料量很少" class="headerlink" title="Case 1:有target domain的labeled資料但資料量很少"></a>Case 1:有target domain的labeled資料但資料量很少</h2><ul>
+<li>用類似BERT的fine-tune方法來微調一下model</li>
+<li>但target domain資料量很少，所以很容易overfitting<ul>
+<li>限制fine-tune前後的參數變化量<br>    - 降低lr<br>    - 限制epoch數</li>
+</ul>
+</li>
+</ul>
+<h2 id="Case-2-有一大堆target-domain的unlabeled資料"><a href="#Case-2-有一大堆target-domain的unlabeled資料" class="headerlink" title="Case 2:有一大堆target domain的unlabeled資料"></a>Case 2:有一大堆target domain的unlabeled資料</h2><ul>
+<li>本課的討論重點</li>
+<li>在實務上比較有常發生</li>
+<li>Idea:用一個feature extractor把source跟target domain的不同點刪除，擷取出共同的部分<ul>
+<li>Ex.數字辨識，學習去忽略圖片顏色</li>
+</ul>
+</li>
+</ul>
+<h3 id="Domain-Adversarial-training"><a href="#Domain-Adversarial-training" class="headerlink" title="Domain Adversarial training"></a>Domain Adversarial training</h3><h4 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h4><ul>
+<li><p>我們會訓練出一個new image classifier model，其中前半部分是feature extractor，後半部則是label predictor<br><img src="/../images/20220817_2.png"></p>
+</li>
+<li><p>我們會希望feature extractor的輸出（上圖右下角的分佈圖），source跟target domain的分佈看不出差異</p>
+</li>
+<li><p>由feature extractor跟domain classifier互相對抗，將feature extractor的輸出送到domain classifier，domain classifier要想辦法辨認出這個輸出是來自source還是target domain</p>
+</li>
+<li><p>feature extractor -&gt; Generator &amp; domain classifier -&gt; Discriminator</p>
+</li>
+<li><p>但這樣對於feature extractor優勢太大，因為只要他都輸出0，就可以讓domain classifier被輕鬆騙過去 -&gt; 讓label Predictor也加入戰局</p>
+</li>
+</ul>
+<h4 id="計算方法"><a href="#計算方法" class="headerlink" title="計算方法"></a>計算方法</h4><p>令</p>
+<ol>
+<li>Feature extractor的參數為$\theta_f$</li>
+<li>Label Predictor的參數為$\theta_p$</li>
+<li>Domain Classifier的參數為$\theta_d$</li>
+<li>輸出圖片預測結果與真實結果的loss(cross entropy)為$L$</li>
+<li>Domain Classifier二元分類器的輸出loss為$L_d$</li>
+</ol>
+<p>因為我們同時希望Label Predictor分類越正確越好，又同時希望domain classifier能被騙過。則可以得出一個最佳化feature extractor的公式（非正確，勿照抄）<br>$$<br>\theta_f^* &#x3D; min_{\theta_f}\ L-L_d<br>$$</p>
+<p>問題來了，如果我們直接套用這個公式，會導致$L_d$越大越好（也就是讓domain classifier的loss飆高），這可能讓feature extractor變成努力讓domain classifier把target看成source，source看成target，而這也是某種程度上的分隔開兩個domain</p>
+<p>如何改善公式，留給大家思考orz</p>
+<p>domain adversarial training的效果拔群<br><img src="/../images/20220817_3.png"></p>
+<h3 id="Limitation"><a href="#Limitation" class="headerlink" title="Limitation"></a>Limitation</h3><p><img src="/../images/20220817_5.png"><br>由上面的公式，我們可以練出上圖兩種類型的model滿足上面的公式，但是可以明顯看出，右邊的分佈會比左邊還好</p>
+<p>我們雖然不知道橘色(target domain)的label為何，但我們知道藍色(source)資料的分界線，因此我們要在這樣的前提下，想辦法也讓橘色的資料被該分界線劃清</p>
+<ul>
+<li>有很多相關方法<ul>
+<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1802.08735">參考文獻：DIRT-T</a></li>
+<li>一種簡單的方向是確保unlabeled data丟入label predictor後輸出的分佈越集中越好<br><img src="/../images/20220817_6.png"></li>
+</ul>
+</li>
+</ul>
+<h2 id="Case-3：雖然Target-domain-unlabeled-data很多，但Source跟Target-domain的class集合不同"><a href="#Case-3：雖然Target-domain-unlabeled-data很多，但Source跟Target-domain的class集合不同" class="headerlink" title="Case 3：雖然Target domain unlabeled data很多，但Source跟Target domain的class集合不同"></a>Case 3：雖然Target domain unlabeled data很多，但Source跟Target domain的class集合不同</h2><p>到目前為止，我們都假設target跟source domain的類別集合是一樣的</p>
+<p>如果類別集合不同，則硬要align data可能會反導致兩個無關的class被綁在一起 $\rightarrow$ <strong>Universal domain adaptation</strong></p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://openaccess.thecvf.com/content_CVPR_2019/html/You_Universal_Domain_Adaptation_CVPR_2019_paper.html">參考文獻</a></li>
+</ul>
+<h2 id="Case-4：Target-domain-unlabeled-data也很少"><a href="#Case-4：Target-domain-unlabeled-data也很少" class="headerlink" title="Case 4：Target domain unlabeled data也很少"></a>Case 4：Target domain unlabeled data也很少</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1909.13231">Testing time training(TTT)</a></li>
+</ul>
+<h2 id="Case-5：我啥都不知道QQ"><a href="#Case-5：我啥都不知道QQ" class="headerlink" title="Case 5：我啥都不知道QQ"></a>Case 5：我啥都不知道QQ</h2><ul>
+<li>Domain Generalization<ul>
+<li>訓練資料豐富，包含各種domain（ex. 貓狗分類，除了真貓真狗以外還有素描、卡通畫風）<br>    	- <a target="_blank" rel="noopener" href="https://ieeexplore.ieee.org/document/8578664">參考文獻</a><br>    - 訓練資料不豐富，但測試資料很豐富(有點像想辦法做data augmentation)<br>    	- <a target="_blank" rel="noopener" href="https://arxiv.org/abs/2003.13216">參考文獻</a></li>
+</ul>
+</li>
+</ul>
+
     </div>
 
     
@@ -232,6 +321,9 @@
                 </a>
             </div>
             <div class="post-nav-item">
+                <a href="/2022/08/17/ML-2021-12-1-%E5%A2%9E%E5%BC%B7%E5%BC%8F%E5%AD%B8%E7%BF%92%E8%B7%9F%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E4%B8%80%E6%A8%A3%E9%83%BD%E6%98%AF%E4%B8%89%E5%80%8B%E6%AD%A5%E9%A9%9F/" rel="next" title="ML_2021_12-1 增強式學習跟機器學習一樣都是三個步驟">
+                  ML_2021_12-1 增強式學習跟機器學習一樣都是三個步驟 <i class="fa fa-chevron-right"></i>
+                </a>
             </div>
           </div>
     </footer>

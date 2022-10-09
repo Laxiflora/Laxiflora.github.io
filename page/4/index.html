@@ -125,7 +125,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">39</span>
+          <span class="site-state-item-count">41</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
@@ -160,6 +160,229 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://laxiflora.github.io/2022/07/05/ML-2021-2-3-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%BA%8C/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="劉宇承">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="laxiflora的小天地">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | laxiflora的小天地">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2022/07/05/ML-2021-2-3-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%BA%8C/" class="post-title-link" itemprop="url">ML_2021_2-3 類神經網路訓練不起來怎麼辦(二)</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2022-07-05 21:59:49" itemprop="dateCreated datePublished" datetime="2022-07-05T21:59:49+08:00">2022-07-05</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新於</span>
+      <time title="修改時間：2022-08-08 20:10:07" itemprop="dateModified" datetime="2022-08-08T20:10:07+08:00">2022-08-08</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><ul>
+<li>之前課程(Ref. 2021版1-1)說到，在實際train data時我們不是實際把所有Data算出來對L微分求loss，而是把Data先分組切成batch，而所有batch看過一遍，才叫1 epoch</li>
+<li>我們可以設定shuffle，就是每個不同的epoch，data都會重新分組</li>
+</ul>
+<h1 id="Batch-size對模型之影響"><a href="#Batch-size對模型之影響" class="headerlink" title="Batch size對模型之影響"></a>Batch size對模型之影響</h1><ul>
+<li>首先比較兩個case：<br><img src="/../images/20220705_2.png"></li>
+<li>左邊沒有用batch，而右邊batch size &#x3D; 1</li>
+<li>左邊表示每次必須看完所有data，參數才能更新一次；右邊則相反，每看完一個data就更新一次參數</li>
+<li>一個是重攻擊長CD，一個是輕攻擊短CD (?)</li>
+</ul>
+<h2 id="大batch優缺"><a href="#大batch優缺" class="headerlink" title="大batch優缺"></a>大batch優缺</h2><h5 id="優點"><a href="#優點" class="headerlink" title="優點"></a>優點</h5><ul>
+<li>威力大(更新幅度大)且每步都很穩</li>
+</ul>
+<h5 id="缺點"><a href="#缺點" class="headerlink" title="缺點"></a>缺點</h5><ul>
+<li>超級慢<br>(小batch優缺則顛倒)</li>
+</ul>
+<h2 id="small-batch-or-big-batch"><a href="#small-batch-or-big-batch" class="headerlink" title="small batch or big batch?"></a>small batch or big batch?</h2><ul>
+<li>兩邊看似各自相對，但我們還沒考慮平行運算</li>
+<li>若考慮多核心，其實大batch不會比較慢</li>
+<li>以下圖為例，用tesla V100 GPU，batch size到1000都很合適(梯度法)<br><img src="/../images/20220705_1.png"></li>
+<li>因為高batch不一定更花時間，所以其實在平行運算下，大batch的每epoch速度甚至還比小epoch還快</li>
+<li>不過，就算是平行運算下，大batch一定比較好嗎?<ul>
+<li>與直覺相反的是，noisy大有時候反而可以促進訓練能力(如下圖)</li>
+</ul>
+</li>
+</ul>
+<p><img src="/../images/20220705_3.png" alt="upload successful"></p>
+<ul>
+<li>相同model(同bias)下，smaller batch size有更高的performance</li>
+<li>問題來源於optimizer fails(Ref. 2021版2-2關於如何判定問題是哪種)</li>
+</ul>
+<h2 id="為何small-batch-size可以有更好的結果？"><a href="#為何small-batch-size可以有更好的結果？" class="headerlink" title="為何small batch size可以有更好的結果？"></a>為何small batch size可以有更好的結果？</h2><ul>
+<li>一說是Noisy update is better for training<br>見下圖</li>
+</ul>
+<p><img src="/../images/pasted-1.png"><br>small batch下，或許$L^1$卡住了，但是因為$L^2$跟$L^1$有不小的差距，所以剛好可以讓參數更新然後把參數撞開critical point</p>
+<h3 id="small-batch-still-better-for-testing-data"><a href="#small-batch-still-better-for-testing-data" class="headerlink" title="small batch still better for testing data?"></a>small batch still better for testing data?</h3><ul>
+<li>我們知道了small batch在training set表現更好，那testing data是否也是如此呢?</li>
+<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1609.04836">根據這篇論文</a>，可以知道small batch在測試資料也有好表現</li>
+</ul>
+<p><img src="/../images/20220705_4.png" alt="upload successful"></p>
+<ul>
+<li>就算能把big batch model的準確率練到跟small batch model差不多(調hyper parameter)，在測試時也會有差距顯現 $\rightarrow$ big batch有overfitting問題<br>目前普遍認為的原因如下：<ul>
+<li>就算是卡在local minima，也有分好壞</li>
+<li>周圍平坦的local minima較好</li>
+<li>而論文認為大batch size傾向會讓我們走向尖銳的minima point<ul>
+<li>一種說法是，小batch size更動頻繁走向豐富，容易走出周圍很高的minima point(對於逃離critical point能力較高)，而停在平坦的minima point (Ref. 2021版2-2 鞍點)</li>
+</ul>
+<p>	</p>
+</li>
+<li>因為testing 跟 training的loss function，肯定會有所小偏差，如下圖<br><img src="/../images/20220705_6.png" alt="upload successful"></li>
+</ul>
+</li>
+</ul>
+<h2 id="Summary：Batch-comparasion"><a href="#Summary：Batch-comparasion" class="headerlink" title="Summary：Batch comparasion"></a>Summary：Batch comparasion</h2><p><img src="/../images/20220705_7.png" alt="upload successful"></p>
+<ul>
+<li>因此，batch size最終成為了一個hyper parameter</li>
+</ul>
+<h2 id="魚與熊掌兼得的辦法"><a href="#魚與熊掌兼得的辦法" class="headerlink" title="魚與熊掌兼得的辦法?"></a>魚與熊掌兼得的辦法?</h2><ul>
+<li>看ref啃論文  &#x3D; &#x3D;</li>
+</ul>
+<hr>
+<h1 id="另一個對抗saddle-point或minima的技術-momentum"><a href="#另一個對抗saddle-point或minima的技術-momentum" class="headerlink" title="另一個對抗saddle point或minima的技術 : momentum"></a>另一個對抗saddle point或minima的技術 : momentum</h1><ul>
+<li>當small gradient的時候，我們走到一個鞍點或局部最小點之後就會停下來</li>
+<li>但我們可以用物理式來思考，球由高處滾下來到最低點碰到上坡，不一定會停下來，因為有動能</li>
+</ul>
+<h2 id="Review-原本的梯度下降"><a href="#Review-原本的梯度下降" class="headerlink" title="Review : 原本的梯度下降"></a>Review : 原本的梯度下降</h2><p><img src="/../images/pasted-2.png"></p>
+<h2 id="梯度下降-momentum"><a href="#梯度下降-momentum" class="headerlink" title="梯度下降+momentum"></a>梯度下降+momentum</h2><ul>
+<li>簡單來說，就是加入慣性，額外參考上一次的移動軌跡</li>
+</ul>
+<p><img src="/../images/20220706_8.png" alt="upload successful"></p>
+<ul>
+<li>多了一個hyper parameter $\lambda$<br><img src="/../images/20220706_9.png" alt="upload successful"></li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://laxiflora.github.io/2022/07/04/ML-2022-2-1-%E5%86%8D%E6%8E%A2%E5%AF%B6%E5%8F%AF%E5%A4%A2%E3%80%81%E6%95%B8%E7%A2%BC%E5%AF%B6%E8%B2%9D%E5%88%86%E9%A1%9E%E5%99%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="劉宇承">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="laxiflora的小天地">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | laxiflora的小天地">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2022/07/04/ML-2022-2-1-%E5%86%8D%E6%8E%A2%E5%AF%B6%E5%8F%AF%E5%A4%A2%E3%80%81%E6%95%B8%E7%A2%BC%E5%AF%B6%E8%B2%9D%E5%88%86%E9%A1%9E%E5%99%A8/" class="post-title-link" itemprop="url">ML_2022_2-1 再探寶可夢、數碼寶貝分類器</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2022-07-04 22:24:04" itemprop="dateCreated datePublished" datetime="2022-07-04T22:24:04+08:00">2022-07-04</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新於</span>
+      <time title="修改時間：2022-08-08 20:10:07" itemprop="dateModified" datetime="2022-08-08T20:10:07+08:00">2022-08-08</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -762,7 +985,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新於</span>
-      <time title="修改時間：2022-08-15 02:02:39" itemprop="dateModified" datetime="2022-08-15T02:02:39+08:00">2022-08-15</time>
+      <time title="修改時間：2022-08-17 19:31:50" itemprop="dateModified" datetime="2022-08-17T19:31:50+08:00">2022-08-17</time>
     </span>
 
   
@@ -1071,6 +1294,21 @@
 </blockquote>
 <hr>
 <h2 id="Ch11：Adaptation"><a href="#Ch11：Adaptation" class="headerlink" title="Ch11：Adaptation"></a>Ch11：Adaptation</h2><p>[11-1]<a href="/2022/08/15/ML-2021-11-1-%E6%A6%82%E8%BF%B0%E9%A0%98%E5%9F%9F%E8%87%AA%E9%81%A9%E6%87%89/">概述領域自適應</a></p>
+<ul>
+<li>概述何為Domain shift</li>
+<li>Domain adaptation名詞解釋</li>
+<li>根據condition的不同(target,source差距、手握的data量)，簡單講解domain adaptation的各種approach<ul>
+<li>本課著重在target domain unlabeled data很多的前提</li>
+</ul>
+</li>
+<li>提供各種condition的參考文獻（列入關鍵字）<blockquote>
+<p>關鍵字：<br>source&#x2F;target domain、Domain Adversarial training、Feature Extractor、Domain Classifier、Label Predictor、Universal domain adaptation、Testing time training、Domain Generalization</p>
+</blockquote>
+</li>
+</ul>
+<hr>
+<h2 id="CH12：Reinforcement-Learning"><a href="#CH12：Reinforcement-Learning" class="headerlink" title="CH12：Reinforcement Learning"></a>CH12：Reinforcement Learning</h2><p>[12-1]<a href="/2022/08/17/ML-2021-12-1-%E5%A2%9E%E5%BC%B7%E5%BC%8F%E5%AD%B8%E7%BF%92%E8%B7%9F%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E4%B8%80%E6%A8%A3%E9%83%BD%E6%98%AF%E4%B8%89%E5%80%8B%E6%AD%A5%E9%A9%9F/">概述增強式學習(一) – 增強式學習跟機器學習一樣都是三個步驟</a></p>
+<hr>
 <h1 id="2022年正課筆記"><a href="#2022年正課筆記" class="headerlink" title="2022年正課筆記"></a>2022年正課筆記</h1><p>[1-1]<a href="/2022/07/04/ML-2022-1-1-%E6%AD%A3%E8%AA%B2%E5%85%A7%E5%AE%B9%E4%BB%8B%E7%B4%B9/">正課內容介紹</a></p>
 <ul>
 <li>介紹各講的重點核心</li>
@@ -1511,116 +1749,8 @@
 
 
 
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://laxiflora.github.io/2022/06/21/%E5%A6%82%E4%BD%95%E7%94%A8hexo%E5%9C%A8github%20page%E4%B8%8A%E9%83%A8%E7%BD%B2%E5%B1%AC%E6%96%BC%E8%87%AA%E5%B7%B1%E7%9A%84%E7%AC%AC%E4%B8%80%E5%80%8B%E7%B6%B2%E7%AB%99/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="劉宇承">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="laxiflora的小天地">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | laxiflora的小天地">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/06/21/%E5%A6%82%E4%BD%95%E7%94%A8hexo%E5%9C%A8github%20page%E4%B8%8A%E9%83%A8%E7%BD%B2%E5%B1%AC%E6%96%BC%E8%87%AA%E5%B7%B1%E7%9A%84%E7%AC%AC%E4%B8%80%E5%80%8B%E7%B6%B2%E7%AB%99/" class="post-title-link" itemprop="url">如何用hexo在github page上部署屬於自己的第一個網站</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">發表於</span>
-
-      <time title="創建時間：2022-06-21 17:45:00" itemprop="dateCreated datePublished" datetime="2022-06-21T17:45:00+08:00">2022-06-21</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新於</span>
-      <time title="修改時間：2022-08-08 20:10:07" itemprop="dateModified" datetime="2022-08-08T20:10:07+08:00">2022-08-08</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="起頭"><a href="#起頭" class="headerlink" title="起頭"></a>起頭</h1><p>部落格開張的第一篇文章，就決定以部署hexo產生的靜態網頁到github上來開頭了！</p>
-<h1 id="前置需求"><a href="#前置需求" class="headerlink" title="前置需求"></a>前置需求</h1><ul>
-<li>常用的文字編輯器(我是用visual studio code)</li>
-<li><a target="_blank" rel="noopener" href="https://nodejs.org/en/">node.js</a><br><br><br><br><tab>安裝完之後，就可以開啟終端機來安裝hexo了~</li>
-</ul>
-<h1 id="hexo的環境建置"><a href="#hexo的環境建置" class="headerlink" title="hexo的環境建置"></a>hexo的環境建置</h1><h2 id="Step1-安裝hexo"><a href="#Step1-安裝hexo" class="headerlink" title="Step1. 安裝hexo"></a>Step1. 安裝hexo</h2><ul>
-<li>打開終端機以後，輸入以下指令安裝hexo<br></li>
-</ul>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo-cli -g</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>安裝完以後，可以在終端機輸入’hexo -v’，確定一下hexo是否成功安裝並顯示版本。</li>
-</ul>
-<h2 id="Step2-初始化一個Hexo資料夾"><a href="#Step2-初始化一個Hexo資料夾" class="headerlink" title="Step2. 初始化一個Hexo資料夾"></a>Step2. 初始化一個Hexo資料夾</h2><p> 輸入以下指令<br> <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo init &lt;資料夾名稱&gt;</span><br></pre></td></tr></table></figure><br> 則hexo會幫你產生一個資料夾，這個資料夾內就是你的blog根目錄了<br></p>
-<h2 id="Step3-在資料夾安裝必要檔案"><a href="#Step3-在資料夾安裝必要檔案" class="headerlink" title="Step3. 在資料夾安裝必要檔案"></a>Step3. 在資料夾安裝必要檔案</h2><ul>
-<li>目前的資料夾內部還沒有東西，首先先把終端機的目錄切換到剛剛產生的資料夾，接著執行以下指令來安裝所需要的套件:<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install</span><br></pre></td></tr></table></figure>
-至此基本的hexo網頁架構就完成了！你的blog資料夾應該會長得像這樣：<br></li>
-</ul>
-<p><img src="/../images/20220621_1.png"><br><br>之後要針對網頁內容的修改都會到<em>source&#x2F;_posts</em>裡面更改<br></p>
-<h2 id="Step4-建立一個新的網誌"><a href="#Step4-建立一個新的網誌" class="headerlink" title="Step4. 建立一個新的網誌"></a>Step4. 建立一個新的網誌</h2><ul>
-<li>如果想要建立一個新的空白網誌，在終端機輸入<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo new post &quot;你的網誌標題&quot;</span><br></pre></td></tr></table></figure>
-hexo就會幫你建立一個新的網誌，並且會在 <em>source&#x2F;_posts</em> 新增一個md檔，md檔使用markdown語法來撰寫，因此建議對markdown有些基本認識<a target="_blank" rel="noopener" href="https://hackmd.io/@eMP9zQQ0Qt6I8Uqp2Vqy6w/SyiOheL5N/%2FBVqowKshRH246Q7UDyodFA?type=book">[點我來去看新手教學]</a>。在md檔裡面撰寫的內容會直接更新到網頁上<br><br><br></li>
-<li>如果想要測試你的網站的實際模樣，可以輸入<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo server</span><br></pre></td></tr></table></figure>
-或是<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo s</span><br></pre></td></tr></table></figure>
-來讓hexo把網頁部署到localhost，根據終端機顯示的ip用瀏覽器打開就會看到你剛剛的成果囉~<br><br>至此基本的hexo網頁就完成了!<br></li>
-</ul>
-<h1 id="將hexo產生的網頁部署到github-pages"><a href="#將hexo產生的網頁部署到github-pages" class="headerlink" title="將hexo產生的網頁部署到github pages"></a>將hexo產生的網頁部署到github pages</h1><p>先假定大家都已經有一個github帳號了，首先到github先開一個新的Repository，我們會將網頁內容上傳到這裡<br><img src="/../images/20220621_2.png"><br></p>
-<p>接下來回到文字編輯器，打開_config.yml檔案，找到deploy子項，將repo改成你剛剛的repository連結</p>
-<p><img src="/../images/20220621_3.png"><br><br>完成後到終端機輸入</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">hexo cl  //清空hexo的快取，避免有些內容沒有更新到</span><br><span class="line">hexo g //在部署網站前先產生好靜態檔案</span><br><span class="line">hexo d //deploy，把檔案上傳到你設定的deploy目的地，本篇教學是送到git</span><br></pre></td></tr></table></figure>
-<p>或也可以直接輸入</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hexo cl</span><br><span class="line">hexo g -d</span><br></pre></td></tr></table></figure>
-<p>這樣就完成網站部署了，在瀏覽器中輸入<code>https://username.github.io/</code>就可以實際看到你部署好的網頁囉~</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/3/"><i class="fa fa-angle-left" aria-label="上一頁"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span>
+    <a class="extend prev" rel="prev" href="/page/3/"><i class="fa fa-angle-left" aria-label="上一頁"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/5/"><i class="fa fa-angle-right" aria-label="下一頁"></i></a>
   </nav>
 
 </div>

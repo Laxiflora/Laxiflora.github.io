@@ -125,7 +125,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">39</span>
+          <span class="site-state-item-count">41</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
@@ -160,6 +160,296 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://laxiflora.github.io/2022/07/23/ML-2021-5-2-Transformer%EF%BC%88%E4%B8%8A%EF%BC%89/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="劉宇承">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="laxiflora的小天地">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | laxiflora的小天地">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2022/07/23/ML-2021-5-2-Transformer%EF%BC%88%E4%B8%8A%EF%BC%89/" class="post-title-link" itemprop="url">ML_2021_5-2 Transformer（上）</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2022-07-23 20:40:26" itemprop="dateCreated datePublished" datetime="2022-07-23T20:40:26+08:00">2022-07-23</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新於</span>
+      <time title="修改時間：2022-08-08 20:10:07" itemprop="dateModified" datetime="2022-08-08T20:10:07+08:00">2022-08-08</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <ul>
+<li>Transformer與BERT之間關係密切</li>
+<li>Transformer是一種seq2seq的model</li>
+</ul>
+<h1 id="seq2seq簡介"><a href="#seq2seq簡介" class="headerlink" title="seq2seq簡介"></a>seq2seq簡介</h1><ul>
+<li>由模型來決定輸出要多長</li>
+<li>語音辨識、機器翻譯、speech translation就是應用(Hw4做的是分類模型)</li>
+<li>speech translation不一定是speech recognition + machine translation，因為很多語言其實並沒有文字，或不普及(ex.台語:母湯?不行?)</li>
+<li>其實有機會直接輸入台語的聲音資料，直接輸出中文(省略再翻譯的過程)</li>
+</ul>
+<h1 id="seq2seq應用"><a href="#seq2seq應用" class="headerlink" title="seq2seq應用"></a>seq2seq應用</h1><h2 id="台語範例"><a href="#台語範例" class="headerlink" title="台語範例"></a>台語範例</h2><ul>
+<li>直接台語轉中文不是沒有可能</li>
+<li>但是對於倒裝(文法)上的不同會有問題</li>
+</ul>
+<h2 id="Text-to-speech-TTS-synthesis"><a href="#Text-to-speech-TTS-synthesis" class="headerlink" title="Text-to-speech(TTS) synthesis"></a>Text-to-speech(TTS) synthesis</h2><ul>
+<li>相反的，也有可能輸入中文然後合成出台語的聲音訊號作為輸出(範例是分為兩步驟，先把中文翻譯為台語羅馬拼音，之後再把他轉成聲音)<br><img src="/../images/20220724_7.png"></li>
+</ul>
+<h2 id="seq2seq-for-chatbot"><a href="#seq2seq-for-chatbot" class="headerlink" title="seq2seq for chatbot"></a>seq2seq for chatbot</h2><ul>
+<li>Seq2seq也可以用在聊天機器人，輸入是一段文字，輸出則是response<ul>
+<li>學習大量的日常對話(來自影集、連續劇等)</li>
+</ul>
+</li>
+</ul>
+<h2 id="seq2seq-in-NLP"><a href="#seq2seq-in-NLP" class="headerlink" title="seq2seq in NLP"></a>seq2seq in NLP</h2><ul>
+<li>大多數的NLP應用，都可以想成是QA問題，而QA的問題，又可以透過seq2seq model來解決</li>
+<li>不過對於NLP的任務，通常還是會針對任務特性做一個客製化的模型，seq2seq就像是瑞士刀一樣，對大多問題都可用，但不是最佳模型<ul>
+<li>相關模型有另外一個課程: <a target="_blank" rel="noopener" href="https://speech.ee.ntu.edu.tw/~hylee/dlhlp/2020-spring.html"><br>DEEP LEARNING FOR HUMAN LANGUAGE PROCESSING 2020 SPRING</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="seq2seq-in-others"><a href="#seq2seq-in-others" class="headerlink" title="seq2seq in others"></a>seq2seq in others</h2><ul>
+<li>seq2seq也可以在一些輸出看似不像是seq的問題套用</li>
+</ul>
+<h3 id="syntactic-parsing"><a href="#syntactic-parsing" class="headerlink" title="syntactic parsing"></a>syntactic parsing</h3><pre><code>- ex. 文法解析(syntactic parsing)  
+</code></pre>
+<p><img src="/../images/pasted-25.png"><br>    - 把一個樹狀的結構用括號硬解成一個sequence，<a target="_blank" rel="noopener" href="https://arxiv.org/ab/1412.7449">參考</a></p>
+<h3 id="multi-label-classification"><a href="#multi-label-classification" class="headerlink" title="multi-label classification"></a>multi-label classification</h3><ul>
+<li>不同於multi-class，multi-label可以屬於多個class(同時屬於好幾類)</li>
+<li>每個data對應的label個數可能不同，不能直接用分類模型輸出前n名</li>
+<li>硬做seq2seq，輸出sequence就是class</li>
+</ul>
+<h3 id="object-detection"><a href="#object-detection" class="headerlink" title="object detection"></a>object detection</h3><pre><code>- 物件偵測也可以用seq2seq硬做  
+</code></pre>
+<p><img src="/../images/20220724_9.png"><br>    - <a target="_blank" rel="noopener" href="https://arxiv.org/abs/2005.12872">參考連結:End-to-End Object Detection with Transformers</a>
+    </p>
+<h1 id="Seq2seq結構"><a href="#Seq2seq結構" class="headerlink" title="Seq2seq結構"></a>Seq2seq結構</h1><ul>
+<li>避免見樹不見林，先看seq2seq的完整模型架構</li>
+<li>主要分為encoder跟decoder兩大區塊</li>
+<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1409.3215">起源來自: Sequence to Sequence Learning with Neural Networks(2014)</a></li>
+<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1706.03762">現今形狀(transformer): Attention Is All You Need(2017)</a> (下圖)<br><img src="/../images/20220724_10.png"></li>
+<li>Add &amp; Norm &#x3D; residual +layer norm</li>
+<li>圈起來的地方是一個block，此圖範例只有1 block</li>
+</ul>
+<h2 id="encoder"><a href="#encoder" class="headerlink" title="encoder"></a>encoder</h2><ul>
+<li>給定一排向量(input)，輸出一樣長度的向量</li>
+<li>transformer中block用的技巧就是self-attention，好幾個block就是作好幾次self-attention<br><img src="/../images/20220724_11.png" alt="upload successful"></li>
+<li>self-attention詳細的執行過程請參考CH4<ul>
+<li>避免見樹不見林，這裡解釋一下encoder步驟，下方再分開講解每個區塊在幹嘛。encoder就是先把輸入轉成vectors(input embedding)，做完positional encoding以後，連續做好幾個block</li>
+<li>每一個block做:self-attention -&gt; residual connection -&gt; layer norm -&gt; FC</li>
+</ul>
+</li>
+</ul>
+<h3 id="Residual-connection"><a href="#Residual-connection" class="headerlink" title="Residual connection"></a>Residual connection</h3><ul>
+<li>原因暫且不討論，不過這種架構在DL被廣泛應用</li>
+<li>做完self-attention之後在輸入到下一個block之前，需要進行一次的residual connection，就是把self-attention的輸出再加上自己原本的輸入<br><img src="/../images/20220724_12.png"></li>
+</ul>
+<h3 id="Layer-norm"><a href="#Layer-norm" class="headerlink" title="Layer norm"></a>Layer norm</h3><ul>
+<li>原始transformer做完residual以後做<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1607.06450">layer norm</a>，把單一feature的每個dimantion計算標準化</li>
+</ul>
+<blockquote>
+<p>❗️ 與Batch norm的差別：<br>batch norm是把batch內不同筆data的同一個dimantion做標準化(橫向)；<br>而layer norm則是把同一筆data內不同dimantion做標準化(豎向)</p>
+</blockquote>
+<h3 id="Fully-connected-layer"><a href="#Fully-connected-layer" class="headerlink" title="Fully connected layer"></a>Fully connected layer</h3><ul>
+<li>上述做完以後，輸出丟入FC訓練，然後『再做一次residual network以及norm』以後，輸出的結果，是一個block的計算</li>
+</ul>
+<h2 id="其他形狀的encoder"><a href="#其他形狀的encoder" class="headerlink" title="其他形狀的encoder"></a>其他形狀的encoder</h2><ul>
+<li><p>BERT其實就是transformer的encoder</p>
+</li>
+<li><p>encoder的network架構是按照原始論文設計</p>
+<ul>
+<li>還有其他encoder設計<br>    - <a target="_blank" rel="noopener" href="https://arxiv.org/abs/2002.04745">參考1</a>、<a target="_blank" rel="noopener" href="https://arxiv.org/abs/2003.07845">為何Batch norm不如layer norm?</a></li>
+</ul>
+</li>
+<li><p>下章節介紹decoder</p>
+</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://laxiflora.github.io/2022/07/23/ML-LEE-2022-hw4/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="劉宇承">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="laxiflora的小天地">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | laxiflora的小天地">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2022/07/23/ML-LEE-2022-hw4/" class="post-title-link" itemprop="url">ML_LEE_2022_hw4</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2022-07-23 01:12:30" itemprop="dateCreated datePublished" datetime="2022-07-23T01:12:30+08:00">2022-07-23</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新於</span>
+      <time title="修改時間：2022-08-08 20:10:07" itemprop="dateModified" datetime="2022-08-08T20:10:07+08:00">2022-08-08</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p><a target="_blank" rel="noopener" href="https://www.kaggle.com/c/ml2022spring-hw4">作業題目</a></p>
+<h1 id="可進行的目標"><a href="#可進行的目標" class="headerlink" title="可進行的目標"></a>可進行的目標</h1><p><img src="/../images/20220723_2.png"></p>
+<ul>
+<li>Medium : 0.70375 (train 1~1.5 hr)</li>
+<li>Strong : 0.77750 (train 3~4 hr)</li>
+<li>Boss : 0.86500 (train 2~2.5 hr )</li>
+</ul>
+<h2 id="調整transformer參數與pred-layer模型"><a href="#調整transformer參數與pred-layer模型" class="headerlink" title="調整transformer參數與pred_layer模型"></a>調整transformer參數與pred_layer模型</h2><ul>
+<li>包括降低multi-head數量、feedforward dropout rate等等</li>
+<li>降低pred-layer的linear connect layer層數 （這個問題複雜度不高，線性聯階層不用到兩層）</li>
+</ul>
+<h2 id="實作conformer"><a href="#實作conformer" class="headerlink" title="實作conformer"></a>實作conformer</h2><ul>
+<li>把原本的 <code>self.encoder_layer</code>改掉，套用conformer模型</li>
+<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2005.08100">conformer來源</a></li>
+<li>記得修改Classifier的forward</li>
+</ul>
+<h2 id="更動transformer-x2F-comformer-encode層數"><a href="#更動transformer-x2F-comformer-encode層數" class="headerlink" title="更動transformer&#x2F;comformer encode層數"></a>更動transformer&#x2F;comformer encode層數</h2><ul>
+<li>原本只有一層(就是<code>self.encoder_layer</code>)，可以改成呼叫<code>self.encoder</code>並修改Classifier的forward</li>
+</ul>
+<hr>
+<h1 id="寫作業歷程"><a href="#寫作業歷程" class="headerlink" title="寫作業歷程"></a>寫作業歷程</h1><h2 id="2022-x2F-7-x2F-22"><a href="#2022-x2F-7-x2F-22" class="headerlink" title="2022&#x2F;7&#x2F;22"></a>2022&#x2F;7&#x2F;22</h2><p>這次作業transformer（self-attention）在NLP與語音辨識領域運用廣泛，是我想要好好學好的章節，不過這次作業給我挫敗感很大…<br>這份作業寫一整天，白天的時候在查<a target="_blank" rel="noopener" href="https://arxiv.org/abs/2005.08100">comformer的paper</a>，但是因為對於transformer的觀念也不甚熟悉，所以照著李宏毅老師給的reference查到了<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/263031249">這篇paper（中文心得版）</a>，在大略的瞭解了transformer家族以後，最後回去看了一下<a target="_blank" rel="noopener" href="https://medium.com/ching-i/transformer-attention-is-all-you-need-c7967f38af14">別人看「Attention is all you need」的心得</a>，對照上課的筆記這才更有了概念</p>
+<p>到了晚上終於要開始著手改code，首先在<a target="_blank" rel="noopener" href="https://pytorch.org/audio/stable/_modules/torchaudio/models/conformer.html#Conformer">torchaudio document</a>查到了他支援的conformer model API，開始套用以後才開始發現他的問題：看似簡單的forward修改其實困難重重！</p>
+<p>首先是最基礎的問題，因為是pytorch菜雞，我甚至連forward的意涵是什麼都不知道，後來查到原來他是__call__會呼叫的函數，通常進行一個step（單位為一batch）的計算，而這份code在訓練時會呼叫model_fn</p>
+<p>model_fn用意在於<br>    - 先做mels與labels的分類<br>    - 把資料放到GPU上<br>    - 呼叫<code>model.forward()</code>以及計算loss<br>    - 最後進行predict以後算出該step之acc</p>
+<p>搞懂了forward以後，開始著手修改forward內部的code使他貼合conformer，但因為這樣所以我也必須去查torchaudio.models.Conformer這個class裡面的forward會怎麼運作（巢狀模型），查到的資料如下：<br><img src="/../images/20220722_1.png"><br>註解寫到lengths with shape(B,)，因此我很直觀的直接打了</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># out: (batch size, length, d_model)</span><br><span class="line">self.encoder(out,(out[0],) ) </span><br></pre></td></tr></table></figure>
+<p>這麼做跳了一個錯誤：他抓不到<code>out[0]</code>的shape，我這才發現他要的是torch.Tensor type，於是我改成</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">self.encoder(out, torch.tensor(out[0],) )</span><br></pre></td></tr></table></figure>
+<p>仔細研究torch.tensor用法以後終於可以正確地塞tensor進去，但是我卻鬼打牆的一直卡在lengths這個參數的shape不對，從錯誤碼發現跟ket_padding_mask有關，幾經波折以後看到<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/353365423">這篇</a>才發現他要吃的參數是(batch size,sequence length)，最後修正成了這樣</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">out = self.encoder(out,torch.tensor([out[0],out[1]]))</span><br></pre></td></tr></table></figure>
+<p>卻碰到了新的錯誤碼：<br><img src="/../images/20220722_2.png"><br>留待明天處理…</p>
+<hr>
+<h2 id="2022-x2F-7-x2F-23"><a href="#2022-x2F-7-x2F-23" class="headerlink" title="2022&#x2F;7&#x2F;23"></a>2022&#x2F;7&#x2F;23</h2><p>果然是昨天腦袋昏到不好思考，把out.size(0)跟out[0].size()搞混，雖說後來修正了，但還是套不進去。對於tensor dim的掌握力太差了…<br><img src="/../images/20220723_1.png"></p>
+<p>後來改用<a target="_blank" rel="noopener" href="https://github.com/lucidrains/conformer">這個conformer</a>來實作，多了很多我不知道幹嘛用的參數，而且看似不能增加layer數orz…，先求能跑吧，感覺達不到strong base line了，參數如下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">self.encoder_layer = ConformerBlock(</span><br><span class="line">    dim = d_model,</span><br><span class="line">    dim_head = 64,</span><br><span class="line">    heads = 2,</span><br><span class="line">    ff_mult = 4,</span><br><span class="line">    conv_expansion_factor = 2,</span><br><span class="line">    conv_kernel_size = 31,</span><br><span class="line">    attn_dropout = 0.,</span><br><span class="line">    ff_dropout = 0.,</span><br><span class="line">    conv_dropout = 0.</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<p>要注意的是他的forward吃的參數是<code>(length, batch size, d_model)</code>，所以permute那行註解要拿掉，這方面沒有統一真的很煩人，最後Classifier forward code如下:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">def forward(self, mels):</span><br><span class="line">	&quot;&quot;&quot;</span><br><span class="line">	args:</span><br><span class="line">		mels: (batch size, length, 40)</span><br><span class="line">	return:</span><br><span class="line">		out: (batch size, n_spks)</span><br><span class="line">	&quot;&quot;&quot;</span><br><span class="line">	# out: (batch size, length, d_model)</span><br><span class="line">	out = self.prenet(mels)</span><br><span class="line">	# out: (length, batch size, d_model)</span><br><span class="line">	out = out.permute(1, 0, 2)</span><br><span class="line">	# The encoder layer expect features in the shape of (length, batch size, d_model).</span><br><span class="line"> #out = self.encoder_layer(out)</span><br><span class="line">  # Do 2 conformer layer</span><br><span class="line">#	out = self.encoder_layer(out)</span><br><span class="line">	out = self.encoder_layer(out)</span><br><span class="line">	# out: (batch size, length, d_model)</span><br><span class="line">	out = out.transpose(0, 1)</span><br><span class="line">	# mean pooling</span><br><span class="line">	stats = out.mean(dim=1)</span><br><span class="line"></span><br><span class="line">	# out: (batch, n_spks)</span><br><span class="line">	out = self.pred_layer(stats)</span><br><span class="line">	return out</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>中間有個<code>out = self.encoder_layer(out)</code>被註解了，我原本是想說既然參數不能設定layer數，那就讓他跑兩次也可以是兩輪，不過我想太美了，因為GPU多線程的關係，讓整個tqdm的log大暴走，正確性也打個問號，搞不好會碰到race condition…，因為這是這個模型設計者沒設計到的部分(或是我菜到沒發現QQ)，所以最後決定讓他就單層去跑</p>
+<hr>
+<h1 id="作業結果"><a href="#作業結果" class="headerlink" title="作業結果"></a>作業結果</h1><p>Train了70000 step (大約1 hr)，跟strong差一點點，但acc還在上升，感覺是練不夠久<br><img src="/../images/20220723_4.png"><br>補了以下的code讓他繼續撿剛剛的模型train</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">if exists(&quot;./model.ckpt&quot;):</span><br><span class="line">	model.load_state_dict(torch.load(&quot;./model.ckpt&quot;))</span><br><span class="line">	print(&quot;Exist model detected, continue training...&quot;)</span><br><span class="line">       if model.training() == False:</span><br><span class="line">		model.train()</span><br></pre></td></tr></table></figure>
+<p>得到命中率&#x3D;79%<br><img src="/../images/20220723_7.png"></p>
+<p>但提交的時候卻出了大問題，測試的結果非常差<br><img src="/../images/20220723_5.png"><br>有查到一篇心得(下圖)也是成績暴跌，推測測試集跟訓練集的分布差很多(不過那篇作者是碰到切割長度的問題，這我沒有改不該有影響才對)，這份作業做到這吧，沒力氣修正了orz，再修也會淪為調參之流，感覺學不到甚麼。<br>結論姑且下在data mismatch，不過模型參數與notebook我會保留在github，將來靈光乍現的時候再來看看</p>
+<p><img src="/../images/20220723_6.png"></p>
+<h1 id="Report"><a href="#Report" class="headerlink" title="Report"></a>Report</h1><p><img src="/../images/pasted-23.png"></p>
+<ol>
+<li><p>因為卡住所以我有多看幾個varient</p>
+<ul>
+<li>linformer : 藉由attention matrix在做sorftmax轉化以後非行滿秩的特性，降低attention matrix的維度，使得transformer的複雜度可以降到線姓<br>    - Sparse Attention (FP&#x2F;LP) : 因為傳統transformer的複雜度過高，所以藉由讓self-attention關注的範圍由全局變成局部性，降低計算時間。FP(fixed patterns)是固定self-attention窗口大小，LP則是把它的大小變成一個可學習的參數</li>
+</ul>
+</li>
+<li><p>因為transformer雖然可以考慮sequence的全局性，但對於自己的重視程度較為有限，而CNN則可以對局部性的特徵著重關注，兩者混合起來可以達到互補提高準確性的效果。</p>
+</li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1460,231 +1750,8 @@
 
 
 
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://laxiflora.github.io/2022/07/05/ML-2021-2-3-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%BA%8C/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="劉宇承">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="laxiflora的小天地">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | laxiflora的小天地">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/07/05/ML-2021-2-3-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%BA%8C/" class="post-title-link" itemprop="url">ML_2021_2-3 類神經網路訓練不起來怎麼辦(二)</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">發表於</span>
-
-      <time title="創建時間：2022-07-05 21:59:49" itemprop="dateCreated datePublished" datetime="2022-07-05T21:59:49+08:00">2022-07-05</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新於</span>
-      <time title="修改時間：2022-08-08 20:10:07" itemprop="dateModified" datetime="2022-08-08T20:10:07+08:00">2022-08-08</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><ul>
-<li>之前課程(Ref. 2021版1-1)說到，在實際train data時我們不是實際把所有Data算出來對L微分求loss，而是把Data先分組切成batch，而所有batch看過一遍，才叫1 epoch</li>
-<li>我們可以設定shuffle，就是每個不同的epoch，data都會重新分組</li>
-</ul>
-<h1 id="Batch-size對模型之影響"><a href="#Batch-size對模型之影響" class="headerlink" title="Batch size對模型之影響"></a>Batch size對模型之影響</h1><ul>
-<li>首先比較兩個case：<br><img src="/../images/20220705_2.png"></li>
-<li>左邊沒有用batch，而右邊batch size &#x3D; 1</li>
-<li>左邊表示每次必須看完所有data，參數才能更新一次；右邊則相反，每看完一個data就更新一次參數</li>
-<li>一個是重攻擊長CD，一個是輕攻擊短CD (?)</li>
-</ul>
-<h2 id="大batch優缺"><a href="#大batch優缺" class="headerlink" title="大batch優缺"></a>大batch優缺</h2><h5 id="優點"><a href="#優點" class="headerlink" title="優點"></a>優點</h5><ul>
-<li>威力大(更新幅度大)且每步都很穩</li>
-</ul>
-<h5 id="缺點"><a href="#缺點" class="headerlink" title="缺點"></a>缺點</h5><ul>
-<li>超級慢<br>(小batch優缺則顛倒)</li>
-</ul>
-<h2 id="small-batch-or-big-batch"><a href="#small-batch-or-big-batch" class="headerlink" title="small batch or big batch?"></a>small batch or big batch?</h2><ul>
-<li>兩邊看似各自相對，但我們還沒考慮平行運算</li>
-<li>若考慮多核心，其實大batch不會比較慢</li>
-<li>以下圖為例，用tesla V100 GPU，batch size到1000都很合適(梯度法)<br><img src="/../images/20220705_1.png"></li>
-<li>因為高batch不一定更花時間，所以其實在平行運算下，大batch的每epoch速度甚至還比小epoch還快</li>
-<li>不過，就算是平行運算下，大batch一定比較好嗎?<ul>
-<li>與直覺相反的是，noisy大有時候反而可以促進訓練能力(如下圖)</li>
-</ul>
-</li>
-</ul>
-<p><img src="/../images/20220705_3.png" alt="upload successful"></p>
-<ul>
-<li>相同model(同bias)下，smaller batch size有更高的performance</li>
-<li>問題來源於optimizer fails(Ref. 2021版2-2關於如何判定問題是哪種)</li>
-</ul>
-<h2 id="為何small-batch-size可以有更好的結果？"><a href="#為何small-batch-size可以有更好的結果？" class="headerlink" title="為何small batch size可以有更好的結果？"></a>為何small batch size可以有更好的結果？</h2><ul>
-<li>一說是Noisy update is better for training<br>見下圖</li>
-</ul>
-<p><img src="/../images/pasted-1.png"><br>small batch下，或許$L^1$卡住了，但是因為$L^2$跟$L^1$有不小的差距，所以剛好可以讓參數更新然後把參數撞開critical point</p>
-<h3 id="small-batch-still-better-for-testing-data"><a href="#small-batch-still-better-for-testing-data" class="headerlink" title="small batch still better for testing data?"></a>small batch still better for testing data?</h3><ul>
-<li>我們知道了small batch在training set表現更好，那testing data是否也是如此呢?</li>
-<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1609.04836">根據這篇論文</a>，可以知道small batch在測試資料也有好表現</li>
-</ul>
-<p><img src="/../images/20220705_4.png" alt="upload successful"></p>
-<ul>
-<li>就算能把big batch model的準確率練到跟small batch model差不多(調hyper parameter)，在測試時也會有差距顯現 $\rightarrow$ big batch有overfitting問題<br>目前普遍認為的原因如下：<ul>
-<li>就算是卡在local minima，也有分好壞</li>
-<li>周圍平坦的local minima較好</li>
-<li>而論文認為大batch size傾向會讓我們走向尖銳的minima point<ul>
-<li>一種說法是，小batch size更動頻繁走向豐富，容易走出周圍很高的minima point(對於逃離critical point能力較高)，而停在平坦的minima point (Ref. 2021版2-2 鞍點)</li>
-</ul>
-<p>	</p>
-</li>
-<li>因為testing 跟 training的loss function，肯定會有所小偏差，如下圖<br><img src="/../images/20220705_6.png" alt="upload successful"></li>
-</ul>
-</li>
-</ul>
-<h2 id="Summary：Batch-comparasion"><a href="#Summary：Batch-comparasion" class="headerlink" title="Summary：Batch comparasion"></a>Summary：Batch comparasion</h2><p><img src="/../images/20220705_7.png" alt="upload successful"></p>
-<ul>
-<li>因此，batch size最終成為了一個hyper parameter</li>
-</ul>
-<h2 id="魚與熊掌兼得的辦法"><a href="#魚與熊掌兼得的辦法" class="headerlink" title="魚與熊掌兼得的辦法?"></a>魚與熊掌兼得的辦法?</h2><ul>
-<li>看ref啃論文  &#x3D; &#x3D;</li>
-</ul>
-<hr>
-<h1 id="另一個對抗saddle-point或minima的技術-momentum"><a href="#另一個對抗saddle-point或minima的技術-momentum" class="headerlink" title="另一個對抗saddle point或minima的技術 : momentum"></a>另一個對抗saddle point或minima的技術 : momentum</h1><ul>
-<li>當small gradient的時候，我們走到一個鞍點或局部最小點之後就會停下來</li>
-<li>但我們可以用物理式來思考，球由高處滾下來到最低點碰到上坡，不一定會停下來，因為有動能</li>
-</ul>
-<h2 id="Review-原本的梯度下降"><a href="#Review-原本的梯度下降" class="headerlink" title="Review : 原本的梯度下降"></a>Review : 原本的梯度下降</h2><p><img src="/../images/pasted-2.png"></p>
-<h2 id="梯度下降-momentum"><a href="#梯度下降-momentum" class="headerlink" title="梯度下降+momentum"></a>梯度下降+momentum</h2><ul>
-<li>簡單來說，就是加入慣性，額外參考上一次的移動軌跡</li>
-</ul>
-<p><img src="/../images/20220706_8.png" alt="upload successful"></p>
-<ul>
-<li>多了一個hyper parameter $\lambda$<br><img src="/../images/20220706_9.png" alt="upload successful"></li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://laxiflora.github.io/2022/07/04/ML-2022-2-1-%E5%86%8D%E6%8E%A2%E5%AF%B6%E5%8F%AF%E5%A4%A2%E3%80%81%E6%95%B8%E7%A2%BC%E5%AF%B6%E8%B2%9D%E5%88%86%E9%A1%9E%E5%99%A8/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="劉宇承">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="laxiflora的小天地">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | laxiflora的小天地">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/07/04/ML-2022-2-1-%E5%86%8D%E6%8E%A2%E5%AF%B6%E5%8F%AF%E5%A4%A2%E3%80%81%E6%95%B8%E7%A2%BC%E5%AF%B6%E8%B2%9D%E5%88%86%E9%A1%9E%E5%99%A8/" class="post-title-link" itemprop="url">ML_2022_2-1 再探寶可夢、數碼寶貝分類器</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">發表於</span>
-
-      <time title="創建時間：2022-07-04 22:24:04" itemprop="dateCreated datePublished" datetime="2022-07-04T22:24:04+08:00">2022-07-04</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新於</span>
-      <time title="修改時間：2022-08-08 20:10:07" itemprop="dateModified" datetime="2022-08-08T20:10:07+08:00">2022-08-08</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/2/"><i class="fa fa-angle-left" aria-label="上一頁"></i></a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/4/"><i class="fa fa-angle-right" aria-label="下一頁"></i></a>
+    <a class="extend prev" rel="prev" href="/page/2/"><i class="fa fa-angle-left" aria-label="上一頁"></i></a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/4/"><i class="fa fa-angle-right" aria-label="下一頁"></i></a>
   </nav>
 
 </div>

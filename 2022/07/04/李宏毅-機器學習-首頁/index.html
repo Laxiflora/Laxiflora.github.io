@@ -29,7 +29,7 @@
 <meta property="og:description" content="機器學習總編首頁台大李弘毅老師的課  課程影片： 2021預習影片  2022正課影片 課程網頁  2021年預習筆記Ch 1：Introduction of Deep Learning[1-1]監督式學習概論  介紹甚麼是機器學習，以及機器學習的任務 以預測李宏毅老師的頻道觀看人數為例，介紹監督式學習的運作流程 關鍵字：Linear model、Piecewise Linear Curve、si">
 <meta property="og:locale" content="zh_TW">
 <meta property="article:published_time" content="2022-07-04T14:13:53.000Z">
-<meta property="article:modified_time" content="2022-08-14T18:02:39.989Z">
+<meta property="article:modified_time" content="2022-08-17T11:31:50.534Z">
 <meta property="article:author" content="劉宇承">
 <meta property="article:tag" content="機器學習">
 <meta property="article:tag" content="李宏毅系列">
@@ -119,7 +119,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E7%B8%BD%E7%B7%A8%E9%A6%96%E9%A0%81"><span class="nav-number">1.</span> <span class="nav-text">機器學習總編首頁</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2021%E5%B9%B4%E9%A0%90%E7%BF%92%E7%AD%86%E8%A8%98"><span class="nav-number">2.</span> <span class="nav-text">2021年預習筆記</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Ch-1%EF%BC%9AIntroduction-of-Deep-Learning"><span class="nav-number">2.1.</span> <span class="nav-text">Ch 1：Introduction of Deep Learning</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Ch-2%EF%BC%9AWhat-to-do-if-my-network-fails-to-train"><span class="nav-number">2.2.</span> <span class="nav-text">Ch 2：What to do if my network fails to train</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Ch3-image-as-input"><span class="nav-number">2.3.</span> <span class="nav-text">Ch3 : image as input</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Ch4%EF%BC%9ASequence-as-input"><span class="nav-number">2.4.</span> <span class="nav-text">Ch4：Sequence as input</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Ch5%EF%BC%9ASequence-2-Sequence"><span class="nav-number">2.5.</span> <span class="nav-text">Ch5：Sequence 2 Sequence</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Ch6%EF%BC%9AGeneration-Generative-Adversarial-Network-GAN"><span class="nav-number">2.6.</span> <span class="nav-text">Ch6：Generation  (Generative Adversarial Network, GAN)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Ch-6-5-%EF%BC%9ARecent-Advance-of-Self-supervised-learning-for-NLP"><span class="nav-number">2.7.</span> <span class="nav-text">Ch 6.5 ：Recent Advance of Self-supervised learning for NLP</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Ch8%EF%BC%9AAuto-encoder-x2F-Anomaly-Detection"><span class="nav-number">2.8.</span> <span class="nav-text">Ch8：Auto-encoder&#x2F; Anomaly Detection</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Ch9%EF%BC%9AExplainable-AI"><span class="nav-number">2.9.</span> <span class="nav-text">Ch9：Explainable AI</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Ch10%EF%BC%9AAdversarial-Attack"><span class="nav-number">2.10.</span> <span class="nav-text">Ch10：Adversarial Attack</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Ch11%EF%BC%9AAdaptation"><span class="nav-number">2.11.</span> <span class="nav-text">Ch11：Adaptation</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2022%E5%B9%B4%E6%AD%A3%E8%AA%B2%E7%AD%86%E8%A8%98"><span class="nav-number">3.</span> <span class="nav-text">2022年正課筆記</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BD%9C%E6%A5%AD%E5%8D%80-%E6%9C%89%E5%AF%AB%E7%9A%84%E9%83%A8%E5%88%86orz"><span class="nav-number">4.</span> <span class="nav-text">作業區(有寫的部分orz)</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E7%B8%BD%E7%B7%A8%E9%A6%96%E9%A0%81"><span class="nav-number">1.</span> <span class="nav-text">機器學習總編首頁</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2021%E5%B9%B4%E9%A0%90%E7%BF%92%E7%AD%86%E8%A8%98"><span class="nav-number">2.</span> <span class="nav-text">2021年預習筆記</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Ch-1%EF%BC%9AIntroduction-of-Deep-Learning"><span class="nav-number">2.1.</span> <span class="nav-text">Ch 1：Introduction of Deep Learning</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Ch-2%EF%BC%9AWhat-to-do-if-my-network-fails-to-train"><span class="nav-number">2.2.</span> <span class="nav-text">Ch 2：What to do if my network fails to train</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Ch3-image-as-input"><span class="nav-number">2.3.</span> <span class="nav-text">Ch3 : image as input</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Ch4%EF%BC%9ASequence-as-input"><span class="nav-number">2.4.</span> <span class="nav-text">Ch4：Sequence as input</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Ch5%EF%BC%9ASequence-2-Sequence"><span class="nav-number">2.5.</span> <span class="nav-text">Ch5：Sequence 2 Sequence</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Ch6%EF%BC%9AGeneration-Generative-Adversarial-Network-GAN"><span class="nav-number">2.6.</span> <span class="nav-text">Ch6：Generation  (Generative Adversarial Network, GAN)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Ch-6-5-%EF%BC%9ARecent-Advance-of-Self-supervised-learning-for-NLP"><span class="nav-number">2.7.</span> <span class="nav-text">Ch 6.5 ：Recent Advance of Self-supervised learning for NLP</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Ch8%EF%BC%9AAuto-encoder-x2F-Anomaly-Detection"><span class="nav-number">2.8.</span> <span class="nav-text">Ch8：Auto-encoder&#x2F; Anomaly Detection</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Ch9%EF%BC%9AExplainable-AI"><span class="nav-number">2.9.</span> <span class="nav-text">Ch9：Explainable AI</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Ch10%EF%BC%9AAdversarial-Attack"><span class="nav-number">2.10.</span> <span class="nav-text">Ch10：Adversarial Attack</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Ch11%EF%BC%9AAdaptation"><span class="nav-number">2.11.</span> <span class="nav-text">Ch11：Adaptation</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CH12%EF%BC%9AReinforcement-Learning"><span class="nav-number">2.12.</span> <span class="nav-text">CH12：Reinforcement Learning</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2022%E5%B9%B4%E6%AD%A3%E8%AA%B2%E7%AD%86%E8%A8%98"><span class="nav-number">3.</span> <span class="nav-text">2022年正課筆記</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BD%9C%E6%A5%AD%E5%8D%80-%E6%9C%89%E5%AF%AB%E7%9A%84%E9%83%A8%E5%88%86orz"><span class="nav-number">4.</span> <span class="nav-text">作業區(有寫的部分orz)</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -132,7 +132,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">39</span>
+          <span class="site-state-item-count">41</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
@@ -213,7 +213,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新於</span>
-      <time title="修改時間：2022-08-15 02:02:39" itemprop="dateModified" datetime="2022-08-15T02:02:39+08:00">2022-08-15</time>
+      <time title="修改時間：2022-08-17 19:31:50" itemprop="dateModified" datetime="2022-08-17T19:31:50+08:00">2022-08-17</time>
     </span>
 
   
@@ -522,6 +522,21 @@
 </blockquote>
 <hr>
 <h2 id="Ch11：Adaptation"><a href="#Ch11：Adaptation" class="headerlink" title="Ch11：Adaptation"></a>Ch11：Adaptation</h2><p>[11-1]<a href="/2022/08/15/ML-2021-11-1-%E6%A6%82%E8%BF%B0%E9%A0%98%E5%9F%9F%E8%87%AA%E9%81%A9%E6%87%89/">概述領域自適應</a></p>
+<ul>
+<li>概述何為Domain shift</li>
+<li>Domain adaptation名詞解釋</li>
+<li>根據condition的不同(target,source差距、手握的data量)，簡單講解domain adaptation的各種approach<ul>
+<li>本課著重在target domain unlabeled data很多的前提</li>
+</ul>
+</li>
+<li>提供各種condition的參考文獻（列入關鍵字）<blockquote>
+<p>關鍵字：<br>source&#x2F;target domain、Domain Adversarial training、Feature Extractor、Domain Classifier、Label Predictor、Universal domain adaptation、Testing time training、Domain Generalization</p>
+</blockquote>
+</li>
+</ul>
+<hr>
+<h2 id="CH12：Reinforcement-Learning"><a href="#CH12：Reinforcement-Learning" class="headerlink" title="CH12：Reinforcement Learning"></a>CH12：Reinforcement Learning</h2><p>[12-1]<a href="/2022/08/17/ML-2021-12-1-%E5%A2%9E%E5%BC%B7%E5%BC%8F%E5%AD%B8%E7%BF%92%E8%B7%9F%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E4%B8%80%E6%A8%A3%E9%83%BD%E6%98%AF%E4%B8%89%E5%80%8B%E6%AD%A5%E9%A9%9F/">概述增強式學習(一) – 增強式學習跟機器學習一樣都是三個步驟</a></p>
+<hr>
 <h1 id="2022年正課筆記"><a href="#2022年正課筆記" class="headerlink" title="2022年正課筆記"></a>2022年正課筆記</h1><p>[1-1]<a href="/2022/07/04/ML-2022-1-1-%E6%AD%A3%E8%AA%B2%E5%85%A7%E5%AE%B9%E4%BB%8B%E7%B4%B9/">正課內容介紹</a></p>
 <ul>
 <li>介紹各講的重點核心</li>
