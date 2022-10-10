@@ -29,7 +29,7 @@
 <meta property="og:description" content="參考資料: stackoverflow 用std::string做strtok由於C++的string type並不支援strtok的功能，所以如果想要將C++的string做切段，有以下幾種方法: 法1: 用istringstream使用stringstream類別，使用方法就像C++風格的iostream一樣，只是這個stream不是stdin&#x2F;stdout，也不是fstream，而">
 <meta property="og:locale" content="zh_TW">
 <meta property="article:published_time" content="2022-10-09T09:16:11.000Z">
-<meta property="article:modified_time" content="2022-10-09T09:28:40.153Z">
+<meta property="article:modified_time" content="2022-10-09T09:36:08.281Z">
 <meta property="article:author" content="劉宇承">
 <meta property="article:tag" content="C++">
 <meta name="twitter:card" content="summary">
@@ -118,7 +118,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%94%A8std-string%E5%81%9Astrtok"><span class="nav-number">1.</span> <span class="nav-text">用std::string做strtok</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B3%951-%E7%94%A8istringstream"><span class="nav-number">1.1.</span> <span class="nav-text">法1: 用istringstream</span></a></li></ol></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%94%A8std-string%E5%81%9Astrtok"><span class="nav-number">1.</span> <span class="nav-text">用std::string做strtok</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B3%951-%E7%94%A8istringstream"><span class="nav-number">1.1.</span> <span class="nav-text">法1: 用istringstream</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B3%952-%E5%85%88%E6%8A%8Astring%E8%BD%89%E6%88%90char-%E4%BB%A5%E5%BE%8C%E5%86%8D%E5%88%87%E5%89%B2"><span class="nav-number">1.2.</span> <span class="nav-text">法2: 先把string轉成char*以後再切割</span></a></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -131,7 +131,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">41</span>
+          <span class="site-state-item-count">42</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
@@ -206,7 +206,7 @@
       <span class="post-meta-item-text">發表於</span>
       
 
-      <time title="創建時間：2022-10-09 17:16:11 / 修改時間：17:28:40" itemprop="dateCreated datePublished" datetime="2022-10-09T17:16:11+08:00">2022-10-09</time>
+      <time title="創建時間：2022-10-09 17:16:11 / 修改時間：17:36:08" itemprop="dateCreated datePublished" datetime="2022-10-09T17:16:11+08:00">2022-10-09</time>
     </span>
 
   
@@ -223,11 +223,12 @@
 <h1 id="用std-string做strtok"><a href="#用std-string做strtok" class="headerlink" title="用std::string做strtok"></a>用std::string做strtok</h1><p>由於C++的string type並不支援strtok的功能，所以如果想要將C++的string做切段，有以下幾種方法:</p>
 <h2 id="法1-用istringstream"><a href="#法1-用istringstream" class="headerlink" title="法1: 用istringstream"></a>法1: 用istringstream</h2><p>使用<a target="_blank" rel="noopener" href="https://cplusplus.com/reference/sstream/istringstream/istringstream/">stringstream類別</a>，使用方法就像C++風格的iostream一樣，只是這個stream不是stdin&#x2F;stdout，也不是fstream，而是將string的內容倒入一個stream (因此不具有fd–待查證)。</p>
 <p>將要切割的字串倒入stream以後，再用getline中的Delimiter參數做為切割標準即可<br>參考程式碼片段如下:</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">vector&lt;string&gt; <span class="title">split</span><span class="params">(<span class="type">const</span> string&amp; s, <span class="type">char</span> delimiter)</span></span>&#123;</span><br><span class="line">   vector&lt;string&gt; tokens;</span><br><span class="line">   string token;</span><br><span class="line">   <span class="function">istringstream <span class="title">tokenStream</span><span class="params">(s)</span></span>;</span><br><span class="line">   <span class="keyword">while</span> (<span class="built_in">getline</span>(tokenStream, token, delimiter))</span><br><span class="line">   &#123;</span><br><span class="line">      tokens.<span class="built_in">push_back</span>(token);</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="keyword">return</span> tokens;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">vector&lt;string&gt; <span class="title">split</span><span class="params">(<span class="type">const</span> string&amp; s, <span class="type">char</span> delimiter)</span></span>&#123;</span><br><span class="line">   vector&lt;string&gt; tokens;</span><br><span class="line">   string token;</span><br><span class="line">   <span class="function">istringstream <span class="title">tokenStream</span><span class="params">(s)</span></span>;</span><br><span class="line">   <span class="keyword">while</span> (<span class="built_in">getline</span>(tokenStream, token, delimiter))&#123;</span><br><span class="line">      tokens.<span class="built_in">push_back</span>(token);</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="keyword">return</span> tokens;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// tokens vector裝的是切割完的string</span></span><br></pre></td></tr></table></figure>
 
 
-
-
+<h2 id="法2-先把string轉成char-以後再切割"><a href="#法2-先把string轉成char-以後再切割" class="headerlink" title="法2: 先把string轉成char*以後再切割"></a>法2: 先把string轉成char*以後再切割</h2><p><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/289347/using-strtok-with-a-stdstring">參考資料</a><br>如果要將string轉換成char*，可以透過<code>string.c_str()</code>函數</p>
+<p>這個方法其實不太推薦，他是把C++風格棄掉，強制使用strtok來處理字串<br>參考程式碼片段如下:</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//given string str as a string needed to slice</span></span><br><span class="line"><span class="type">char</span> *dup = <span class="built_in">strdup</span>(str.<span class="built_in">c_str</span>());</span><br><span class="line">token = <span class="built_in">strtok</span>(dup, <span class="string">&quot; &quot;</span>);</span><br><span class="line"><span class="built_in">free</span>(dup);</span><br></pre></td></tr></table></figure>
     </div>
 
     
@@ -248,6 +249,9 @@
                 </a>
             </div>
             <div class="post-nav-item">
+                <a href="/2022/10/10/C-pipe%E8%88%87buffer-overflow/" rel="next" title="C++ pipe與buffer overflow">
+                  C++ pipe與buffer overflow <i class="fa fa-chevron-right"></i>
+                </a>
             </div>
           </div>
     </footer>

@@ -125,7 +125,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">41</span>
+          <span class="site-state-item-count">42</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
@@ -160,6 +160,245 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://laxiflora.github.io/2022/07/24/ML-2021-5-3-Transformer%EF%BC%88%E4%B8%8B%EF%BC%89/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="劉宇承">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="laxiflora的小天地">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | laxiflora的小天地">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2022/07/24/ML-2021-5-3-Transformer%EF%BC%88%E4%B8%8B%EF%BC%89/" class="post-title-link" itemprop="url">ML_2021_5-3 Transformer（下）</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2022-07-24 22:54:31" itemprop="dateCreated datePublished" datetime="2022-07-24T22:54:31+08:00">2022-07-24</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新於</span>
+      <time title="修改時間：2022-08-08 20:10:07" itemprop="dateModified" datetime="2022-08-08T20:10:07+08:00">2022-08-08</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <ul>
+<li>接續5-2，講論文的transformer中的decoder區塊</li>
+<li>Decoder有兩種<ul>
+<li>autoregressive(AT)</li>
+<li>non-autoregressive(NAT)</li>
+</ul>
+</li>
+<li>這堂課主講AT</li>
+</ul>
+<h1 id="Transformer：Decoder的運作-語音辨識為範例"><a href="#Transformer：Decoder的運作-語音辨識為範例" class="headerlink" title="Transformer：Decoder的運作 (語音辨識為範例)"></a>Transformer：Decoder的運作 (語音辨識為範例)</h1><ul>
+<li><p>輸入一段聲音，輸出一段文字</p>
+</li>
+<li><p>encoder收到聲音訊號(seq)以後，輸出一排vector(seq)</p>
+</li>
+<li><p>Decoder用於產生語音辨識的結果<br><img src="/../images/20220726_1.png"></p>
+</li>
+<li><p>輸出會是一個向量(one-hot vector)，他的長度就是整個語料庫的大小</p>
+<ul>
+<li>中文通常就是一個字為單位，英文有可能以詞為單位，也可能以字根字首為單位(subwords)</li>
+</ul>
+</li>
+<li><p>第一步驟的時候，decoder會輸入一個token(BEGIN)，一種特殊符號</p>
+</li>
+<li><p>接下來第二及之後的步驟，會把前面步驟輸出的字母丟入decoder作為輸入<br><img src="/../images/20220726_2.png"></p>
+<ul>
+<li>這樣的問題就是，如果前面辨識產生的結果是錯的，那後面的輸出也會受到錯誤的結果影響 (error propagation)</li>
+</ul>
+</li>
+</ul>
+<h1 id="Transformer：Decoder結構"><a href="#Transformer：Decoder結構" class="headerlink" title="Transformer：Decoder結構"></a>Transformer：Decoder結構</h1><ul>
+<li>暫且忽略來自encoder的輸入</li>
+</ul>
+<p><img src="/../images/20220726_3.png" alt="upload successful"></p>
+<ul>
+<li>撇除圈起來的地方不看，可以發現decoder跟encoder的差別沒有很大</li>
+</ul>
+<h2 id="masked-self-attention"><a href="#masked-self-attention" class="headerlink" title="masked self-attention"></a>masked self-attention</h2><ul>
+<li>注意到decoder第一格有一個”masked multi-head attention”</li>
+<li>相對於原始的self-attention，decoder只能參考前面的vector，不能參考之後的<br><img src="/../images/20220726_4.png"></li>
+<li>因為token是一個一個產生，不能考慮右邊</li>
+</ul>
+<h2 id="Determine-output-length"><a href="#Determine-output-length" class="headerlink" title="Determine output length"></a>Determine output length</h2><ul>
+<li>目前的decoder運作機制，不知道甚麼時候該停下來 (無限自動選字的概念)</li>
+<li>需要有一個「斷」的token，塞在輸出的vector class內<br><img src="/../images/20220726_5.png"></li>
+</ul>
+<h2 id="Non-autoregressive-NAT"><a href="#Non-autoregressive-NAT" class="headerlink" title="Non-autoregressive(NAT)"></a>Non-autoregressive(NAT)</h2><p><img src="/../images/20220726_6.png" alt="upload successful"></p>
+<ul>
+<li>AT會把上一個字輸出出來，才產生下一個字元</li>
+<li>NAT則是一次給好幾個START token，一次性產生整個sequence</li>
+</ul>
+<h3 id="Determine-NAT-output-length"><a href="#Determine-NAT-output-length" class="headerlink" title="Determine NAT output length"></a>Determine NAT output length</h3><ul>
+<li>如何知道NAT decoder的長度哩?<ul>
+<li>另外做一個pridictor去預測NAT該輸出的長度</li>
+<li>假設一個句子的長度上限，看哪段輸出了END，就把字串砍到那個位置</li>
+</ul>
+</li>
+</ul>
+<h3 id="NAT優點"><a href="#NAT優點" class="headerlink" title="NAT優點"></a>NAT優點</h3><ul>
+<li>相對於AT更平行化</li>
+<li>可控的輸出長度(可以不用被動等到有END)<ul>
+<li>可以發現AT是有點RNN、LSTM的思維</li>
+<li>NAT是熱門的研究主題</li>
+</ul>
+</li>
+<li>目前NAT的performance還是比較差<ul>
+<li>原因:<a target="_blank" rel="noopener" href="https://youtu.be/jvyKmU4OM3c">multi-modality</a></li>
+</ul>
+</li>
+</ul>
+<h1 id="Transformer：Encoder-Decoder"><a href="#Transformer：Encoder-Decoder" class="headerlink" title="Transformer：Encoder-Decoder"></a>Transformer：Encoder-Decoder</h1><ul>
+<li>現在焦點放到剛剛圖中圈起來的地方，這裡是encoder與decoder交會的地方(cross attention)</li>
+</ul>
+<p>圖示如下:<br><img src="/../images/20220726_7.png"></p>
+<ul>
+<li><p>做法很像一層self-attention在做的事情，只是q來自於decoder，而k,v來自於encoder</p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://ieeexplore.ieee.org/document/7472621">cross attention的相關論文</a></p>
+<ul>
+<li>這個方法不是來自transformer<br>    - 是先有cross才有self</li>
+</ul>
+</li>
+<li><p>在原始論文內，decoder每一層cross attention都會拿encoder最後一層的輸出當輸入</p>
+<ul>
+<li>當然也有其他種連接方式，<a target="_blank" rel="noopener" href="https://arxov.org/abs/2005.08081">參考</a></li>
+</ul>
+</li>
+</ul>
+<hr>
+<p> 以上是模型訓練好以後，模型怎麼去跑，接下來來談seq2seq類模型在training中碰到的小問題</p>
+<h1 id="Seq2Seq：Training"><a href="#Seq2Seq：Training" class="headerlink" title="Seq2Seq：Training"></a>Seq2Seq：Training</h1><h2 id="Teacher-forcing"><a href="#Teacher-forcing" class="headerlink" title="Teacher forcing"></a>Teacher forcing</h2><p>下圖為Transformer的最終訓練展示圖<br><img src="/../images/pasted-31.png"></p>
+<ul>
+<li>每一次預測一個單位字，就是做一次的分類問題</li>
+<li>每一個字視為一個分類問題，所以要minimize 這些所有預測+BEGIN、END各自的cross entropy</li>
+<li>在訓練的時候會給decoder看ground truth<ul>
+<li>這樣做法叫做Teacher forcing</li>
+</ul>
+</li>
+</ul>
+<h2 id="Copy-mechanism"><a href="#Copy-mechanism" class="headerlink" title="Copy mechanism"></a>Copy mechanism</h2><ul>
+<li>很多任務不一定要decoder產生東西，而是從輸入中複製東西出來<ul>
+<li>Ex. User: 你好，我是庫洛洛<br>    	Machine: 庫洛洛你好，很高興認識你<br>    - 機器不需要知道庫洛洛是誰，只要判別出人名複製就好</li>
+</ul>
+</li>
+<li>機器聽不懂的話，也可以直接copy user input來再次詢問user是甚麼意思</li>
+<li>應用: 閱讀文章的摘要</li>
+<li>Pointer Network、Copy network</li>
+</ul>
+<h2 id="Guided-Attention"><a href="#Guided-Attention" class="headerlink" title="Guided Attention"></a>Guided Attention</h2><ul>
+<li>TTS as example(語音合成)</li>
+<li>看到過短的句子可能沒念完整，但讓她念好幾次卻發音成功<ul>
+<li>嘗試強迫機器把所有看到的東西都看一遍 -&gt; guided attention</li>
+</ul>
+</li>
+<li>在輸出嚴格的任務中頗好用(語音合成、辨識)<br><img src="/../images/pasted-27.png"></li>
+<li>如果機器的觀看順序顛三倒四，表示這種attention可能會出問題</li>
+<li>Guided attention就是強迫機器的attention有規範(ex.由左向右)</li>
+<li>相關參考：Monotonic attention、Location-aware attention</li>
+</ul>
+<h2 id="Beam-search"><a href="#Beam-search" class="headerlink" title="Beam search"></a>Beam search</h2><p><img src="/../images/pasted-30.png"></p>
+<ul>
+<li><p>假設這個decoder只可能產生兩個token，要輸出一段sequence，前面都是直接輸出該輪概率最高的token，稱為「Greedy decoding」</p>
+</li>
+<li><p>但有沒有可能前面選擇非最佳的token，反倒導致後續的decode命中率更集中呢</p>
+</li>
+<li><p>Beam search找一個非最佳也不用爆搜的作法</p>
+</li>
+<li><p>關於這個演算法，有兩方論戰：<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1904.09751">The curious case of neural test degeneration</a></p>
+<ul>
+<li>Randomness is needed for decoder when generating seq in some tasks (ex.TTS)</li>
+</ul>
+</li>
+<li><p>老師認為在針對答案較為單一的任務，Beam search會表現比較好；而如果需要機器的想像力(空間大)的任務，則建議需要一些隨機性(故意加一些noise)</p>
+</li>
+<li><p>TTS任務中，需要在測試集加入雜訊</p>
+<ul>
+<li>true beauty lies in the crackks of imperfection</li>
+</ul>
+</li>
+</ul>
+<h2 id="Optimizing-evalyation-metrics"><a href="#Optimizing-evalyation-metrics" class="headerlink" title="Optimizing evalyation metrics?"></a>Optimizing evalyation metrics?</h2><ul>
+<li>作業用BLEU Score作為判斷依據<ul>
+<li>Decoder產生輸出以後，跟正確的句子做比較</li>
+</ul>
+</li>
+<li>但訓練的時候資料分開計算，只能用cross entropy。這兩者之間未必正相關</li>
+<li>不一定要挑decoder cross entropy效果最好的那個模型<ul>
+<li>可否在training用BLEU score?<br>    	- 不容易，BLEU本身很複雜，不易微分<br>        - 當遇到opti無法解決的問題，就用RL(強化學習)硬train一發<ul>
+<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1511.06732">REF</a> (HARD)</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="Exposure-bias"><a href="#Exposure-bias" class="headerlink" title="Exposure bias"></a>Exposure bias</h2><p><img src="/../images/20220727_2.png"></p>
+<ul>
+<li><p>因為decoder在train的時候，前面的vector是看著ground truth在做，所以不會有「一步錯，步步錯的問題」</p>
+</li>
+<li><p>但當然在測試時不可能這麼做</p>
+</li>
+<li><p>可以故意在training裡面加入錯的ground truth來讓模型習慣前面有錯誤輸出的應對方式 -&gt; <a target="_blank" rel="noopener" href="https://arxiv.org/abs/1506.03099">Scheduled Sampling</a></p>
+</li>
+<li><p>在transformer中會有所變化，<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1906.07651">參考</a></p>
+</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1547,189 +1786,6 @@
 <li><p>這是一個透過改變loss function來改變整個error surface的例子</p>
 </li>
 <li><p>loss function的定義是有可能影響訓練難度的</p>
-</li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://laxiflora.github.io/2022/07/06/ML-2021-2-4-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%B8%89/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="劉宇承">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="laxiflora的小天地">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | laxiflora的小天地">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/07/06/ML-2021-2-4-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%B8%89/" class="post-title-link" itemprop="url">ML_2021_2-4 類神經網路訓練不起來怎麼辦(三)</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">發表於</span>
-
-      <time title="創建時間：2022-07-06 14:04:41" itemprop="dateCreated datePublished" datetime="2022-07-06T14:04:41+08:00">2022-07-06</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新於</span>
-      <time title="修改時間：2022-08-08 20:10:07" itemprop="dateModified" datetime="2022-08-08T20:10:07+08:00">2022-08-08</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <ul>
-<li>Critical point 不一定是在訓練模型時會碰到的最大問題</li>
-</ul>
-<h1 id="Adaptive-Learning-Rate"><a href="#Adaptive-Learning-Rate" class="headerlink" title="Adaptive Learning Rate"></a>Adaptive Learning Rate</h1><ul>
-<li>我們都認為training loss卡住了之後，是因為parameters卡在critical point</li>
-<li>其實有可能是loss function在兩個谷間碰撞，可能是兩組parameters之間剛好loss差不多</li>
-<li>考慮一個情境，高爾夫球一直在球洞兩邊滾來滾去，就是滾不到終點<br><img src="/../images/pasted-3.png"></li>
-<li>多數training其實還沒走到critical point就已經停止 (所以真正要注意的點不是critical point)</li>
-</ul>
-<h2 id="非卡在critical-point的Example"><a href="#非卡在critical-point的Example" class="headerlink" title="非卡在critical point的Example"></a>非卡在critical point的Example</h2><ul>
-<li><p>給定一個convex error surface，如下圖<br><img src="/../images/20220706_2.png" alt="upload successful"></p>
-</li>
-<li><p>當learning rate太大，會容易在等高線密集的地方邁步過大，如下圖<br><img src="/../images/20220706_3.png" alt="upload successful"></p>
-</li>
-<li><p>或是當learning rate太小，容易卡在低谷幾乎動不了(要挪到X需要好幾百萬次更新)，如下圖<br><img src="/../images/image.png" alt="upload successful"></p>
-</li>
-</ul>
-<p>$\rightarrow$ 單一learning rate通常不能貫徹模型訓練的整個過程</p>
-<h2 id="如何設定learning-rate-Adagrad-Approach"><a href="#如何設定learning-rate-Adagrad-Approach" class="headerlink" title="如何設定learning rate? - Adagrad Approach"></a>如何設定learning rate? - Adagrad Approach</h2><ul>
-<li><p>從上個例子可知，當某方向上等高線密集時，我們需要learning rate 小，反之則要大</p>
-</li>
-<li><p>為了讓$\eta$能自動變動，要調整公式</p>
-</li>
-<li><p>下圖為梯度下降法的原始公式<br><img src="/../images/20220706_4.png" alt="upload successful"></p>
-</li>
-<li><p>方便起見，這裡只用一個參數</p>
-</li>
-<li><p>更動以後的算式如下</p>
-</li>
-</ul>
-<p>$$<br>\theta^{t+1}_i \leftarrow \theta^t_i - \frac{\eta}{\sigma^t_i} g^t_i<br>$$</p>
-<ul>
-<li>我們讓$\sigma^t_i$加入等式，這樣就可以讓learning rate變成一個parameter dependent的hyper parameter</li>
-</ul>
-<h3 id="如何計算sigma"><a href="#如何計算sigma" class="headerlink" title="如何計算sigma?"></a>如何計算sigma?</h3><p>$$<br>\theta^{1}_i \leftarrow \theta^0_i - \frac{\eta}{\sigma^0_i} g^0_i<br>$$<br>其中$\sigma^0_i &#x3D; \sqrt{(g^0_i)^2} &#x3D; \vert g^0_i \vert$<br>接下來<br>$$<br>\theta^{2}_i \leftarrow \theta^1_i - \frac{\eta}{\sigma^0_i} g^1_i<br>$$<br>其中$\sigma^1_i &#x3D; \sqrt{\frac{1}{2}[(g^0_i)^2+(g^1_i)^2]}$</p>
-<p>…<br>一路推廣，可以得到</p>
-<p>$$<br>\theta^{t+1}_i \leftarrow \theta^t_i - \frac{\eta}{\sigma^t_i} g^t_i<br>$$</p>
-<p>其中</p>
-<p>$$<br>\sigma^t_i &#x3D; \sqrt{\frac{1}{t+1}\sum_{j&#x3D;0}^{t}(g_i^j)^2}<br>$$</p>
-<ul>
-<li>目前這個技巧應用在Adagrad</li>
-</ul>
-<h3 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h3><ul>
-<li>當gradient小(平坦)，算出來的$\sigma$就小，learning rate大</li>
-<li>當gradient大(陡峭)，算出來的$\sigma$就大，learning rate小<br><img src="/../images/pasted-4.png"></li>
-</ul>
-<h3 id="這樣會有甚麼問題"><a href="#這樣會有甚麼問題" class="headerlink" title="這樣會有甚麼問題"></a>這樣會有甚麼問題</h3><ul>
-<li>剛才的假設是同一個參數，他的gradient大小就固定一個值(?)</li>
-<li>就算是同一個參數，他需要的learning rate也會隨時間而改變</li>
-<li>我們期待就算是同一個參數在同一個方向，learning rate也會有所改變<br>舉例，我們討論橫軸</li>
-</ul>
-<p><img src="/../images/20220706_5.png" alt="upload successful"></p>
-<hr>
-<h2 id="如何設定learning-rate-RMSProp-Approach"><a href="#如何設定learning-rate-RMSProp-Approach" class="headerlink" title="如何設定learning rate? - RMSProp Approach"></a>如何設定learning rate? - RMSProp Approach</h2><ul>
-<li>一個沒有論文的方法orz</li>
-<li>方法如下圖<br><img src="/../images/pasted-5.png"></li>
-<li>主要改變了紅圈圈起來的部分，捨棄了用前面所有的gradient求MSE決定$\sigma$的方法，RMSProp只採計上一個$\sigma$值以及這次的gradient之MSE和</li>
-<li>多了一個hyper parameter $alpha$，調整對上一個$\sigma$的學習率高低</li>
-<li>其實上一個$\sigma$就包含了前面所有的gradient之MSE，只是權重會隨著疊代越來越小</li>
-</ul>
-<p>learning rate變動範例圖<br><img src="/../images/20220706_7.png"></p>
-<h2 id="回到一開始的範例"><a href="#回到一開始的範例" class="headerlink" title="回到一開始的範例"></a>回到一開始的範例</h2><ul>
-<li>[回到這個範例](# 非卡在critical point的Example)，我們來看看各approach的效果</li>
-</ul>
-<h4 id="Adaptive-learning-rate"><a href="#Adaptive-learning-rate" class="headerlink" title="Adaptive learning rate"></a>Adaptive learning rate</h4><p><img src="/../images/pasted-6.png" alt="filename already exists, renamed"></p>
-<ul>
-<li>為啥爆炸了?<ul>
-<li>根據公式，我們把前面幾次的gradient都列入計算，因為在橫線的部分步伐很大，所以當走到步伐該縮小的時候，會爆衝<br>    - 但也因為公式，爆衝一陣子以後learning rate會逐漸縮小，然後回歸正軌，等待一陣子以後learning rate上升再度爆炸</li>
-</ul>
-</li>
-</ul>
-<h5 id="解法：learning-rate-decay"><a href="#解法：learning-rate-decay" class="headerlink" title="解法：learning rate decay"></a>解法：learning rate decay</h5><ul>
-<li>隨著訓練的進行，我們一定越來越接近終點</li>
-<li>可以隨著時間降低learning rate，開始微調</li>
-</ul>
-<h5 id="解法2：Warm-up"><a href="#解法2：Warm-up" class="headerlink" title="解法2：Warm up"></a>解法2：Warm up</h5><p><img src="/../images/20220706_10.png"></p>
-<ul>
-<li>算是一種黑科技</li>
-<li>先變大learning rate，再縮小(?)</li>
-<li>在訓練bert的時候常常用到，但他在很久以前就出現在<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1512.03385">論文</a>過了</li>
-<li>在transformer中也出現過，見下圖<br><img src="/../images/20220706_11.png"></li>
-<li>一種可能的解釋是，因為$\sigma$是統計的數據，在訓練初期的時候容易失準，故初期讓learning rate小，等到$\sigma$精準一點以後，再讓learning rate變高</li>
-<li>相關paper : <a target="_blank" rel="noopener" href="https://arxiv.org/abs/1908.03265">RAdam</a></li>
-</ul>
-<h2 id="Summary-of-Optimization"><a href="#Summary-of-Optimization" class="headerlink" title="Summary of Optimization"></a>Summary of Optimization</h2><p><img src="/../images/20220706_12.png"></p>
-<ul>
-<li>雖然Momentum跟$\sigma$都使用過去的資料，但不會因此抵銷<ul>
-<li>Momentum是把所有gradient加起來，故有考慮方向與正負號</li>
-<li>$\sigma$只考慮MSE</li>
-</ul>
-</li>
-</ul>
-<h2 id="下次預告"><a href="#下次預告" class="headerlink" title="下次預告"></a>下次預告</h2><ul>
-<li>當訓練過程遭遇大山，要如何闢路繞過去？</li>
-<li>有沒有可能直接炸掉大山，改變error surface呢?<br>$\rightarrow$ Batch normalization<br>PS. 課程跳到2-6哦</li>
-</ul>
-<hr>
-<h1 id="Note"><a href="#Note" class="headerlink" title="Note"></a>Note</h1><ul>
-<li><p>現今最常見的Optimizer:Adam其實就是RMSProp + Momentum</p>
-</li>
-<li><p>Adam的細節自行參考</p>
-</li>
-<li><p>arxiv論文年代看法</p>
-<ul>
-<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1512.03385%E7%82%BA%E4%BE%8B">https://arxiv.org/abs/1512.03385為例</a><br>    - 15代表2015年出版<br>    - 12代表12月</li>
-</ul>
 </li>
 </ul>
 

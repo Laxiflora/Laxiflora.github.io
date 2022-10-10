@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css" integrity="sha256-xejo6yLi6vGtAjcMIsY8BHdKsLg7QynVlFMzdQgUuy8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"laxiflora.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":true,"version":"8.12.3","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="本篇主要講述C++中pipe()函數的相關行為 因為pipe的buffer大小並非無限大，如果輸入流資料量過大，很有可能會碰到buffer塞滿而輸入還沒結束的問題寫了以下的code來測試pipe buffer如果塞爆了會發生甚麼事情 實驗123456789101112131415161718192021222324252627282930313233343536373839404142434445">
+<meta property="og:type" content="article">
+<meta property="og:title" content="C++ pipe與buffer overflow">
+<meta property="og:url" content="https://laxiflora.github.io/2022/10/10/C-pipe%E8%88%87buffer-overflow/index.html">
+<meta property="og:site_name" content="laxiflora的小天地">
+<meta property="og:description" content="本篇主要講述C++中pipe()函數的相關行為 因為pipe的buffer大小並非無限大，如果輸入流資料量過大，很有可能會碰到buffer塞滿而輸入還沒結束的問題寫了以下的code來測試pipe buffer如果塞爆了會發生甚麼事情 實驗123456789101112131415161718192021222324252627282930313233343536373839404142434445">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://laxiflora.github.io/images/20221010_2.png">
+<meta property="og:image" content="https://laxiflora.github.io/images/20221010_1.png">
+<meta property="article:published_time" content="2022-10-10T15:28:56.000Z">
+<meta property="article:modified_time" content="2022-10-10T15:50:22.444Z">
+<meta property="article:author" content="劉宇承">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://laxiflora.github.io/images/20221010_2.png">
+
+
+<link rel="canonical" href="https://laxiflora.github.io/2022/10/10/C-pipe%E8%88%87buffer-overflow/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://laxiflora.github.io/2022/10/10/C-pipe%E8%88%87buffer-overflow/","path":"2022/10/10/C-pipe與buffer-overflow/","title":"C++ pipe與buffer overflow"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>C++ pipe與buffer overflow | laxiflora的小天地</title>
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">laxiflora的小天地</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">前進軟體工程師的練功之路</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>標籤</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AF%A6%E9%A9%97"><span class="nav-number">1.</span> <span class="nav-text">實驗</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Pipe%E7%89%B9%E6%80%A7"><span class="nav-number">2.</span> <span class="nav-text">Pipe特性</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">劉宇承</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">42</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">標籤</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://laxiflora.github.io/2022/10/10/C-pipe%E8%88%87buffer-overflow/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="劉宇承">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="laxiflora的小天地">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="C++ pipe與buffer overflow | laxiflora的小天地">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          C++ pipe與buffer overflow
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+      
+
+      <time title="創建時間：2022-10-10 23:28:56 / 修改時間：23:50:22" itemprop="dateCreated datePublished" datetime="2022-10-10T23:28:56+08:00">2022-10-10</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>本篇主要講述C++中<code>pipe()</code>函數的相關行為</p>
+<p>因為pipe的buffer大小並非無限大，如果輸入流資料量過大，很有可能會碰到buffer塞滿而輸入還沒結束的問題<br>寫了以下的code來測試pipe buffer如果塞爆了會發生甚麼事情</p>
+<h1 id="實驗"><a href="#實驗" class="headerlink" title="實驗"></a>實驗</h1><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cstdlib&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/wait.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sstream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cstring&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span>* argv[])</span></span>&#123;</span><br><span class="line">    <span class="comment">// 創造pipe</span></span><br><span class="line">    <span class="type">int</span> my_pipe[<span class="number">2</span>];</span><br><span class="line">    <span class="keyword">if</span>(<span class="built_in">pipe</span>(my_pipe) == <span class="number">-1</span>)&#123;</span><br><span class="line">        <span class="built_in">fprintf</span>(stderr, <span class="string">&quot;Error creating pipe\n&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//-------------------------</span></span><br><span class="line">    <span class="type">pid_t</span> child_id;</span><br><span class="line">    child_id = fork();</span><br><span class="line">    <span class="keyword">if</span>(child_id == <span class="number">-1</span>)&#123;</span><br><span class="line">        <span class="built_in">fprintf</span>(stderr, <span class="string">&quot;Fork error\n&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 創造一個子process，將buffer塞爆</span></span><br><span class="line">    <span class="keyword">if</span>(child_id == <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">close</span>(my_pipe[<span class="number">0</span>]);</span><br><span class="line">        <span class="built_in">dup2</span>(my_pipe[<span class="number">1</span>], <span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">        string some = <span class="string">&quot;something&quot;</span>;</span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">0</span>;i&lt;<span class="number">1000000000000000</span>;i++)&#123;</span><br><span class="line">            cout&lt;&lt;some;</span><br><span class="line">        &#125;</span><br><span class="line">        cout&lt;&lt;<span class="string">&quot;Chind,finished&quot;</span>;</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//---------------------------------</span></span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    &#123;   </span><br><span class="line">        <span class="type">int</span> aaa = fork();</span><br><span class="line">        <span class="comment">// 再創造一個子process，讓他先sleep 4秒以後再嘗試在已經被塞爆的buffer寫入</span></span><br><span class="line">        <span class="keyword">if</span>(aaa == <span class="number">0</span>)&#123;</span><br><span class="line">            <span class="built_in">sleep</span>(<span class="number">4</span>);</span><br><span class="line">            <span class="built_in">close</span>(my_pipe[<span class="number">0</span>]);</span><br><span class="line">            <span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">0</span>;i&lt;<span class="number">1999</span>;i++)&#123;</span><br><span class="line"></span><br><span class="line">                cout&lt;&lt;<span class="string">&quot;Child2 round &quot;</span>&lt;&lt;i+<span class="number">1</span>&lt;&lt;<span class="string">&quot;\n&quot;</span>;</span><br><span class="line">                <span class="built_in">write</span>(my_pipe[<span class="number">1</span>],<span class="string">&quot;NP&quot;</span>,<span class="built_in">sizeof</span>(<span class="string">&quot;NP&quot;</span>));  <span class="comment">// is stuck because of the fullness of pipe</span></span><br><span class="line">            &#125;</span><br><span class="line">            <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//----------------------------</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">// 原本的父process，先sleep 10秒讓我們觀察child process被塞爆的現象再read一些東西來疏通pipe，但這樣的量不足以讀完所有的input</span></span><br><span class="line">        <span class="keyword">else</span>&#123;</span><br><span class="line"></span><br><span class="line">            <span class="built_in">close</span>(my_pipe[<span class="number">1</span>]); <span class="comment">// parent doesn&#x27;t write</span></span><br><span class="line"></span><br><span class="line">            <span class="type">char</span> reading_buf[<span class="number">1000</span>]=&#123;<span class="string">&#x27;\0&#x27;</span>&#125;;</span><br><span class="line">            <span class="built_in">sleep</span>(<span class="number">10</span>);</span><br><span class="line">            <span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">0</span>;i&lt;<span class="number">10000</span>;i++)&#123;</span><br><span class="line">                <span class="built_in">read</span>(my_pipe[<span class="number">0</span>], reading_buf, <span class="number">100</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//等待第一次fork出來的子process</span></span><br><span class="line">    <span class="built_in">wait</span>(&amp;child_id);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//這行永遠不會印出來，因為子process永遠不會輸出完成而結束</span></span><br><span class="line">    cout&lt;&lt;my_pipe[<span class="number">0</span>]&lt;&lt;my_pipe[<span class="number">1</span>]; <span class="comment">//3,4</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>實際編譯執行後，出現以下結果<br><img src="/../images/20221010_2.png" alt="upload successful"><br>Child2卡在第1897次輸出就寫不下去了，當然第一個process也是卡住的狀態(見Ps)</p>
+<h1 id="Pipe特性"><a href="#Pipe特性" class="headerlink" title="Pipe特性"></a>Pipe特性</h1><p>從這個小實驗可以知道一些事情</p>
+<ul>
+<li><p>pipe的buffer有限，是會被塞爆的</p>
+</li>
+<li><p>原生的pipe如果被寫滿，會讓想繼續寫入的<strong>所有process</strong>被卡住不能繼續執行，直到pipe被讀取</p>
+<ul>
+<li>不可以wait process完整寫入發signal以後才fork另一個process再讀取，這樣很可能導致整個程式卡死<br>    - 如果卡住的process太多，可能會讓父process再也fork不出東西來讓本該讀取的process去接，造成整個程式卡死</li>
+</ul>
+</li>
+<li><p>要注意針對大資料的處理，pipe應該要有個”抒發管道”，不能期待他真的裝下全世界</p>
+</li>
+</ul>
+<p>P.S<br>測試這個東西的時候還有用背景執行，創造了不少卡著的process<br><img src="/../images/20221010_1.png"><br>其中相連的pid可以看出來是同一個程式來的，原本的父process，連帶所有child process都無法被正常結束…</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/10/09/%E7%94%A8std-string%E5%81%9Astrtok/" rel="prev" title="用std::string做strtok">
+                  <i class="fa fa-chevron-left"></i> 用std::string做strtok
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">劉宇承</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>

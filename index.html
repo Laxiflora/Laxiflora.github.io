@@ -125,7 +125,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">41</span>
+          <span class="site-state-item-count">42</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
@@ -169,6 +169,93 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://laxiflora.github.io/2022/10/10/C-pipe%E8%88%87buffer-overflow/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="劉宇承">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="laxiflora的小天地">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | laxiflora的小天地">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2022/10/10/C-pipe%E8%88%87buffer-overflow/" class="post-title-link" itemprop="url">C++ pipe與buffer overflow</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+      
+
+      <time title="創建時間：2022-10-10 23:28:56 / 修改時間：23:50:22" itemprop="dateCreated datePublished" datetime="2022-10-10T23:28:56+08:00">2022-10-10</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>本篇主要講述C++中<code>pipe()</code>函數的相關行為</p>
+<p>因為pipe的buffer大小並非無限大，如果輸入流資料量過大，很有可能會碰到buffer塞滿而輸入還沒結束的問題<br>寫了以下的code來測試pipe buffer如果塞爆了會發生甚麼事情</p>
+<h1 id="實驗"><a href="#實驗" class="headerlink" title="實驗"></a>實驗</h1><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cstdlib&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/wait.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sstream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cstring&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span>* argv[])</span></span>&#123;</span><br><span class="line">    <span class="comment">// 創造pipe</span></span><br><span class="line">    <span class="type">int</span> my_pipe[<span class="number">2</span>];</span><br><span class="line">    <span class="keyword">if</span>(<span class="built_in">pipe</span>(my_pipe) == <span class="number">-1</span>)&#123;</span><br><span class="line">        <span class="built_in">fprintf</span>(stderr, <span class="string">&quot;Error creating pipe\n&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//-------------------------</span></span><br><span class="line">    <span class="type">pid_t</span> child_id;</span><br><span class="line">    child_id = fork();</span><br><span class="line">    <span class="keyword">if</span>(child_id == <span class="number">-1</span>)&#123;</span><br><span class="line">        <span class="built_in">fprintf</span>(stderr, <span class="string">&quot;Fork error\n&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 創造一個子process，將buffer塞爆</span></span><br><span class="line">    <span class="keyword">if</span>(child_id == <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">close</span>(my_pipe[<span class="number">0</span>]);</span><br><span class="line">        <span class="built_in">dup2</span>(my_pipe[<span class="number">1</span>], <span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">        string some = <span class="string">&quot;something&quot;</span>;</span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">0</span>;i&lt;<span class="number">1000000000000000</span>;i++)&#123;</span><br><span class="line">            cout&lt;&lt;some;</span><br><span class="line">        &#125;</span><br><span class="line">        cout&lt;&lt;<span class="string">&quot;Chind,finished&quot;</span>;</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//---------------------------------</span></span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    &#123;   </span><br><span class="line">        <span class="type">int</span> aaa = fork();</span><br><span class="line">        <span class="comment">// 再創造一個子process，讓他先sleep 4秒以後再嘗試在已經被塞爆的buffer寫入</span></span><br><span class="line">        <span class="keyword">if</span>(aaa == <span class="number">0</span>)&#123;</span><br><span class="line">            <span class="built_in">sleep</span>(<span class="number">4</span>);</span><br><span class="line">            <span class="built_in">close</span>(my_pipe[<span class="number">0</span>]);</span><br><span class="line">            <span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">0</span>;i&lt;<span class="number">1999</span>;i++)&#123;</span><br><span class="line"></span><br><span class="line">                cout&lt;&lt;<span class="string">&quot;Child2 round &quot;</span>&lt;&lt;i+<span class="number">1</span>&lt;&lt;<span class="string">&quot;\n&quot;</span>;</span><br><span class="line">                <span class="built_in">write</span>(my_pipe[<span class="number">1</span>],<span class="string">&quot;NP&quot;</span>,<span class="built_in">sizeof</span>(<span class="string">&quot;NP&quot;</span>));  <span class="comment">// is stuck because of the fullness of pipe</span></span><br><span class="line">            &#125;</span><br><span class="line">            <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//----------------------------</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">// 原本的父process，先sleep 10秒讓我們觀察child process被塞爆的現象再read一些東西來疏通pipe，但這樣的量不足以讀完所有的input</span></span><br><span class="line">        <span class="keyword">else</span>&#123;</span><br><span class="line"></span><br><span class="line">            <span class="built_in">close</span>(my_pipe[<span class="number">1</span>]); <span class="comment">// parent doesn&#x27;t write</span></span><br><span class="line"></span><br><span class="line">            <span class="type">char</span> reading_buf[<span class="number">1000</span>]=&#123;<span class="string">&#x27;\0&#x27;</span>&#125;;</span><br><span class="line">            <span class="built_in">sleep</span>(<span class="number">10</span>);</span><br><span class="line">            <span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">0</span>;i&lt;<span class="number">10000</span>;i++)&#123;</span><br><span class="line">                <span class="built_in">read</span>(my_pipe[<span class="number">0</span>], reading_buf, <span class="number">100</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//等待第一次fork出來的子process</span></span><br><span class="line">    <span class="built_in">wait</span>(&amp;child_id);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//這行永遠不會印出來，因為子process永遠不會輸出完成而結束</span></span><br><span class="line">    cout&lt;&lt;my_pipe[<span class="number">0</span>]&lt;&lt;my_pipe[<span class="number">1</span>]; <span class="comment">//3,4</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>實際編譯執行後，出現以下結果<br><img src="/../images/20221010_2.png" alt="upload successful"><br>Child2卡在第1897次輸出就寫不下去了，當然第一個process也是卡住的狀態(見Ps)</p>
+<h1 id="Pipe特性"><a href="#Pipe特性" class="headerlink" title="Pipe特性"></a>Pipe特性</h1><p>從這個小實驗可以知道一些事情</p>
+<ul>
+<li><p>pipe的buffer有限，是會被塞爆的</p>
+</li>
+<li><p>原生的pipe如果被寫滿，會讓想繼續寫入的<strong>所有process</strong>被卡住不能繼續執行，直到pipe被讀取</p>
+<ul>
+<li>不可以wait process完整寫入發signal以後才fork另一個process再讀取，這樣很可能導致整個程式卡死<br>    - 如果卡住的process太多，可能會讓父process再也fork不出東西來讓本該讀取的process去接，造成整個程式卡死</li>
+</ul>
+</li>
+<li><p>要注意針對大資料的處理，pipe應該要有個”抒發管道”，不能期待他真的裝下全世界</p>
+</li>
+</ul>
+<p>P.S<br>測試這個東西的時候還有用背景執行，創造了不少卡著的process<br><img src="/../images/20221010_1.png"><br>其中相連的pid可以看出來是同一個程式來的，原本的父process，連帶所有child process都無法被正常結束…</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
     <link itemprop="mainEntityOfPage" href="https://laxiflora.github.io/2022/10/09/%E7%94%A8std-string%E5%81%9Astrtok/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -199,7 +286,7 @@
       <span class="post-meta-item-text">發表於</span>
       
 
-      <time title="創建時間：2022-10-09 17:16:11 / 修改時間：17:28:40" itemprop="dateCreated datePublished" datetime="2022-10-09T17:16:11+08:00">2022-10-09</time>
+      <time title="創建時間：2022-10-09 17:16:11 / 修改時間：17:36:08" itemprop="dateCreated datePublished" datetime="2022-10-09T17:16:11+08:00">2022-10-09</time>
     </span>
 
   
@@ -216,11 +303,12 @@
 <h1 id="用std-string做strtok"><a href="#用std-string做strtok" class="headerlink" title="用std::string做strtok"></a>用std::string做strtok</h1><p>由於C++的string type並不支援strtok的功能，所以如果想要將C++的string做切段，有以下幾種方法:</p>
 <h2 id="法1-用istringstream"><a href="#法1-用istringstream" class="headerlink" title="法1: 用istringstream"></a>法1: 用istringstream</h2><p>使用<a target="_blank" rel="noopener" href="https://cplusplus.com/reference/sstream/istringstream/istringstream/">stringstream類別</a>，使用方法就像C++風格的iostream一樣，只是這個stream不是stdin&#x2F;stdout，也不是fstream，而是將string的內容倒入一個stream (因此不具有fd–待查證)。</p>
 <p>將要切割的字串倒入stream以後，再用getline中的Delimiter參數做為切割標準即可<br>參考程式碼片段如下:</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">vector&lt;string&gt; <span class="title">split</span><span class="params">(<span class="type">const</span> string&amp; s, <span class="type">char</span> delimiter)</span></span>&#123;</span><br><span class="line">   vector&lt;string&gt; tokens;</span><br><span class="line">   string token;</span><br><span class="line">   <span class="function">istringstream <span class="title">tokenStream</span><span class="params">(s)</span></span>;</span><br><span class="line">   <span class="keyword">while</span> (<span class="built_in">getline</span>(tokenStream, token, delimiter))</span><br><span class="line">   &#123;</span><br><span class="line">      tokens.<span class="built_in">push_back</span>(token);</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="keyword">return</span> tokens;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">vector&lt;string&gt; <span class="title">split</span><span class="params">(<span class="type">const</span> string&amp; s, <span class="type">char</span> delimiter)</span></span>&#123;</span><br><span class="line">   vector&lt;string&gt; tokens;</span><br><span class="line">   string token;</span><br><span class="line">   <span class="function">istringstream <span class="title">tokenStream</span><span class="params">(s)</span></span>;</span><br><span class="line">   <span class="keyword">while</span> (<span class="built_in">getline</span>(tokenStream, token, delimiter))&#123;</span><br><span class="line">      tokens.<span class="built_in">push_back</span>(token);</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="keyword">return</span> tokens;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// tokens vector裝的是切割完的string</span></span><br></pre></td></tr></table></figure>
 
 
-
-
+<h2 id="法2-先把string轉成char-以後再切割"><a href="#法2-先把string轉成char-以後再切割" class="headerlink" title="法2: 先把string轉成char*以後再切割"></a>法2: 先把string轉成char*以後再切割</h2><p><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/289347/using-strtok-with-a-stdstring">參考資料</a><br>如果要將string轉換成char*，可以透過<code>string.c_str()</code>函數</p>
+<p>這個方法其實不太推薦，他是把C++風格棄掉，強制使用strtok來處理字串<br>參考程式碼片段如下:</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//given string str as a string needed to slice</span></span><br><span class="line"><span class="type">char</span> *dup = <span class="built_in">strdup</span>(str.<span class="built_in">c_str</span>());</span><br><span class="line">token = <span class="built_in">strtok</span>(dup, <span class="string">&quot; &quot;</span>);</span><br><span class="line"><span class="built_in">free</span>(dup);</span><br></pre></td></tr></table></figure>
       
     </div>
 
@@ -1325,81 +1413,6 @@
 </li>
 </ul>
 
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://laxiflora.github.io/2022/08/04/ML-LEE-2022-hw7/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="劉宇承">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="laxiflora的小天地">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | laxiflora的小天地">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/08/04/ML-LEE-2022-hw7/" class="post-title-link" itemprop="url">ML_LEE_2022_hw7</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">發表於</span>
-
-      <time title="創建時間：2022-08-04 11:58:19" itemprop="dateCreated datePublished" datetime="2022-08-04T11:58:19+08:00">2022-08-04</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新於</span>
-      <time title="修改時間：2022-08-08 20:10:07" itemprop="dateModified" datetime="2022-08-08T20:10:07+08:00">2022-08-08</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          
       
     </div>
 
