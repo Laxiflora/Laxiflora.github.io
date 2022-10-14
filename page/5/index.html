@@ -125,13 +125,13 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">42</span>
+          <span class="site-state-item-count">44</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-count">9</span>
         <span class="site-state-item-name">標籤</span></a>
       </div>
   </nav>
@@ -160,6 +160,272 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://laxiflora.github.io/2022/07/02/pytorch%E5%85%A5%E9%96%80/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="劉宇承">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="laxiflora的小天地">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | laxiflora的小天地">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2022/07/02/pytorch%E5%85%A5%E9%96%80/" class="post-title-link" itemprop="url">pytorch入門</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2022-07-02 20:39:19" itemprop="dateCreated datePublished" datetime="2022-07-02T20:39:19+08:00">2022-07-02</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新於</span>
+      <time title="修改時間：2022-08-08 20:10:07" itemprop="dateModified" datetime="2022-08-08T20:10:07+08:00">2022-08-08</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="讀取資料"><a href="#讀取資料" class="headerlink" title="讀取資料"></a>讀取資料</h1><h2 id="需import的套件"><a href="#需import的套件" class="headerlink" title="需import的套件"></a>需import的套件</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">torch.utils.data.Dataset</span><br><span class="line">torch.utils.data.DataLoader</span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">dataset = MyDataset(file)</span><br><span class="line">dataloader = DataLoader(dataset, batch_size, shuffle=<span class="literal">True</span>) //Training用true, Testing用false</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>MyDataset屬於自定義的類別，定義如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">MyDataset</span>(<span class="title class_ inherited__">Dataset</span>):</span><br><span class="line">	<span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self,file</span>):</span><br><span class="line">    	self.data = ...</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__getitem__</span>(<span class="params">self, index</span>):</span><br><span class="line">    	<span class="keyword">return</span> self.data[index]</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__len__</span>(<span class="params">self</span>):</span><br><span class="line">    	<span class="keyword">return</span> <span class="built_in">len</span>(self.data)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>pytorch裡面的資料大多是以tensor來表示(向量)</p>
+</li>
+<li><p>我們除了讀取資料，也可以自行創建，範例如下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">x = torch.tensor([1,2],[3,4]) // 得到2x2</span><br><span class="line">x = torch.from_numpy(np.array([1,2],[3,4])) //也可以自numpy轉移矩陣</span><br><span class="line">x  torch.zeros([2,2]) //創建一個shape為(2,2)的全0矩陣</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h1 id="常用函數"><a href="#常用函數" class="headerlink" title="常用函數"></a>常用函數</h1><ul>
+<li><p>transpose : 讓兩個維度之間互換<br>範例</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">x.shape() == (2,3)</span><br><span class="line">x = x.transpose(0,1)</span><br><span class="line">x.shape() == (3,2)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>x.squeeze(0)：將一個大小為1維度消除</p>
+</li>
+<li><p>相對的，呼叫x.unsqueeze(0)就是增加一個大小&#x3D;1的維度</p>
+</li>
+<li><p>torch.cat：將一個維度連接起來(其餘維度大小需相同)</p>
+</li>
+</ul>
+<h1 id="常見問題"><a href="#常見問題" class="headerlink" title="常見問題"></a>常見問題</h1><ul>
+<li>data type</li>
+<li>運算用的處理器 <code>x = x.to(&#39;...&#39;)</code></li>
+<li></li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://laxiflora.github.io/2022/06/28/Hexo%E4%BD%BF%E7%94%A8%E6%8A%80%E5%B7%A7/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="劉宇承">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="laxiflora的小天地">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | laxiflora的小天地">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2022/06/28/Hexo%E4%BD%BF%E7%94%A8%E6%8A%80%E5%B7%A7/" class="post-title-link" itemprop="url">Hexo使用技巧</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2022-06-28 21:13:03" itemprop="dateCreated datePublished" datetime="2022-06-28T21:13:03+08:00">2022-06-28</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新於</span>
+      <time title="修改時間：2022-08-11 19:32:45" itemprop="dateModified" datetime="2022-08-11T19:32:45+08:00">2022-08-11</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="目錄"><a href="#目錄" class="headerlink" title="目錄"></a>目錄</h1><p><a href="#%E5%A6%82%E4%BD%95%E5%9C%A8git-repo%E8%A3%A1%E9%9D%A2%E5%8A%A0%E4%B8%8AREADME">如何在get repo裡面加上README ?</a><br><a href="#%E5%A6%82%E4%BD%95%E5%9C%A8hexo%E8%A8%AD%E7%BD%AE%E7%9A%84%E7%B6%B2%E9%A0%81%E6%8F%92%E5%85%A5%E5%9C%96%E7%89%87">如何在hexo設置的網頁插入圖片 ?</a><br><a href="#%E5%A6%82%E4%BD%95%E5%9C%A8hexo%E8%A8%AD%E7%BD%AE%E7%B6%B2%E9%A0%81%E9%8C%A8%E9%BB%9E">如何在hexo設置網頁錨點 ?</a><br><a href="#%E5%A6%82%E4%BD%95%E5%9C%A8hexo%E8%BC%B8%E5%85%A5%E6%95%B8%E5%AD%B8%E5%BC%8F">如何在hexo輸入數學式 ?</a></p>
+<h1 id="如何在git-repo裡面加上README"><a href="#如何在git-repo裡面加上README" class="headerlink" title="如何在git repo裡面加上README"></a>如何在git repo裡面加上README</h1><ul>
+<li>由於hexo會幫你自動把md檔轉成html上傳github，因此直接在_posts裡面新增README是不可行的</li>
+</ul>
+<h2 id="Step1"><a href="#Step1" class="headerlink" title="Step1"></a>Step1</h2><ul>
+<li>到_config.yml裡面找到#Directory子項，在裡面的skip_render補上README.md</li>
+</ul>
+<h2 id="Step2"><a href="#Step2" class="headerlink" title="Step2"></a>Step2</h2><ul>
+<li>完成以後就可以直接在source&#x2F;_posts裡面直接補上README囉~上傳的時候也可以正常顯示了<br><img src="/../images/20220621_4.png"></li>
+</ul>
+<h3 id="附註：如果想備份blog原始檔到github，README應該做在根目錄上而非source內，且兩個README可以獨立存在"><a href="#附註：如果想備份blog原始檔到github，README應該做在根目錄上而非source內，且兩個README可以獨立存在" class="headerlink" title="附註：如果想備份blog原始檔到github，README應該做在根目錄上而非source內，且兩個README可以獨立存在!"></a>附註：如果想備份blog原始檔到github，README應該做在根目錄上而非source內，且兩個README可以獨立存在!</h3><h3 id="回目錄"><a href="#回目錄" class="headerlink" title="(回目錄)"></a><a href="#%E7%9B%AE%E9%8C%84">(回目錄)</a></h3><hr>
+<h1 id="如何在hexo設置的網頁插入圖片"><a href="#如何在hexo設置的網頁插入圖片" class="headerlink" title="如何在hexo設置的網頁插入圖片"></a>如何在hexo設置的網頁插入圖片</h1><ul>
+<li>如果直接在source&#x2F;image放入圖片並且在md連連結的話，會連不上圖片</li>
+<li>可以使用admin套件來協助</li>
+</ul>
+<h2 id="Step1-1"><a href="#Step1-1" class="headerlink" title="Step1"></a>Step1</h2><p>在終端機輸入</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$npm install hexo-admin --save</span><br></pre></td></tr></table></figure>
+<p>來安裝admin套件</p>
+<h2 id="Step2-1"><a href="#Step2-1" class="headerlink" title="Step2"></a>Step2</h2><ul>
+<li>安裝完以後，在localhost狀態下補一個<code>/admin</code>就可以進入admin介面</li>
+<li>在admin介面可以直接看到你的所有貼文，按下筆進入編輯，在這頁面下直接貼上圖片即可</li>
+</ul>
+<p><img src="/../images/20220628_1.png"></p>
+<ul>
+<li>在貼上成功以後會出現<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">![upload successful](\\images\yourPicName.png\)</span><br></pre></td></tr></table></figure>
+請把<code>\</code>改成<code>/</code>並且把<code>\\</code>改成<code>../</code>即可 (Win11，其他系統可能改法不同，請依照系統特性修改)</li>
+</ul>
+<h3 id="回目錄-1"><a href="#回目錄-1" class="headerlink" title="(回目錄)"></a><a href="#%E7%9B%AE%E9%8C%84">(回目錄)</a></h3><hr>
+<h1 id="如何在hexo設置網頁錨點"><a href="#如何在hexo設置網頁錨點" class="headerlink" title="如何在hexo設置網頁錨點"></a>如何在hexo設置網頁錨點</h1><p>markdown語法為：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[連結文字](#你要連結的標題名稱)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>碰上空格需要以-代替</li>
+<li>如果碰上.或是()，依照各編輯器與網站，處理方法不同<ul>
+<li>有些編輯器直接忽略即可</li>
+<li>有些編輯器(如本站)同樣用-代替(複數.跟()相連也只需要一個-)，若遇到結尾有)可以忽略</li>
+</ul>
+</li>
+<li>以錨定標題『有夠 歪七扭八)標()題)』為例，語法為<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[嘗試看看吧!](#有夠-歪七扭八-標-題)</span><br></pre></td></tr></table></figure>
+<a href="#%E6%9C%89%E5%A4%A0-%E6%AD%AA%E4%B8%83%E6%89%AD%E5%85%AB-%E6%A8%99-%E9%A1%8C">嘗試看看吧!</a></li>
+</ul>
+<h3 id="有夠-歪七扭八-標-題"><a href="#有夠-歪七扭八-標-題" class="headerlink" title="有夠 歪七扭八)標()題)"></a>有夠 歪七扭八)標()題)</h3><h3 id="回目錄-2"><a href="#回目錄-2" class="headerlink" title="(回目錄)"></a><a href="#%E7%9B%AE%E9%8C%84">(回目錄)</a></h3><hr>
+<h1 id="如何在hexo輸入數學式"><a href="#如何在hexo輸入數學式" class="headerlink" title="如何在hexo輸入數學式"></a>如何在hexo輸入數學式</h1><p>原本以為這只是小問題，結果卻搞了我整整半天…原生hexo渲染器對於LaTex支援性太差了…這點輸HackMD</p>
+<h2 id="法一：hexo-renderer-marked-hexo-math"><a href="#法一：hexo-renderer-marked-hexo-math" class="headerlink" title="法一：hexo-renderer-marked + hexo-math"></a>法一：hexo-renderer-marked + hexo-math</h2><p><a target="_blank" rel="noopener" href="https://www.tzingtao.com/2019/06/21/Math-Equations-in-Hexo/">參考資料來源</a><br><a target="_blank" rel="noopener" href="https://github.com/hexojs/hexo-math">hexo-math頁面</a></p>
+<ul>
+<li>Hexo預設的renderer是不支持直接在md中使用<code>$...$</code>的，一般來說推薦的工具是hexo-math，直接在終端機輸入以下指令即可安裝<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo-math --save</span><br></pre></td></tr></table></figure></li>
+<li>然而雖然我們可以直接在md檔中用$…$輸入LaTex表達式，但因為”&quot;屬於特殊符號，都會先被markdown先行解析，因此我們每次要使用到\都需要先在前面打一個\來避免他被吃掉(\)</li>
+<li>依照官方文件建議，我們可以使用hexo-math指定的標籤<code>『&#123;% math %&#125; ... &#123;% endmath %&#125;』</code>來包住數學式，這樣我們就可以防止數學式的\符號被markdown randerer影響<ul>
+<li>這麼做的好處是寫表達式不用一個一個去處理\，但是壞處就是在對於沒有支援hexo-math的地方使用這樣的標籤會導致相容性出問題(而且那陀標籤很笨重)，使網頁跑版。</li>
+</ul>
+</li>
+</ul>
+<p>PS. 與法三相對，是選擇跟renderer規則和平共處的做法(不改裝pandoc或改主題的前提下)，現在回來看這做法好像不錯orz…</p>
+<h2 id="法二：hexo-renderer-markdown-it-markdown-it-latex2img"><a href="#法二：hexo-renderer-markdown-it-markdown-it-latex2img" class="headerlink" title="法二：hexo-renderer-markdown-it + markdown-it-latex2img"></a>法二：hexo-renderer-markdown-it + markdown-it-latex2img</h2><p><a target="_blank" rel="noopener" href="https://github.com/MakerGYT/markdown-it-latex2img#hexo">markdown-it-latex2img頁面</a><br><a target="_blank" rel="noopener" href="https://github.com/hexojs/hexo-renderer-markdown-it">hexo-renderer-markdown-it頁面</a></p>
+<ul>
+<li>相比於官方原始的renderer，這個版本的渲染器支援更多功能</li>
+<li>markdown-it-laten2img是一個plugin，用於支援LaTex的文字格式</li>
+<li>若採用這個方法，需要先移除原版的renderer<br>指令如下:<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">npm uni hexo-renderer-marked --save</span><br><span class="line">npm i hexo-renderer-markdown-it --save</span><br><span class="line">npm i markdown-it-latex2img --save</span><br></pre></td></tr></table></figure>
+安裝完以後，到<code>_config.yml</code>中補這段：<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#markdown setting for hexo-renderer-markdown-it</span></span><br><span class="line"><span class="attr">markdown:</span></span><br><span class="line">  <span class="attr">plugins:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">markdown-it-latex2img</span></span><br></pre></td></tr></table></figure>
+就可以了<br>PS. 目前已知問題：改用這個renderer會導致錨點功能失效！(因為整個渲染器被改掉，可能導致原始的一些符號渲染成其他符號而讓原本的文本失效!)<br>PPS. 因為後來連admin插件都不能用，原本的圖片連結都失效了，不得已只好放棄這個做法</li>
+</ul>
+<h2 id="法三："><a href="#法三：" class="headerlink" title="法三："></a>法三：</h2><p>筆者處理這個問題的時候弄到頭昏腦脹…直接貼別人的教學網誌<br><a target="_blank" rel="noopener" href="https://nighting4le.com/2020/12/05/hexoWithLatex/">請參照這篇網誌</a></p>
+<h4 id="目前已知問題："><a href="#目前已知問題：" class="headerlink" title="目前已知問題："></a>目前已知問題：</h4><ul>
+<li>因為有改到渲染escape的規則，所以會導致有些東西失靈(同前面法2的原因)</li>
+<li>&lt;detail&gt;不可使用</li>
+<li>\也不再會被丟入特殊字元中 (這是為了配合LaTex裡面動不動就需要用到\，所以必須把\的保留字移除)<ul>
+<li>這樣做的壞處是(、)、.、\、\n、\t、&lt;&gt;、[]等等特殊符號不可跟某些需要用到這些符號的指令混用了</li>
+<li>ex: 不能在連結內打[]</li>
+</ul>
+</li>
+</ul>
+<p>目前這樣設置只是折衷，不可能兼顧方便性與相容性(打$$可以切LaTex inline)、又兼顧全面性(\的保留字依然適用)，只能說，當有些保留字<br>衝突的時候真的就只能犧牲一者(所以你在我的網誌裡面會看不到toggle list，因為\被無視了XD，請善用錨點功能)</p>
+<h2 id="更新：最後反璞歸真只用hexo-renderer-marked-hexo-math-居然可以用-而且-不會被無視…-雖然我不知道發生甚麼但總之他動了…orz"><a href="#更新：最後反璞歸真只用hexo-renderer-marked-hexo-math-居然可以用-而且-不會被無視…-雖然我不知道發生甚麼但總之他動了…orz" class="headerlink" title="更新：最後反璞歸真只用hexo-renderer-marked + hexo-math 居然可以用$$而且\不會被無視… 雖然我不知道發生甚麼但總之他動了…orz"></a>更新：最後反璞歸真只用hexo-renderer-marked + hexo-math 居然可以用$$而且\不會被無視… 雖然我不知道發生甚麼但總之他動了…orz</h2><p><img src="/../images/20220701_3.png" alt="upload successful"></p>
+<h2 id="法四"><a href="#法四" class="headerlink" title="法四"></a>法四</h2><p>直接使用hexo next theme…</p>
+<h2 id="目前設法"><a href="#目前設法" class="headerlink" title="目前設法:"></a>目前設法:</h2><ul>
+<li>使用hexo next theme</li>
+<li>安裝hexo-math</li>
+<li>使用原始的renderer</li>
+<li>在<code>_config.next.yml</code>裡面找到math，enable mathjax，且every_page&#x3D; true</li>
+</ul>
+<p>Note: 如果用Katex會跑版，然後如果用mathjax配上hexo-renderer-markdown-it會讓圖片的_(或其他字元)被渲染器被吃掉導致無法顯示<br>參考資料：<a target="_blank" rel="noopener" href="https://theme-next.js.org/docs/third-party-services/math-equations">hexo-next官方文件</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/lzs781/article/details/105592503">https://blog.csdn.net/lzs781/article/details/105592503</a></p>
+<h1 id="如何讓hexo與hackMD更加兼容"><a href="#如何讓hexo與hackMD更加兼容" class="headerlink" title="如何讓hexo與hackMD更加兼容"></a>如何讓hexo與hackMD更加兼容</h1><ul>
+<li><a target="_blank" rel="noopener" href="https://dwatow.github.io/2017/06-12-hexo/change-hexo-render/">參考文章</a></li>
+</ul>
+<h1 id="圖床"><a href="#圖床" class="headerlink" title="圖床"></a>圖床</h1><h3 id="回目錄-3"><a href="#回目錄-3" class="headerlink" title="(回目錄)"></a><a href="#%E7%9B%AE%E9%8C%84">(回目錄)</a></h3><hr>
+<!-- ## 法二：使用 -->
+<!-- 附註給自己
+目前使用法1 -->
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 

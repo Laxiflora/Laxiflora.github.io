@@ -125,13 +125,13 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">42</span>
+          <span class="site-state-item-count">44</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-count">9</span>
         <span class="site-state-item-name">標籤</span></a>
       </div>
   </nav>
@@ -160,6 +160,304 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://laxiflora.github.io/2022/08/09/ML-2021-8-2-%E9%A0%98%E7%B5%90%E8%AE%8A%E8%81%B2%E5%99%A8%E8%88%87%E6%9B%B4%E5%A4%9A%E6%87%89%E7%94%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="劉宇承">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="laxiflora的小天地">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | laxiflora的小天地">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2022/08/09/ML-2021-8-2-%E9%A0%98%E7%B5%90%E8%AE%8A%E8%81%B2%E5%99%A8%E8%88%87%E6%9B%B4%E5%A4%9A%E6%87%89%E7%94%A8/" class="post-title-link" itemprop="url">ML_2021_8-2 領結變聲器與更多應用</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+      
+
+      <time title="創建時間：2022-08-09 03:22:28 / 修改時間：14:45:29" itemprop="dateCreated datePublished" datetime="2022-08-09T03:22:28+08:00">2022-08-09</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="Feature-Disentanglement"><a href="#Feature-Disentanglement" class="headerlink" title="Feature Disentanglement"></a>Feature Disentanglement</h1><ul>
+<li><p>有沒有可能可以知道embedding vector中，各維所儲存的資訊呢？</p>
+</li>
+<li><p>Feature disentanglement旨在找出各維的內容，且有辦法做到</p>
+<ul>
+<li>非本課內容，只列參考</li>
+<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1904.05742">https://arxiv.org/abs/1904.05742</a></li>
+<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1804.02812">https://arxiv.org/abs/1804.02812</a></li>
+<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1905.05879">https://arxiv.org/abs/1905.05879</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="Feature-Disentanglement-應用"><a href="#Feature-Disentanglement-應用" class="headerlink" title="Feature Disentanglement 應用"></a>Feature Disentanglement 應用</h2><p><em>假如我們能知道embedding各維所代表的意涵，我們能用它做寫甚麼？</em></p>
+<h3 id="Voice-Conversion"><a href="#Voice-Conversion" class="headerlink" title="Voice Conversion"></a>Voice Conversion</h3><ul>
+<li><p>ex.柯南的領結變聲器</p>
+</li>
+<li><p>如果要A人聲轉成B人聲，一般需要A,B都念一樣的句子</p>
+</li>
+<li><p>透過feature disentanglement技術，可以讓A,B不必一定要說一樣的話</p>
+<ul>
+<li>我們知道哪些維度代表說話者的特徵，則我們可以只擷取這段維度，丟入decoder<br><img src="/../images/20220809_1.png"></li>
+</ul>
+</li>
+</ul>
+<p>    </p>
+<h1 id="Discrete-Latent-Representation"><a href="#Discrete-Latent-Representation" class="headerlink" title="Discrete Latent Representation"></a>Discrete Latent Representation</h1><ul>
+<li><p>embedding的各維可以不一定是real numbers，它可以是binary，甚至是one-hot</p>
+</li>
+<li><p>把embedding做這樣的格式可以更容易做feature disentanglement</p>
+</li>
+</ul>
+<h2 id="Example：VQVAE"><a href="#Example：VQVAE" class="headerlink" title="Example：VQVAE"></a>Example：VQVAE</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1711.00937">論文連結</a></li>
+</ul>
+<p>會準備一個code book，將embedding跟這裏面的vectors計算相似度，取出相似度最高的那個vector，丟入decoder，範例如下圖</p>
+<p><img src="/../images/20220809_2.png"></p>
+<p>這樣的過程其實有點像self-attention。encoder的輸出類比於self-attention裡面的query，而code book的vectors則像是key</p>
+<ul>
+<li>這樣表示decoder的輸入可能性只有codebook裡面的向量數量，讓輸出變成離散的</li>
+</ul>
+<h2 id="Text-as-Representation"><a href="#Text-as-Representation" class="headerlink" title="Text as Representation"></a>Text as Representation</h2><ul>
+<li>Representation &#x3D; embedding</li>
+<li>有沒有可能讓embedding不要是向量，而是人們看得懂的文字呢？</li>
+</ul>
+<p><img src="/../images/20220809_4.png"><br>範例：<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1810.02851">https://arxiv.org/abs/1810.02851</a></p>
+<ul>
+<li><p>在這個範例下，輸入跟輸出都是seq，所以model會需要是一個seq2seq的類型</p>
+<ul>
+<li>這也是一種transformer</li>
+</ul>
+</li>
+<li><p>這類做法也稱為seq2seq2seq auto-encoder (中間也是文字)</p>
+</li>
+</ul>
+<h3 id="embedding的可讀性"><a href="#embedding的可讀性" class="headerlink" title="embedding的可讀性"></a>embedding的可讀性</h3><ul>
+<li>若我們要取的任務是取得文章摘要，有沒有可能輸出的embedding其實就是summary呢？<ul>
+<li><p>行不通。實務上encoder跟decoder之間會發明一個暗號，人類看不懂embedding的輸出，但是decoder卻能正常還原</p>
+</li>
+<li><p>一種解決方法就是套用GAN的概念，加入discriminator，讓embedding跟真人寫得summary做比較，而embedding則必須騙過discriminator</p>
+</li>
+</ul>
+</li>
+</ul>
+<p><img src="/../images/20220809_5.png"><br>沒錯 看起來又很像cycle GAN了<br>encoder、decoder就是generator，上面的則是discriminator</p>
+<h2 id="Tree-as-representation"><a href="#Tree-as-representation" class="headerlink" title="Tree as representation"></a>Tree as representation</h2><p>本課不細講，相關參考如下</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1806.07832">https://arxiv.org/abs/1806.07832</a></li>
+<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1904.03746">https://arxiv.org/abs/1904.03746</a></li>
+</ul>
+<h1 id="More-Applications"><a href="#More-Applications" class="headerlink" title="More Applications"></a>More Applications</h1><h2 id="VAE"><a href="#VAE" class="headerlink" title="VAE"></a>VAE</h2><ul>
+<li><p>若把decoder單獨拆出來，也可以看作是一個generator</p>
+</li>
+<li><p>decoder經過一段修正，就是variational auto-encoder (VAE)</p>
+</li>
+</ul>
+<h2 id="Compression"><a href="#Compression" class="headerlink" title="Compression"></a>Compression</h2><ul>
+<li>auto-encoder也可以看作是一種壓縮，把一個圖片丟入encoder，並且儲存embedding<ul>
+<li>decoder的還原動作則是”decompression”，不過這樣還原出來的圖片會有失真</li>
+</ul>
+</li>
+</ul>
+<h2 id="Anomaly-Detection-異常檢測"><a href="#Anomaly-Detection-異常檢測" class="headerlink" title="Anomaly Detection (異常檢測)"></a>Anomaly Detection (異常檢測)</h2><p><em>本次作業內容</em></p>
+<p>給定一個資料集{$x^1,x^2,…,x^N$}，並且判斷輸入x與資料集是否相似<br><img src="/../images/20220809_6.png"></p>
+<p>異常檢測的相關應用：</p>
+<ul>
+<li><p>信用卡交易詐欺檢測 (交易行為是否異常)</p>
+</li>
+<li><p>網路侵入偵測 (連線行為是否異常)</p>
+</li>
+<li><p>癌症偵測 (細胞是否變異)</p>
+</li>
+<li><p>那異常檢測是否就是一種二元分類問題呢？</p>
+<ul>
+<li>這種問題的難點就是在蒐集資料，異常資料不易蒐集</li>
+<li>這類問題假設我們只有正常的訓練資料(其中一種class)，而沒有異常訓練資料，稱為”One class分類問題”</li>
+</ul>
+</li>
+<li><p>解決One class classification問題，就會需要auto-encoder</p>
+<ul>
+<li>正常資料由於有學習過，所以可以有效還原<br>    - 但如果出現了異常資料，decoder會難以還原，若發現decoder的輸出與原始輸入相似度低(large reconstruction loss)，則可以判斷它就是anomaly的資料</li>
+</ul>
+</li>
+</ul>
+<p>auto-encoder只是anomaly detection的一種approach，更多的異常檢測任務解法可以參考其它年的課程</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://laxiflora.github.io/2022/08/08/ML-2021-8-1-%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="劉宇承">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="laxiflora的小天地">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | laxiflora的小天地">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2022/08/08/ML-2021-8-1-%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/" class="post-title-link" itemprop="url">ML_2021_8-1 基本概念</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2022-08-08 23:58:36" itemprop="dateCreated datePublished" datetime="2022-08-08T23:58:36+08:00">2022-08-08</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新於</span>
+      <time title="修改時間：2022-08-09 03:21:25" itemprop="dateModified" datetime="2022-08-09T03:21:25+08:00">2022-08-09</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <ul>
+<li><p>也不用label data就可以做pretrain -&gt; 算是一種self-supervised learning</p>
+</li>
+<li><p>出現在2006年，是很老的模型</p>
+</li>
+</ul>
+<h1 id="Auto-encoder-模型"><a href="#Auto-encoder-模型" class="headerlink" title="Auto-encoder 模型"></a>Auto-encoder 模型</h1><p><img src="/../images/20220808_2.png"><br>Auto-encoder也有encoder、decoder的兩層network，輸入會是一張unlabeled的圖片，經過encoder以後變成向量，再透過decoder變回一張圖片</p>
+<ul>
+<li><p>訓練的目標是希望decoder輸出的圖與原圖越像越好(距離越近越好)</p>
+<ul>
+<li>又稱為reconstruction</li>
+</ul>
+</li>
+<li><p>很像Cycle GAN中，2個generator之間的關係</p>
+</li>
+<li><p>關於中間的vector，有很多別稱</p>
+<ul>
+<li>Embedding, Representation, Code</li>
+</ul>
+</li>
+<li><p>auto-encoder的encoder通常輸入是為度很高的向量，而中介的vector則是維度低很多的向量，故可用於壓縮</p>
+<ul>
+<li>具備壓縮的功能<br>    - encoder的輸出也叫做bottleneck<br>    - 這樣降維的技術稱為「dimention reduction」</li>
+</ul>
+</li>
+</ul>
+<h1 id="Why-auto-encoder"><a href="#Why-auto-encoder" class="headerlink" title="Why auto-encoder"></a>Why auto-encoder</h1><ul>
+<li>為何有辦法讓低維度向量變成一個圖片呢?<ul>
+<li>圖片的變化有限，把變化的可能性記下來，就可以把一個複雜的圖片用簡單的方式記錄下來</li>
+</ul>
+</li>
+</ul>
+<h2 id="變形：De-noising-auto-encode"><a href="#變形：De-noising-auto-encode" class="headerlink" title="變形：De-noising auto-encode"></a>變形：De-noising auto-encode</h2><ul>
+<li><p>也不是多新的技術(2008)</p>
+</li>
+<li><p>把輸入的圖片先隨便加入一些雜訊，但是要decoder還原加入雜訊之前的結果</p>
+<ul>
+<li>auto-encoder必須自己學會把雜訊去除</li>
+</ul>
+</li>
+<li><p>這個idea其實跟現今的BERT很像(填空)</p>
+</li>
+</ul>
+<p><img src="/../images/20220808_3.png"></p>
+<ul>
+<li>BERT又可看作一個de-noising auto-encoder<ul>
+<li>BERT的decoder不一定是linear。 廣義來看，可以把BERT切開，比如一個BERT前6層是encoder，後6層+linear layer是decoder</li>
+</ul>
+</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1427,335 +1725,6 @@
 </ul>
 </li>
 <li><p><a target="_blank" rel="noopener" href="https://arxiv.org/avs/1611.07004">相關文獻</a></p>
-</li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://laxiflora.github.io/2022/07/28/ML-2021-6-2-%E7%94%9F%E6%88%90%E5%BC%8F%E5%B0%8D%E6%8A%97%E7%B6%B2%E8%B7%AF-%E4%BA%8C-%E7%90%86%E8%AB%96%E4%BB%8B%E7%B4%B9%E8%88%87WGAN/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="劉宇承">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="laxiflora的小天地">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | laxiflora的小天地">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/07/28/ML-2021-6-2-%E7%94%9F%E6%88%90%E5%BC%8F%E5%B0%8D%E6%8A%97%E7%B6%B2%E8%B7%AF-%E4%BA%8C-%E7%90%86%E8%AB%96%E4%BB%8B%E7%B4%B9%E8%88%87WGAN/" class="post-title-link" itemprop="url">ML_2021_6-2 生成式對抗網路(二) - 理論介紹與WGAN</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">發表於</span>
-
-      <time title="創建時間：2022-07-28 00:53:06" itemprop="dateCreated datePublished" datetime="2022-07-28T00:53:06+08:00">2022-07-28</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新於</span>
-      <time title="修改時間：2022-08-08 20:10:07" itemprop="dateModified" datetime="2022-08-08T20:10:07+08:00">2022-08-08</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="訓練的目標"><a href="#訓練的目標" class="headerlink" title="訓練的目標"></a>訓練的目標</h1><ul>
-<li>訓練到底要min&#x2F;max甚麼東西呢?<br><img src="/../images/20220728_1.png"></li>
-</ul>
-<p>一維的範例</p>
-<p><img src="/../images/20220728_2.png"></p>
-<ul>
-<li><p>要找的最佳化G參數就是<br>$$<br>G^* &#x3D; arg\ min_GDiv(P_G,P_{data})<br>$$</p>
-</li>
-<li><p>其中Div()表示兩個distribution之間的距離(相似度)公式</p>
-</li>
-<li><p>問題在不知道怎麼計算divergence</p>
-</li>
-<li><p>GAN可以在只有Sample的情況下，估計出div()是多少</p>
-<ul>
-<li>需要從$P_G、P_{data}$取樣，$P_{data}$取自圖庫，而$P_G$則取自generator產生的圖片<br>    - 這部分就要交給Discriminator，他要max一個objective function，公式有很多種</li>
-</ul>
-</li>
-</ul>
-<h2 id="JS-divergence"><a href="#JS-divergence" class="headerlink" title="JS divergence"></a>JS divergence</h2><p>公式如下(我們要取Max)<br>    $$<br>    V(G,D) &#x3D; E_{y\ from\ P_{data}}[logD(y)] + E_{y\ from\ P_G}[log(1-D(y)]<br>    $$</p>
-<ul>
-<li>我們會需要來自data的D(y)越大越好，來自G的D(y)越小越好</li>
-</ul>
-<p>Note: 若加上一點自由度，簡化上述公式，可以得到<br>$$<br>J^D &#x3D; -D(x) + D(G(z)), for\ all\ D(x),\ D(G(z))\  \in \ [0,1]<br>$$<br>且生成器的損失函數：<br>$$<br>J^G &#x3D; -J^D<br>$$<br>因為他們之間彼此對抗，所以他們兩者之間的損失只差一個負號，稱為min-max GAN</p>
-<p><img src="/../images/20220729_1.png"></p>
-<ul>
-<li>其實 $D^*$ 等同於(-1) x cross entropy<ul>
-<li>早年這麼設計的理由是因為，希望objective function可以跟二元分類扯上關係</li>
-</ul>
-</li>
-</ul>
-<p><img src="/../images/20220728_3.png"></p>
-<ul>
-<li><p><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1406.2661">參考</a></p>
-</li>
-<li><p>small divergence，data跟G的圖很像，則hard to discrininate，則small max V(D,G)</p>
-</li>
-<li><p>因為$max_D\ V(D,G)$與JS divergence有關聯，所以我們可以把Div()換掉，變成<br>$$<br>G^* &#x3D; arg\ min_G [max_DV(G,D)] \\\<br>D^* &#x3D; arg\ max_DV(D,G)<br>$$<br>&#x2F;&#x2F;D的max objetive value跟JS divergence有關</p>
-</li>
-</ul>
-<h2 id="其他的divergence"><a href="#其他的divergence" class="headerlink" title="其他的divergence"></a>其他的divergence</h2><ul>
-<li>當然，我們也可以用不同的divergence<ul>
-<li>對於不同的divergence，用甚麼樣的objective function，<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1606.00709">這篇論文有詳細解釋</a><br><img src="/../images/20220728_4.png"></li>
-</ul>
-</li>
-</ul>
-<h1 id="訓練GAN的小技巧"><a href="#訓練GAN的小技巧" class="headerlink" title="訓練GAN的小技巧"></a>訓練GAN的小技巧</h1><h2 id="JS-divergence-的問題"><a href="#JS-divergence-的問題" class="headerlink" title="JS divergence 的問題"></a>JS divergence 的問題</h2><ul>
-<li><p>$P_G、P_{data}$重疊的地方往往很少</p>
-<ul>
-<li>pf1. 圖片是高維空間裡面，低維的manifold<br>    	- 就像在一個平面空間中的兩條線一樣，重合的地方很少<br>    	- 在高維空間內隨便sample的點都不會是圖片<br>    	- 所以他們相交的部分幾乎可以忽略</li>
-<li>pf2.若$P_G、P_{data}$sample的點不夠多，很容易劃出一個界線把他們切開<br>-&gt; $P_G、P_{data}$重疊範圍非常少</li>
-</ul>
-</li>
-<li><p>若兩個分布沒有重疊的地方，算出來的Div就會永遠都是log 2，看不出差距<br><img src="/../images/20220728_5.png"></p>
-</li>
-</ul>
-<h2 id="WGAN"><a href="#WGAN" class="headerlink" title="WGAN"></a>WGAN</h2><ul>
-<li>換一個衡量divergense來衡量2 distribution之相似度</li>
-</ul>
-<h3 id="Wasserstein-distance"><a href="#Wasserstein-distance" class="headerlink" title="Wasserstein distance"></a>Wasserstein distance</h3><ul>
-<li><p>假設一個distribution P為一坨土，而另一個distribution Q為目的地</p>
-</li>
-<li><p>把土堆P挪到Q所需要的移動距離平均就是Wasserstein distance<br><img src="/../images/pasted-34.png"></p>
-</li>
-<li><p>因為可能的挪法很多，所以d會有不同</p>
-<ul>
-<li>定義: 窮舉所有的moving plan，找出最小的移動距離當作wasserstein distance<ul>
-<li>計算麻煩</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p>假設我們能計算Wasserstein distance，帶來的優點:</p>
-<ul>
-<li>就可以解決JS divergence看不出上圖的好壞比較的問題  <br><img src="/../images/20220728_7.png"></li>
-</ul>
-</li>
-</ul>
-<h3 id="Evaluate-Wasserstein-distance"><a href="#Evaluate-Wasserstein-distance" class="headerlink" title="Evaluate Wasserstein distance"></a>Evaluate Wasserstein distance</h3><ul>
-<li>解下面的Optimization問題(下圖)，解出來就會是Wasserstein distance<br><img src="/../images/20220728_9.png"><br>[、]是期望值，D(x)就是剛剛的D(y)</li>
-<li>D必須是1-Lipschitz function (Discriminator不可變化劇烈)<ul>
-<li>如果沒有這個constraint，則D的training不會收斂<br>    - 讓D保持smooth強迫D(x)變成無窮與負無窮</li>
-<li>基本上就是保證real跟generated的data距離不會太遠</li>
-</ul>
-</li>
-</ul>
-<p><img src="/../images/pasted-35.png"></p>
-<h3 id="how-to-確保這個式子可用"><a href="#how-to-確保這個式子可用" class="headerlink" title="how to 確保這個式子可用"></a>how to 確保這個式子可用</h3><ul>
-<li><p>原始GAN方法</p>
-<ul>
-<li>強迫network的parameters w bound在[c,-c]<br>    - 在梯度下降的para更新後，若w&gt;c , w&#x3D;c ; if w&lt;-c , w &#x3D; -c<br>    - 可能可以讓function平滑一點，但沒有解決問題</li>
-</ul>
-</li>
-<li><p>有一篇 paper : improved WGAN 做的處理方法:</p>
-<ul>
-<li>在real data取sample，在fake data取一個sample，在中間再取一個sample，這個sample的梯度需要接近1 (?)</li>
-</ul>
-</li>
-</ul>
-<p>      <br><img src="/../images/pasted-36.png"></p>
-<ul>
-<li>相關方法很多，可以多查查<ul>
-<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1802.05957">Spectral Norm</a><ul>
-<li>Keep gradient norm在哪都 &lt; 1</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<h4 id="Q-amp-A"><a href="#Q-amp-A" class="headerlink" title="Q &amp; A"></a>Q &amp; A</h4><p>Q1: 在discriminator訓練時，可否加入GAN以往的輸出</p>
-<p>A1: 可。實務上跑的時候不會真的讓discriminator被maximize，太花時間，所以通常幾個iteration後就會轉換到generator</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://laxiflora.github.io/2022/07/27/ML-2021-6-1-%E7%94%9F%E6%88%90%E5%BC%8F%E5%B0%8D%E6%8A%97%E7%B6%B2%E8%B7%AF-%E4%B8%80-%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E4%BB%8B%E7%B4%B9/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="劉宇承">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="laxiflora的小天地">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | laxiflora的小天地">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/07/27/ML-2021-6-1-%E7%94%9F%E6%88%90%E5%BC%8F%E5%B0%8D%E6%8A%97%E7%B6%B2%E8%B7%AF-%E4%B8%80-%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E4%BB%8B%E7%B4%B9/" class="post-title-link" itemprop="url">ML_2021_6-1 生成式對抗網路(一) - 基本概念介紹</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">發表於</span>
-
-      <time title="創建時間：2022-07-27 22:52:40" itemprop="dateCreated datePublished" datetime="2022-07-27T22:52:40+08:00">2022-07-27</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新於</span>
-      <time title="修改時間：2022-08-08 20:10:07" itemprop="dateModified" datetime="2022-08-08T20:10:07+08:00">2022-08-08</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p><img src="/../images/20220727_4.png"></p>
-<ul>
-<li>到目前為止的network都是一個function</li>
-<li>這次則是把network當作generator使用<ul>
-<li>現在的network會加入一個new variable z，現在network就有兩筆輸入了</li>
-</ul>
-</li>
-<li>z由某個simple distribution生成(distribution必須夠簡單 ex. uniform)</li>
-<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1406.2661">初代GAN</a></li>
-</ul>
-<h1 id="Why-需要輸出是一個分布"><a href="#Why-需要輸出是一個分布" class="headerlink" title="Why 需要輸出是一個分布"></a>Why 需要輸出是一個分布</h1><ul>
-<li>以video prediction「小精靈」為例說明<ul>
-<li>給定previous frames，輸出預測下一個frame會出現的畫面</li>
-<li>但是在類似畫面下，有時候小精靈往左轉，有時候他往右轉，導致分裂(機器選擇兩面討好，這樣對兩個case的loss最小)<br>    -&gt; 讓機器的輸出不再單一，而是一個機率性的分佈  <br><img src="/../images/pasted-32.png"></li>
-</ul>
-</li>
-</ul>
-<p>    </p>
-<p>在機器的輸出需要創造性的時候(同一輸入可能有多種輸出)，就會需要distribution<br>    - ex. 繪圖、寫文章、對話</p>
-<h1 id="Generative-Adversarial-Network-GAN"><a href="#Generative-Adversarial-Network-GAN" class="headerlink" title="Generative Adversarial Network(GAN)"></a>Generative Adversarial Network(GAN)</h1><ul>
-<li><a target="_blank" rel="noopener" href="https://github.com/hindupuravinash/the-gan-zoo">有很多種變形</a></li>
-</ul>
-<h2 id="Anime-face-ganeration"><a href="#Anime-face-ganeration" class="headerlink" title="Anime face ganeration"></a>Anime face ganeration</h2><ul>
-<li>先把x輸入拿掉，並假設z輸入是normal distribution</li>
-<li>其實二次元人物的臉(圖片)就只是一個高維向量</li>
-<li>輸入的distribution複雜性其實影響不大，因generator會想辦法把它變複雜</li>
-</ul>
-<h2 id="Discriminator"><a href="#Discriminator" class="headerlink" title="Discriminator"></a>Discriminator</h2><ul>
-<li>在GAN中會有這樣一個神經網路，用於判別輸出的東西是否真實</li>
-<li>輸入是產生的圖片，而輸出則是一種純量[0.1]</li>
-<li>可用CNN、transformer…等都可以</li>
-</ul>
-<h2 id="Basic-Idea-of-GAN"><a href="#Basic-Idea-of-GAN" class="headerlink" title="Basic Idea of GAN"></a>Basic Idea of GAN</h2><p>示意圖:<br><img src="/../images/20220728_6.png"></p>
-<ul>
-<li><p>就像物競天擇的演化一樣，discriminator會去除掉得分低的GAN成品，而GAN成品就會「天擇」成discriminator比較能接受的情況</p>
-</li>
-<li><p>但是discriminator也會進化，讓GAN必須再繼續進行進化</p>
-</li>
-<li><p>discriminator與generator通常互相視為敵人<br>GAN版示意圖(毛圖注意)<br><img src="/../images/20220727_8.png"></p>
-</li>
-</ul>
-<h2 id="Algorithm"><a href="#Algorithm" class="headerlink" title="Algorithm"></a>Algorithm</h2><ol>
-<li><p>Init gen and discriminator</p>
-</li>
-<li><p>固定住Generator (G)，輸入一陀random sampled vector，吐出成品，更新discriminator (D)</p>
-<ul>
-<li>拿一些「ground truth」 (ex. 真正的二次元人物)，互相比較相似度，並且更新D</li>
-<li>對D來說這是一個分類問題，或是regression問題 (正確圖片標1，錯的標0)，總之就是看個人想怎麼做</li>
-</ul>
-</li>
-<li><p>固定D，更新G，G要練習把D的acc升到最高(去欺騙D)</p>
-<ul>
-<li>把兩個neural network接起來，就會變成「輸入是一個向量，而輸出會是一個分數」，所以現在情況等同於maximize score (gradient ascent)<br>    - 當然固定D，所以「評分系統」不可變動</li>
-</ul>
-</li>
-<li><p>LOOP，反覆訓練G、D<br><img src="/../images/pasted-33.png"></p>
-</li>
-</ol>
-<hr>
-<h2 id="現代GAN"><a href="#現代GAN" class="headerlink" title="現代GAN"></a>現代GAN</h2><ul>
-<li><p><a target="_blank" rel="noopener" href="https://www.gwern.net/Faces">StyleGAN</a></p>
-</li>
-<li><p><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1710.10196">Progressive GAN</a></p>
-</li>
-<li><p>GAN可以產生沒看過的人臉，做一些內插<br><img src="/../images/20220728_10.png"></p>
-</li>
-<li><p>下一堂講解theory behind GAN</p>
 </li>
 </ul>
 

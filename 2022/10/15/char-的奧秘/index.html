@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css" integrity="sha256-xejo6yLi6vGtAjcMIsY8BHdKsLg7QynVlFMzdQgUuy8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"laxiflora.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":true,"version":"8.12.3","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="這篇文主要想要強調的就是，char*作為一個指標，紀錄的是記憶體位址，若指向的記憶體地址沒有被分配，是不可以直接用strcpy的 char[]其實就是一個數組，雖然看似跟char*一樣，但兩者的邏輯不同 char[]char a[] &#x3D; &quot;KKK&quot; 其實等同於char a[] &#x3D; &amp;#123;&#39;K&#39;,&#39;K&#39;,&#39;K&#39;,&#39;\0">
+<meta property="og:type" content="article">
+<meta property="og:title" content="char*的奧秘">
+<meta property="og:url" content="https://laxiflora.github.io/2022/10/15/char-%E7%9A%84%E5%A5%A7%E7%A7%98/index.html">
+<meta property="og:site_name" content="laxiflora的小天地">
+<meta property="og:description" content="這篇文主要想要強調的就是，char*作為一個指標，紀錄的是記憶體位址，若指向的記憶體地址沒有被分配，是不可以直接用strcpy的 char[]其實就是一個數組，雖然看似跟char*一樣，但兩者的邏輯不同 char[]char a[] &#x3D; &quot;KKK&quot; 其實等同於char a[] &#x3D; &amp;#123;&#39;K&#39;,&#39;K&#39;,&#39;K&#39;,&#39;\0">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://laxiflora.github.io/images/20221015_1.png">
+<meta property="article:published_time" content="2022-10-14T18:41:50.000Z">
+<meta property="article:modified_time" content="2022-10-14T19:58:44.610Z">
+<meta property="article:author" content="劉宇承">
+<meta property="article:tag" content="C">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://laxiflora.github.io/images/20221015_1.png">
+
+
+<link rel="canonical" href="https://laxiflora.github.io/2022/10/15/char-%E7%9A%84%E5%A5%A7%E7%A7%98/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://laxiflora.github.io/2022/10/15/char-%E7%9A%84%E5%A5%A7%E7%A7%98/","path":"2022/10/15/char-的奧秘/","title":"char*的奧秘"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>char*的奧秘 | laxiflora的小天地</title>
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">laxiflora的小天地</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">前進軟體工程師的練功之路</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>標籤</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#char"><span class="nav-number">1.</span> <span class="nav-text">char[]</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#char-1"><span class="nav-number">2.</span> <span class="nav-text">char*</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#char-2"><span class="nav-number">3.</span> <span class="nav-text">char *[]</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A1%8D%E5%A4%96%E8%A3%9C%E5%85%85"><span class="nav-number">4.</span> <span class="nav-text">額外補充</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">劉宇承</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">44</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">標籤</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://laxiflora.github.io/2022/10/15/char-%E7%9A%84%E5%A5%A7%E7%A7%98/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="劉宇承">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="laxiflora的小天地">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="char*的奧秘 | laxiflora的小天地">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          char*的奧秘
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+      
+
+      <time title="創建時間：2022-10-15 02:41:50 / 修改時間：03:58:44" itemprop="dateCreated datePublished" datetime="2022-10-15T02:41:50+08:00">2022-10-15</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>這篇文主要想要強調的就是，char*作為一個指標，紀錄的是記憶體位址，若指向的記憶體地址沒有被分配，是不可以直接用strcpy的</p>
+<p>char[]其實就是一個數組，雖然看似跟char*一樣，但兩者的邏輯不同</p>
+<h2 id="char"><a href="#char" class="headerlink" title="char[]"></a>char[]</h2><p><code>char a[] = &quot;KKK&quot;</code> 其實等同於<code>char a[] = &#123;&#39;K&#39;,&#39;K&#39;,&#39;K&#39;,&#39;\0&#39;&#125;</code><br>如果用vs code滑上去看，會發現它其實就是char a[4]<br><img src="/../images/20221015_1.png"></p>
+<p>這類型的變數在宣告時就必須給定字元，且後續長度不可修改。</p>
+<blockquote>
+<p>即，不能用<code>char a[] = &quot;KKK&quot;;  a = &quot;KKKKK&quot;;</code></p>
+</blockquote>
+<p>這時候它的操作等同於char[n]，要改變其中任意「字元」都是可行的(此變數已經作為array被分配在stack中)<br>但當然如果把最後的’\0’換成其他字元，<code>printf(&quot;%s&quot;)</code>會印出奇怪的東西</p>
+<p>至於char* argv[]，同理其實只是等同於<code>char* argv[n] = &#123;&#39;string1&#39;,&#39;string2&#39;,...&#125;</code>而已</p>
+<p>要注意的是不可以直接把整個array改成其他字串，在C語言規範中arrays並非modifiable l-values</p>
+<p>如果要修改這類的char陣列，須使用<code>strcpy</code> (用malloc&#x2F;new出來的char array同理)</p>
+<p>這類char陣列的size是根據字元數變動的</p>
+<h2 id="char-1"><a href="#char-1" class="headerlink" title="char*"></a>char*</h2><p>顧名思義，他其實是字元指標，指向某個字串常數的指標。</p>
+<p>C&#x2F;C++的常數字串儲存方法是為這些字串開一個空間存放他們，當宣告</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">char</span>* A = <span class="string">&quot;hey&quot;</span>;</span><br></pre></td></tr></table></figure>
+<p>時，其實就是為hey這個字串分配一個空的記憶體位置，並且將A指向這個地址。</p>
+<blockquote>
+<p>也就是說，如果哪天”hey”的值變動了，A的內容也會跟著變動! 同時char*可以指向任意大小的char[]，但只要char[]內容更動，char*也會受到影響</p>
+</blockquote>
+<p>因為這個特性，char*不同於char[]，他是可以在後天改值的，只要改變他指的地址即可。</p>
+<ul>
+<li>char*就是浮萍，不像char[]、malloc()出來的char*一樣攜家帶眷</li>
+</ul>
+<p>不過，也因為他是單單一個指向記憶體的指標，我們不能透過strcpy等函數塞整個char array給他，他的空間尚未被初始化，如果直接用strcpy很可能導致SEG Falut</p>
+<p>而且因為類別正確(strcpy的確是接受char*作為參數)，所以編譯器<strong>並不會警告</strong>，新手在看文件時也會看到輸入參數是char*就傻傻地把char*丟進去了</p>
+<p>最後，char*如果沒有被初始化(指向某個常數字串)而直接印出，也會SEG fault</p>
+<ul>
+<li>這類char指標的size是根據作業系統的位元數變動的</li>
+</ul>
+<h2 id="char-2"><a href="#char-2" class="headerlink" title="char *[]"></a>char *[]</h2><p>根據<a href="/2022/10/15/C-C-%E5%AE%A3%E5%91%8A%E9%96%B1%E8%AE%80%E6%B3%95/">C&#x2F;C++宣告閱讀法</a>，以下面的變數為範例</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">char* hard[3];</span><br></pre></td></tr></table></figure>
+<p>我們可以得到他是「hard is size-3 array of pointers to char 」，也就是3個char*。因此我們我們可以套用char*的作法，hard這個變數是不能被strcpy的(不會有任何警告但會SAG fault)</p>
+<h2 id="額外補充"><a href="#額外補充" class="headerlink" title="額外補充"></a>額外補充</h2><p>另一個常見的SEG fault的原因就是生命週期</p>
+<p>考慮以下code</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">foo</span><span class="params">(<span class="type">char</span>* in)</span>&#123;</span><br><span class="line">    <span class="type">char</span> ans[] = <span class="string">&quot;laugh&quot;</span>;</span><br><span class="line">    in = ans; </span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;\nin funct, aram = %s\n&quot;</span>,in);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span>* argv[])</span>&#123;</span><br><span class="line">    <span class="type">char</span>* aram;</span><br><span class="line">    foo(aram);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;\nout funct, aram = %s\n&quot;</span>,aram);</span><br></pre></td></tr></table></figure>
+
+<p>我們應該會期望得到輸出</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">in funct, aram = laugh</span><br><span class="line">out funct, aram = laugh</span><br></pre></td></tr></table></figure>
+
+<p>但結果卻是SEG fault</p>
+<p>因為ans作為foo函數的區域變數，在退出函數時就已經消滅了，當aram變數還指向他的時候，其實會出現未定義行為</p>
+<p>所以如果想要讓aram保存ans的結果，最好的做法就是用malloc的，如下code</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">foo</span><span class="params">(<span class="type">char</span>* in)</span>&#123;</span><br><span class="line">    <span class="type">char</span> ans[] = <span class="string">&quot;laugh&quot;</span>;</span><br><span class="line">    <span class="built_in">strcpy</span>(in,ans);  <span class="comment">//注意要改成strcpy!</span></span><br><span class="line">   <span class="comment">// in = ans; </span></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;\nin funct, aram = %s\n&quot;</span>,in);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span>* argv[])</span>&#123;</span><br><span class="line">    <span class="type">char</span>* aram;</span><br><span class="line">    aram = (<span class="type">char</span>*) <span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(<span class="type">char</span>)*<span class="number">16</span>); <span class="comment">//讓aram變成malloc變數，可以「攜家帶眷」</span></span><br><span class="line">    foo(aram);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;\nout funct, aram = %s\n&quot;</span>,aram);</span><br></pre></td></tr></table></figure>
+
+<p>Note: 如果aram在丟入foo以後才malloc，仍會因為命名問題消滅造成SEG fault!!</p>
+<p>如果想要在函數內進行malloc，則需要傳入aram的地址，如下code</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">foo</span><span class="params">(<span class="type">char</span>** in)</span>&#123;</span><br><span class="line">    <span class="type">char</span> ans[] = <span class="string">&quot;laugh&quot;</span>;</span><br><span class="line">    *in = (<span class="type">char</span>*) <span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(<span class="type">char</span>)*<span class="number">16</span>);</span><br><span class="line">    <span class="built_in">strcpy</span>(*in,ans);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;\nin funct, aram = %s\n&quot;</span>,*in);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span>* argv[])</span>&#123;</span><br><span class="line">    <span class="type">char</span>* aram;</span><br><span class="line">    foo(&amp;aram); <span class="comment">//改這裡</span></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;\nout funct, aram = %s\n&quot;</span>,aram);</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/C/" rel="tag"># C</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/10/15/C-C-%E5%AE%A3%E5%91%8A%E9%96%B1%E8%AE%80%E6%B3%95/" rel="prev" title="C/C++宣告閱讀法">
+                  <i class="fa fa-chevron-left"></i> C/C++宣告閱讀法
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">劉宇承</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>

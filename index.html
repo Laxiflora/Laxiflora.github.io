@@ -125,13 +125,13 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">42</span>
+          <span class="site-state-item-count">44</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-count">9</span>
         <span class="site-state-item-name">標籤</span></a>
       </div>
   </nav>
@@ -160,6 +160,192 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://laxiflora.github.io/2022/10/15/char-%E7%9A%84%E5%A5%A7%E7%A7%98/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="劉宇承">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="laxiflora的小天地">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | laxiflora的小天地">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2022/10/15/char-%E7%9A%84%E5%A5%A7%E7%A7%98/" class="post-title-link" itemprop="url">char*的奧秘</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+      
+
+      <time title="創建時間：2022-10-15 02:41:50 / 修改時間：03:58:44" itemprop="dateCreated datePublished" datetime="2022-10-15T02:41:50+08:00">2022-10-15</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>這篇文主要想要強調的就是，char*作為一個指標，紀錄的是記憶體位址，若指向的記憶體地址沒有被分配，是不可以直接用strcpy的</p>
+<p>char[]其實就是一個數組，雖然看似跟char*一樣，但兩者的邏輯不同</p>
+<h2 id="char"><a href="#char" class="headerlink" title="char[]"></a>char[]</h2><p><code>char a[] = &quot;KKK&quot;</code> 其實等同於<code>char a[] = &#123;&#39;K&#39;,&#39;K&#39;,&#39;K&#39;,&#39;\0&#39;&#125;</code><br>如果用vs code滑上去看，會發現它其實就是char a[4]<br><img src="/../images/20221015_1.png"></p>
+<p>這類型的變數在宣告時就必須給定字元，且後續長度不可修改。</p>
+<blockquote>
+<p>即，不能用<code>char a[] = &quot;KKK&quot;;  a = &quot;KKKKK&quot;;</code></p>
+</blockquote>
+<p>這時候它的操作等同於char[n]，要改變其中任意「字元」都是可行的(此變數已經作為array被分配在stack中)<br>但當然如果把最後的’\0’換成其他字元，<code>printf(&quot;%s&quot;)</code>會印出奇怪的東西</p>
+<p>至於char* argv[]，同理其實只是等同於<code>char* argv[n] = &#123;&#39;string1&#39;,&#39;string2&#39;,...&#125;</code>而已</p>
+<p>要注意的是不可以直接把整個array改成其他字串，在C語言規範中arrays並非modifiable l-values</p>
+<p>如果要修改這類的char陣列，須使用<code>strcpy</code> (用malloc&#x2F;new出來的char array同理)</p>
+<p>這類char陣列的size是根據字元數變動的</p>
+<h2 id="char-1"><a href="#char-1" class="headerlink" title="char*"></a>char*</h2><p>顧名思義，他其實是字元指標，指向某個字串常數的指標。</p>
+<p>C&#x2F;C++的常數字串儲存方法是為這些字串開一個空間存放他們，當宣告</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">char</span>* A = <span class="string">&quot;hey&quot;</span>;</span><br></pre></td></tr></table></figure>
+<p>時，其實就是為hey這個字串分配一個空的記憶體位置，並且將A指向這個地址。</p>
+<blockquote>
+<p>也就是說，如果哪天”hey”的值變動了，A的內容也會跟著變動! 同時char*可以指向任意大小的char[]，但只要char[]內容更動，char*也會受到影響</p>
+</blockquote>
+<p>因為這個特性，char*不同於char[]，他是可以在後天改值的，只要改變他指的地址即可。</p>
+<ul>
+<li>char*就是浮萍，不像char[]、malloc()出來的char*一樣攜家帶眷</li>
+</ul>
+<p>不過，也因為他是單單一個指向記憶體的指標，我們不能透過strcpy等函數塞整個char array給他，他的空間尚未被初始化，如果直接用strcpy很可能導致SEG Falut</p>
+<p>而且因為類別正確(strcpy的確是接受char*作為參數)，所以編譯器<strong>並不會警告</strong>，新手在看文件時也會看到輸入參數是char*就傻傻地把char*丟進去了</p>
+<p>最後，char*如果沒有被初始化(指向某個常數字串)而直接印出，也會SEG fault</p>
+<ul>
+<li>這類char指標的size是根據作業系統的位元數變動的</li>
+</ul>
+<h2 id="char-2"><a href="#char-2" class="headerlink" title="char *[]"></a>char *[]</h2><p>根據<a href="/2022/10/15/C-C-%E5%AE%A3%E5%91%8A%E9%96%B1%E8%AE%80%E6%B3%95/">C&#x2F;C++宣告閱讀法</a>，以下面的變數為範例</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">char* hard[3];</span><br></pre></td></tr></table></figure>
+<p>我們可以得到他是「hard is size-3 array of pointers to char 」，也就是3個char*。因此我們我們可以套用char*的作法，hard這個變數是不能被strcpy的(不會有任何警告但會SAG fault)</p>
+<h2 id="額外補充"><a href="#額外補充" class="headerlink" title="額外補充"></a>額外補充</h2><p>另一個常見的SEG fault的原因就是生命週期</p>
+<p>考慮以下code</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">foo</span><span class="params">(<span class="type">char</span>* in)</span>&#123;</span><br><span class="line">    <span class="type">char</span> ans[] = <span class="string">&quot;laugh&quot;</span>;</span><br><span class="line">    in = ans; </span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;\nin funct, aram = %s\n&quot;</span>,in);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span>* argv[])</span>&#123;</span><br><span class="line">    <span class="type">char</span>* aram;</span><br><span class="line">    foo(aram);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;\nout funct, aram = %s\n&quot;</span>,aram);</span><br></pre></td></tr></table></figure>
+
+<p>我們應該會期望得到輸出</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">in funct, aram = laugh</span><br><span class="line">out funct, aram = laugh</span><br></pre></td></tr></table></figure>
+
+<p>但結果卻是SEG fault</p>
+<p>因為ans作為foo函數的區域變數，在退出函數時就已經消滅了，當aram變數還指向他的時候，其實會出現未定義行為</p>
+<p>所以如果想要讓aram保存ans的結果，最好的做法就是用malloc的，如下code</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">foo</span><span class="params">(<span class="type">char</span>* in)</span>&#123;</span><br><span class="line">    <span class="type">char</span> ans[] = <span class="string">&quot;laugh&quot;</span>;</span><br><span class="line">    <span class="built_in">strcpy</span>(in,ans);  <span class="comment">//注意要改成strcpy!</span></span><br><span class="line">   <span class="comment">// in = ans; </span></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;\nin funct, aram = %s\n&quot;</span>,in);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span>* argv[])</span>&#123;</span><br><span class="line">    <span class="type">char</span>* aram;</span><br><span class="line">    aram = (<span class="type">char</span>*) <span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(<span class="type">char</span>)*<span class="number">16</span>); <span class="comment">//讓aram變成malloc變數，可以「攜家帶眷」</span></span><br><span class="line">    foo(aram);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;\nout funct, aram = %s\n&quot;</span>,aram);</span><br></pre></td></tr></table></figure>
+
+<p>Note: 如果aram在丟入foo以後才malloc，仍會因為命名問題消滅造成SEG fault!!</p>
+<p>如果想要在函數內進行malloc，則需要傳入aram的地址，如下code</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">foo</span><span class="params">(<span class="type">char</span>** in)</span>&#123;</span><br><span class="line">    <span class="type">char</span> ans[] = <span class="string">&quot;laugh&quot;</span>;</span><br><span class="line">    *in = (<span class="type">char</span>*) <span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(<span class="type">char</span>)*<span class="number">16</span>);</span><br><span class="line">    <span class="built_in">strcpy</span>(*in,ans);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;\nin funct, aram = %s\n&quot;</span>,*in);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span>* argv[])</span>&#123;</span><br><span class="line">    <span class="type">char</span>* aram;</span><br><span class="line">    foo(&amp;aram); <span class="comment">//改這裡</span></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;\nout funct, aram = %s\n&quot;</span>,aram);</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://laxiflora.github.io/2022/10/15/C-C-%E5%AE%A3%E5%91%8A%E9%96%B1%E8%AE%80%E6%B3%95/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="劉宇承">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="laxiflora的小天地">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | laxiflora的小天地">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2022/10/15/C-C-%E5%AE%A3%E5%91%8A%E9%96%B1%E8%AE%80%E6%B3%95/" class="post-title-link" itemprop="url">C/C++宣告閱讀法</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+      
+
+      <time title="創建時間：2022-10-15 02:39:08 / 修改時間：02:40:25" itemprop="dateCreated datePublished" datetime="2022-10-15T02:39:08+08:00">2022-10-15</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>來源: <a target="_blank" rel="noopener" href="https://cseweb.ucsd.edu/~ricko/rt_lt.rule.html">The “right-left” rule</a></p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1126,304 +1312,6 @@
 <p><img src="/../images/20220809_13.png" alt="upload successful"><br>  - <a target="_blank" rel="noopener" href="https://arxiv.org/abs/1911.01102">論文連結</a></p>
 <ul>
 <li><a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=6gtn7H-pWr8">相關發表</a></li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://laxiflora.github.io/2022/08/09/ML-2021-8-2-%E9%A0%98%E7%B5%90%E8%AE%8A%E8%81%B2%E5%99%A8%E8%88%87%E6%9B%B4%E5%A4%9A%E6%87%89%E7%94%A8/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="劉宇承">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="laxiflora的小天地">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | laxiflora的小天地">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/08/09/ML-2021-8-2-%E9%A0%98%E7%B5%90%E8%AE%8A%E8%81%B2%E5%99%A8%E8%88%87%E6%9B%B4%E5%A4%9A%E6%87%89%E7%94%A8/" class="post-title-link" itemprop="url">ML_2021_8-2 領結變聲器與更多應用</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">發表於</span>
-      
-
-      <time title="創建時間：2022-08-09 03:22:28 / 修改時間：14:45:29" itemprop="dateCreated datePublished" datetime="2022-08-09T03:22:28+08:00">2022-08-09</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="Feature-Disentanglement"><a href="#Feature-Disentanglement" class="headerlink" title="Feature Disentanglement"></a>Feature Disentanglement</h1><ul>
-<li><p>有沒有可能可以知道embedding vector中，各維所儲存的資訊呢？</p>
-</li>
-<li><p>Feature disentanglement旨在找出各維的內容，且有辦法做到</p>
-<ul>
-<li>非本課內容，只列參考</li>
-<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1904.05742">https://arxiv.org/abs/1904.05742</a></li>
-<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1804.02812">https://arxiv.org/abs/1804.02812</a></li>
-<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1905.05879">https://arxiv.org/abs/1905.05879</a></li>
-</ul>
-</li>
-</ul>
-<h2 id="Feature-Disentanglement-應用"><a href="#Feature-Disentanglement-應用" class="headerlink" title="Feature Disentanglement 應用"></a>Feature Disentanglement 應用</h2><p><em>假如我們能知道embedding各維所代表的意涵，我們能用它做寫甚麼？</em></p>
-<h3 id="Voice-Conversion"><a href="#Voice-Conversion" class="headerlink" title="Voice Conversion"></a>Voice Conversion</h3><ul>
-<li><p>ex.柯南的領結變聲器</p>
-</li>
-<li><p>如果要A人聲轉成B人聲，一般需要A,B都念一樣的句子</p>
-</li>
-<li><p>透過feature disentanglement技術，可以讓A,B不必一定要說一樣的話</p>
-<ul>
-<li>我們知道哪些維度代表說話者的特徵，則我們可以只擷取這段維度，丟入decoder<br><img src="/../images/20220809_1.png"></li>
-</ul>
-</li>
-</ul>
-<p>    </p>
-<h1 id="Discrete-Latent-Representation"><a href="#Discrete-Latent-Representation" class="headerlink" title="Discrete Latent Representation"></a>Discrete Latent Representation</h1><ul>
-<li><p>embedding的各維可以不一定是real numbers，它可以是binary，甚至是one-hot</p>
-</li>
-<li><p>把embedding做這樣的格式可以更容易做feature disentanglement</p>
-</li>
-</ul>
-<h2 id="Example：VQVAE"><a href="#Example：VQVAE" class="headerlink" title="Example：VQVAE"></a>Example：VQVAE</h2><ul>
-<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1711.00937">論文連結</a></li>
-</ul>
-<p>會準備一個code book，將embedding跟這裏面的vectors計算相似度，取出相似度最高的那個vector，丟入decoder，範例如下圖</p>
-<p><img src="/../images/20220809_2.png"></p>
-<p>這樣的過程其實有點像self-attention。encoder的輸出類比於self-attention裡面的query，而code book的vectors則像是key</p>
-<ul>
-<li>這樣表示decoder的輸入可能性只有codebook裡面的向量數量，讓輸出變成離散的</li>
-</ul>
-<h2 id="Text-as-Representation"><a href="#Text-as-Representation" class="headerlink" title="Text as Representation"></a>Text as Representation</h2><ul>
-<li>Representation &#x3D; embedding</li>
-<li>有沒有可能讓embedding不要是向量，而是人們看得懂的文字呢？</li>
-</ul>
-<p><img src="/../images/20220809_4.png"><br>範例：<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1810.02851">https://arxiv.org/abs/1810.02851</a></p>
-<ul>
-<li><p>在這個範例下，輸入跟輸出都是seq，所以model會需要是一個seq2seq的類型</p>
-<ul>
-<li>這也是一種transformer</li>
-</ul>
-</li>
-<li><p>這類做法也稱為seq2seq2seq auto-encoder (中間也是文字)</p>
-</li>
-</ul>
-<h3 id="embedding的可讀性"><a href="#embedding的可讀性" class="headerlink" title="embedding的可讀性"></a>embedding的可讀性</h3><ul>
-<li>若我們要取的任務是取得文章摘要，有沒有可能輸出的embedding其實就是summary呢？<ul>
-<li><p>行不通。實務上encoder跟decoder之間會發明一個暗號，人類看不懂embedding的輸出，但是decoder卻能正常還原</p>
-</li>
-<li><p>一種解決方法就是套用GAN的概念，加入discriminator，讓embedding跟真人寫得summary做比較，而embedding則必須騙過discriminator</p>
-</li>
-</ul>
-</li>
-</ul>
-<p><img src="/../images/20220809_5.png"><br>沒錯 看起來又很像cycle GAN了<br>encoder、decoder就是generator，上面的則是discriminator</p>
-<h2 id="Tree-as-representation"><a href="#Tree-as-representation" class="headerlink" title="Tree as representation"></a>Tree as representation</h2><p>本課不細講，相關參考如下</p>
-<ul>
-<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1806.07832">https://arxiv.org/abs/1806.07832</a></li>
-<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1904.03746">https://arxiv.org/abs/1904.03746</a></li>
-</ul>
-<h1 id="More-Applications"><a href="#More-Applications" class="headerlink" title="More Applications"></a>More Applications</h1><h2 id="VAE"><a href="#VAE" class="headerlink" title="VAE"></a>VAE</h2><ul>
-<li><p>若把decoder單獨拆出來，也可以看作是一個generator</p>
-</li>
-<li><p>decoder經過一段修正，就是variational auto-encoder (VAE)</p>
-</li>
-</ul>
-<h2 id="Compression"><a href="#Compression" class="headerlink" title="Compression"></a>Compression</h2><ul>
-<li>auto-encoder也可以看作是一種壓縮，把一個圖片丟入encoder，並且儲存embedding<ul>
-<li>decoder的還原動作則是”decompression”，不過這樣還原出來的圖片會有失真</li>
-</ul>
-</li>
-</ul>
-<h2 id="Anomaly-Detection-異常檢測"><a href="#Anomaly-Detection-異常檢測" class="headerlink" title="Anomaly Detection (異常檢測)"></a>Anomaly Detection (異常檢測)</h2><p><em>本次作業內容</em></p>
-<p>給定一個資料集{$x^1,x^2,…,x^N$}，並且判斷輸入x與資料集是否相似<br><img src="/../images/20220809_6.png"></p>
-<p>異常檢測的相關應用：</p>
-<ul>
-<li><p>信用卡交易詐欺檢測 (交易行為是否異常)</p>
-</li>
-<li><p>網路侵入偵測 (連線行為是否異常)</p>
-</li>
-<li><p>癌症偵測 (細胞是否變異)</p>
-</li>
-<li><p>那異常檢測是否就是一種二元分類問題呢？</p>
-<ul>
-<li>這種問題的難點就是在蒐集資料，異常資料不易蒐集</li>
-<li>這類問題假設我們只有正常的訓練資料(其中一種class)，而沒有異常訓練資料，稱為”One class分類問題”</li>
-</ul>
-</li>
-<li><p>解決One class classification問題，就會需要auto-encoder</p>
-<ul>
-<li>正常資料由於有學習過，所以可以有效還原<br>    - 但如果出現了異常資料，decoder會難以還原，若發現decoder的輸出與原始輸入相似度低(large reconstruction loss)，則可以判斷它就是anomaly的資料</li>
-</ul>
-</li>
-</ul>
-<p>auto-encoder只是anomaly detection的一種approach，更多的異常檢測任務解法可以參考其它年的課程</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://laxiflora.github.io/2022/08/08/ML-2021-8-1-%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="劉宇承">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="laxiflora的小天地">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | laxiflora的小天地">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/08/08/ML-2021-8-1-%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/" class="post-title-link" itemprop="url">ML_2021_8-1 基本概念</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">發表於</span>
-
-      <time title="創建時間：2022-08-08 23:58:36" itemprop="dateCreated datePublished" datetime="2022-08-08T23:58:36+08:00">2022-08-08</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新於</span>
-      <time title="修改時間：2022-08-09 03:21:25" itemprop="dateModified" datetime="2022-08-09T03:21:25+08:00">2022-08-09</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <ul>
-<li><p>也不用label data就可以做pretrain -&gt; 算是一種self-supervised learning</p>
-</li>
-<li><p>出現在2006年，是很老的模型</p>
-</li>
-</ul>
-<h1 id="Auto-encoder-模型"><a href="#Auto-encoder-模型" class="headerlink" title="Auto-encoder 模型"></a>Auto-encoder 模型</h1><p><img src="/../images/20220808_2.png"><br>Auto-encoder也有encoder、decoder的兩層network，輸入會是一張unlabeled的圖片，經過encoder以後變成向量，再透過decoder變回一張圖片</p>
-<ul>
-<li><p>訓練的目標是希望decoder輸出的圖與原圖越像越好(距離越近越好)</p>
-<ul>
-<li>又稱為reconstruction</li>
-</ul>
-</li>
-<li><p>很像Cycle GAN中，2個generator之間的關係</p>
-</li>
-<li><p>關於中間的vector，有很多別稱</p>
-<ul>
-<li>Embedding, Representation, Code</li>
-</ul>
-</li>
-<li><p>auto-encoder的encoder通常輸入是為度很高的向量，而中介的vector則是維度低很多的向量，故可用於壓縮</p>
-<ul>
-<li>具備壓縮的功能<br>    - encoder的輸出也叫做bottleneck<br>    - 這樣降維的技術稱為「dimention reduction」</li>
-</ul>
-</li>
-</ul>
-<h1 id="Why-auto-encoder"><a href="#Why-auto-encoder" class="headerlink" title="Why auto-encoder"></a>Why auto-encoder</h1><ul>
-<li>為何有辦法讓低維度向量變成一個圖片呢?<ul>
-<li>圖片的變化有限，把變化的可能性記下來，就可以把一個複雜的圖片用簡單的方式記錄下來</li>
-</ul>
-</li>
-</ul>
-<h2 id="變形：De-noising-auto-encode"><a href="#變形：De-noising-auto-encode" class="headerlink" title="變形：De-noising auto-encode"></a>變形：De-noising auto-encode</h2><ul>
-<li><p>也不是多新的技術(2008)</p>
-</li>
-<li><p>把輸入的圖片先隨便加入一些雜訊，但是要decoder還原加入雜訊之前的結果</p>
-<ul>
-<li>auto-encoder必須自己學會把雜訊去除</li>
-</ul>
-</li>
-<li><p>這個idea其實跟現今的BERT很像(填空)</p>
-</li>
-</ul>
-<p><img src="/../images/20220808_3.png"></p>
-<ul>
-<li>BERT又可看作一個de-noising auto-encoder<ul>
-<li>BERT的decoder不一定是linear。 廣義來看，可以把BERT切開，比如一個BERT前6層是encoder，後6層+linear layer是decoder</li>
-</ul>
-</li>
 </ul>
 
       
