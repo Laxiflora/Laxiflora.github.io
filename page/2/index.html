@@ -125,13 +125,13 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">44</span>
+          <span class="site-state-item-count">46</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-count">10</span>
         <span class="site-state-item-name">標籤</span></a>
       </div>
   </nav>
@@ -160,6 +160,269 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://laxiflora.github.io/2022/08/10/ML-2021-9-2-%E6%A9%9F%E5%99%A8%E5%BF%83%E4%B8%AD%E7%9A%84%E8%B2%93%E9%95%B7%E4%BB%80%E9%BA%BC%E6%A8%A3%E5%AD%90/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="劉宇承">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="laxiflora的小天地">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | laxiflora的小天地">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2022/08/10/ML-2021-9-2-%E6%A9%9F%E5%99%A8%E5%BF%83%E4%B8%AD%E7%9A%84%E8%B2%93%E9%95%B7%E4%BB%80%E9%BA%BC%E6%A8%A3%E5%AD%90/" class="post-title-link" itemprop="url">ML_2021_9-2 機器心中的貓長什麼樣子?</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2022-08-10 02:57:37" itemprop="dateCreated datePublished" datetime="2022-08-10T02:57:37+08:00">2022-08-10</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新於</span>
+      <time title="修改時間：2022-08-11 19:32:45" itemprop="dateModified" datetime="2022-08-11T19:32:45+08:00">2022-08-11</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="Global-explanation"><a href="#Global-explanation" class="headerlink" title="Global explanation"></a>Global explanation</h1><ul>
+<li>「What does a cat(specific class) look like」</li>
+<li>本課程以convolution network做圖片分類為例，講述各種global explainable approach</li>
+</ul>
+<h2 id="觀察各Convolution-layer中，filter關注什麼pattern"><a href="#觀察各Convolution-layer中，filter關注什麼pattern" class="headerlink" title="觀察各Convolution layer中，filter關注什麼pattern"></a>觀察各Convolution layer中，filter關注什麼pattern</h2><ul>
+<li><p>假設給定一張特定圖片，則我們每次捲積，都會出現一個feature map</p>
+<ul>
+<li>觀察這個feature map，如果有某個filter裡面的值偏大，可以判定這張圖有某些pattern是由該filter分析</li>
+</ul>
+</li>
+<li><p>不過現在我們不會知道要輸入什麼圖片，要怎麼知道該filter是注意在什麼pattern呢？ $\rightarrow$ 製造一張圖片X*</p>
+</li>
+<li><p>我們把X做為要學習的參數，作為模型的輸入，目標是要maximize該input在經過convolution以後，對應的filter的feature map的各元素值，算式如下<br>$$<br>X^* &#x3D; arg\ max_{X}\sum_i{\sum_j{a_{ij}}}<br>$$<br>其中，使右式最大的自訂圖片X稱為X* (gradient ascent)</p>
+</li>
+</ul>
+<p><img src="/../images/20220811_1.png"><br>以數字辨識為例，這是每個filter想觀察的重點，可以發現有些filter著重注意橫線，有些filter在意協直線等等，看起來非常合理</p>
+<h2 id="透過classifier-output觀察"><a href="#透過classifier-output觀察" class="headerlink" title="透過classifier output觀察"></a>透過classifier output觀察</h2><ul>
+<li><p>找出一種輸入Ｘ，讓第i類別類別$y_i$的分數越高越好</p>
+<ul>
+<li>這種做法無用，只會看到一堆雜訊<br><img src="/../images/20220811_2.png"></li>
+</ul>
+</li>
+<li><p>一種做法是，再加入一個分類器R，用於判定$X^*$到底有多像一個數字</p>
+</li>
+</ul>
+<p>$$<br>X^* &#x3D; arg\ max_{X}\ y_i+R(X) \\\<br>R(X)&#x3D;-\sum_{i,j}|X_{ij}|<br>$$</p>
+<p>這種作法很多需要regularization terms(Constraint)、hyperparameter tuning，並不簡單<br><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1506.06579">範例論文</a></p>
+<h3 id="Constraint-from-generator"><a href="#Constraint-from-generator" class="headerlink" title="Constraint from generator"></a>Constraint from generator</h3><ul>
+<li>train 一個image generator，輸入z以後輸出一個圖片，再把這個圖片丟入image classifier，找出能讓$y_i$最大的值$z^*$<br><img src="/../images/20220811_3.png"><br>$$<br>z^* &#x3D; arg\ max_{z}\ y_i+R(X) \\\<br>R(X)&#x3D;-\sum_{i,j}|X_{ij}|<br>$$</li>
+</ul>
+<p><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1612.00005">範例論文</a></p>
+<p>找出z以後，則我們可以透過Generator來告訴大家，我們所產生的這些圖片會讓電腦容易辨認成這個class</p>
+<blockquote>
+<p>電腦真實想法或許不重要，但希望有辦法可以讓解讀出來的東西可以說服人類</p>
+</blockquote>
+<h2 id="透過仿作一個類似成效的簡易model來解釋"><a href="#透過仿作一個類似成效的簡易model來解釋" class="headerlink" title="透過仿作一個類似成效的簡易model來解釋"></a>透過仿作一個類似成效的簡易model來解釋</h2><p><img src="/../images/20220811_4.png"></p>
+<p>問題是，簡易的模型如何能模仿neural network的決策？<br>$\rightarrow$ 只模仿一部分區域的行為</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://youtu.be/K1mWgthGS-A">LIME(Local Interpretable Model-agnostoc Explanations)</a></li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://laxiflora.github.io/2022/08/09/ML-2021-9-1-%E7%82%BA%E4%BB%80%E9%BA%BC%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E5%8F%AF%E4%BB%A5%E6%AD%A3%E7%A2%BA%E5%88%86%E8%BE%A8%E5%AF%B6%E5%8F%AF%E5%A4%A2%E5%92%8C%E6%95%B8%E7%A2%BC%E5%AF%B6%E8%B2%9D%E5%91%A2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="劉宇承">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="laxiflora的小天地">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | laxiflora的小天地">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2022/08/09/ML-2021-9-1-%E7%82%BA%E4%BB%80%E9%BA%BC%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E5%8F%AF%E4%BB%A5%E6%AD%A3%E7%A2%BA%E5%88%86%E8%BE%A8%E5%AF%B6%E5%8F%AF%E5%A4%A2%E5%92%8C%E6%95%B8%E7%A2%BC%E5%AF%B6%E8%B2%9D%E5%91%A2/" class="post-title-link" itemprop="url">ML_2021_9-1 為什麼類神經網路可以正確分辨寶可夢和數碼寶貝呢?</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2022-08-09 14:46:25" itemprop="dateCreated datePublished" datetime="2022-08-09T14:46:25+08:00">2022-08-09</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新於</span>
+      <time title="修改時間：2022-08-10 02:52:35" itemprop="dateModified" datetime="2022-08-10T02:52:35+08:00">2022-08-10</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>Correct answers !&#x3D; Intelligent</p>
+<h1 id="Why-we-need-explainable-ML"><a href="#Why-we-need-explainable-ML" class="headerlink" title="Why we need explainable ML"></a>Why we need explainable ML</h1><ol>
+<li>對現實決策的解釋性</li>
+</ol>
+<ul>
+<li><p>如果銀行利用機器學習來做是否貸款的判斷，則法律規定機器學習必須給出拒絕&#x2F;同意貸款的理由</p>
+</li>
+<li><p>醫療、法律、自駕車、金融等等領域，不滿足於機器學習的黑箱</p>
+</li>
+</ul>
+<ol start="2">
+<li>可以更好的去調整Model</li>
+</ol>
+<h1 id="Interpretable-v-s-Powerful"><a href="#Interpretable-v-s-Powerful" class="headerlink" title="Interpretable v.s Powerful"></a>Interpretable v.s Powerful</h1><p>Linear model能力差，但是他容易解釋</p>
+<p>Deep networks雖然強大，卻無法被解釋</p>
+<p>與其侷限只用linear model，不如學著讓深度模型可以被解釋</p>
+<ul>
+<li>How about decision tree?<ul>
+<li>Decision tree can be terrible<br>    - 通常會用的都是random forest，而非單一一棵decision tree</li>
+</ul>
+</li>
+</ul>
+<h1 id="Goal-of-Explainable-ML"><a href="#Goal-of-Explainable-ML" class="headerlink" title="Goal of Explainable ML"></a>Goal of Explainable ML</h1><ul>
+<li>判准不好定義，以下是老師個人界定</li>
+</ul>
+<p>人腦也是黑盒子，但我們卻可以相信人的決斷<br>相關心理學實驗：<a target="_blank" rel="noopener" href="https://jamesclear.com/wp-content/uploads/2015/03/copy-machine-study-ellen-langer.pdf">印表機</a></p>
+<p>很多時候人們只是想要一個可以說服他們的理由，所以所謂的Explainable ML其實就是模型的決斷可以給出一個說服老闆、客戶、你自己的一種理由</p>
+<h1 id="Explainable-ML的兩大類"><a href="#Explainable-ML的兩大類" class="headerlink" title="Explainable ML的兩大類"></a>Explainable ML的兩大類</h1><p>問在甚麼情況下會這樣分類 (“你覺得貓看起來像如何”)</p>
+<ul>
+<li>Local explanation</li>
+<li>Global explanation</li>
+</ul>
+<h2 id="Local-explanation"><a href="#Local-explanation" class="headerlink" title="Local explanation"></a>Local explanation</h2><p>根據一個圖片(data)來問問題 (“為何圖片是一隻貓”)</p>
+<ul>
+<li><strong>要找出一個data的哪個component對於機器的分類至關重要</strong><ul>
+<li>一種做法是：遮蓋資料的不同部分，看是否會影響機器的預測結果<br><img src="/../images/20220809_7.png"></li>
+</ul>
+</li>
+</ul>
+<h3 id="另一種作法：Saliency-map"><a href="#另一種作法：Saliency-map" class="headerlink" title="另一種作法：Saliency map"></a>另一種作法：Saliency map</h3><p>針對各維的weight，加上$\Delta x$，看這樣損失函數值e的變化量為何 (|$\frac{\Delta e}{\Delta x}$|)</p>
+<p>(其實就是|$\frac{\partial e}{\partial x_n}$|)</p>
+<p>以圖片為例，可以得出下圖結果，此圖稱為<strong>saliency map</strong>(像素越白表示重要性越高)<br><img src="/../images/20220809_8.png"></p>
+<p>但是Saliency也有限制，會碰到的問題與解決方式如下：</p>
+<ol>
+<li>Noisy Gradient：資料的判別依據混入了雜訊 -&gt; SmoothGrad</li>
+<li>Gradient Saturation：可能一張圖片的特徵已經足以明顯，再對這個明顯的特徵做偏微分以後，e的變化性依然不大，則可能會誤判這個特徵點不重要 -&gt; 有替代的做法稱為「Integrated gradient(IG)」，相關文獻：<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1611.02639">https://arxiv.org/abs/1611.02639</a><br>ex: 大象鼻子長度作為判別是否為大象<br><img src="/../images/20220809_10.png"></li>
+</ol>
+<h3 id="SmoothGrad"><a href="#SmoothGrad" class="headerlink" title="SmoothGrad"></a>SmoothGrad</h3><p>這個技術就是把原始的圖片輸入隨機加入一些雜訊並分別計算他們的Saliency map再取平均，真正重要的部位就會被凸顯出來<br><img src="/../images/20220809_9.png"></p>
+<hr>
+<h1 id="機器如何處理輸入"><a href="#機器如何處理輸入" class="headerlink" title="機器如何處理輸入"></a>機器如何處理輸入</h1><p>前面主要都在說機器如何找出一個輸入的重要部分</p>
+<p>現在要探討的則是機器如何去處理這個輸入的</p>
+<h2 id="Visualization：具現化用肉眼觀察"><a href="#Visualization：具現化用肉眼觀察" class="headerlink" title="Visualization：具現化用肉眼觀察"></a>Visualization：具現化用肉眼觀察</h2><pre><code>- 直接去看neuron、attention的輸出是甚麼。雖然輸出的維度很高，但是可以透過一些方法(PCA、t-SNE等等)壓縮成二維並顯示出來
+</code></pre>
+<p>以作業2為例解釋<br><img src="/../images/20220809_11.png"><br>透過觀察被壓縮後的結果，我們可以看出一些特性</p>
+<p><img src="/../images/20220809_12.png"><br>比如範例中的model某層輸出，可以看出機器可以看的出不同人所說的同樣內容，並把他們align在一起</p>
+<p>關於attention可否被解釋，有諸多論戰</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1902.10186">Attention is not Explanation</a></li>
+<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1908.04626">Attention is not not Explanation</a></li>
+</ul>
+<h2 id="Probing：用探針插入network來觀察發生甚麼事"><a href="#Probing：用探針插入network來觀察發生甚麼事" class="headerlink" title="Probing：用探針插入network來觀察發生甚麼事"></a>Probing：用探針插入network來觀察發生甚麼事</h2><p>訓練一個classifier，將embedding丟進去，讓classifier試圖去訓練是否可以分類出想要的資訊<br><img src="/../images/pasted-46.png"></p>
+<p>注意，probing仍會失誤，不可太快下定論(ex. 分類模型練壞等等)</p>
+<ul>
+<li>一種probing應用的範例：<br>用作業二(語者辨識)的範例，可以把特定layer的輸出embedding丟入TTS模型，讓TTS模型想辦法還原原始的輸入。</li>
+</ul>
+<p>若TTS無法完整的還原某塊部分(如.語者資訊)，則可以知道這個network有學到抹去語者的資訊，只保留語音內容。</p>
+<h2 id="另一個probing例子"><a href="#另一個probing例子" class="headerlink" title="另一個probing例子"></a>另一個probing例子</h2><ul>
+<li>是李老師的論文</li>
+</ul>
+<p><img src="/../images/20220809_13.png" alt="upload successful"><br>  - <a target="_blank" rel="noopener" href="https://arxiv.org/abs/1911.01102">論文連結</a></p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=6gtn7H-pWr8">相關發表</a></li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1305,426 +1568,6 @@
 <ul>
 <li>弄壞資料的方法：旋轉、空白、mask…<br><img src="/../images/20220802_7.png"></li>
 </ul>
-</li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://laxiflora.github.io/2022/07/29/ML-2021-6-4-%E7%94%9F%E6%88%90%E5%BC%8F%E5%B0%8D%E6%8A%97%E7%B6%B2%E8%B7%AF-%E5%9B%9B-%E2%80%93-Cycle-GAN/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="劉宇承">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="laxiflora的小天地">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | laxiflora的小天地">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/07/29/ML-2021-6-4-%E7%94%9F%E6%88%90%E5%BC%8F%E5%B0%8D%E6%8A%97%E7%B6%B2%E8%B7%AF-%E5%9B%9B-%E2%80%93-Cycle-GAN/" class="post-title-link" itemprop="url">ML_2021_6-4 生成式對抗網路(四) – Cycle GAN</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">發表於</span>
-
-      <time title="創建時間：2022-07-29 16:57:34" itemprop="dateCreated datePublished" datetime="2022-07-29T16:57:34+08:00">2022-07-29</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新於</span>
-      <time title="修改時間：2022-08-08 20:10:07" itemprop="dateModified" datetime="2022-08-08T20:10:07+08:00">2022-08-08</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="Learning-from-unpaired-data"><a href="#Learning-from-unpaired-data" class="headerlink" title="Learning from unpaired data"></a>Learning from unpaired data</h1><ul>
-<li>把GAN用在unsupervised learning</li>
-<li>如何用沒標註的資料做semi-supervised learning<ul>
-<li>2021 HW3,HW5都有用到<br>    	- 不過他們仍然需要一些paired data</li>
-</ul>
-</li>
-</ul>
-<h2 id="影像風格轉換"><a href="#影像風格轉換" class="headerlink" title="影像風格轉換"></a>影像風格轉換</h2><ul>
-<li><p>以影像風格轉換，要把三次元真人的圖片轉成二次元的輸出，不可能先幫3次元訓練資料畫一個二次元的圖片來pair，所以任何一筆成對資料都沒有</p>
-</li>
-<li><p>我們可否把輸入的真人圖片變成一個distribution，輸出的圖片也是一個distribution呢?<br><img src="/../images/pasted-39.png"></p>
-</li>
-</ul>
-<h3 id="First-approach"><a href="#First-approach" class="headerlink" title="First approach"></a>First approach</h3><ul>
-<li><p>套用原本GAN的想法，只要能從x domain sample即可</p>
-<ul>
-<li>從domain x sample，輸出以後跟y domain做discriminator，最後輸出向量<br><img src="/../images/pasted-40.png"></li>
-</ul>
-</li>
-<li><p>問題：</p>
-<ul>
-<li>generator可以只訓練通過discriminator的照片，然後完全忽略輸入<ul>
-<li>所以我們需要condition，但又因為沒有paired data，我們不能用condition GAN</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<p>-&gt; 既然這樣，就用兩次GAN，看輸出能不能還原原本的圖片 -&gt; 使用cycle GAN</p>
-<h1 id="Cycle-GAN"><a href="#Cycle-GAN" class="headerlink" title="Cycle GAN"></a>Cycle GAN</h1><p>同樣以影像風格轉換為例(輸入3次元人臉，輸出二次元人臉)</p>
-<ul>
-<li><p>在原本的GAN網路中再新增一個GAN，把第一個generator的輸出丟進第二個generator的輸入，第二個GAN用於產生跟原始的輸入x盡量相似的圖片
-     </p>
-</li>
-<li><p>即讓$G_{x \rightarrow y}越接近G_{y\rightarrow x}$越好<br><img src="/../images/20220729_13.png"></p>
-</li>
-<li><p>問題2: 機器有沒有可能亂學，「串通作弊」呢</p>
-<ul>
-<li>EX: 機器gen1學到真人戴眼鏡，就會把眼鏡拿掉變成痣；gen2則學到看到二次元痣，就把痣拿掉換回眼鏡</li>
-<li>EX2: gen1跟gen2互相對稱旋轉圖片</li>
-</ul>
-</li>
-<li><p>不過在實作上這個問題發生率不高，因為network is lazy，看到眼鏡就輸出眼鏡了</p>
-</li>
-</ul>
-<p><img src="/../images/20220729_14.png"></p>
-<ul>
-<li><p>相反來說，我們也會需要一個discriminator來看$G_{y\rightarrow x}$(就是生成的3次元頭像是否跟原始圖像很像)</p>
-</li>
-<li><p>如上圖，這兩個合起來就會是cycle GEN</p>
-</li>
-</ul>
-<h1 id="其他做影像風格轉換的GAN"><a href="#其他做影像風格轉換的GAN" class="headerlink" title="其他做影像風格轉換的GAN"></a>其他做影像風格轉換的GAN</h1><ul>
-<li><p>Disco GAN</p>
-</li>
-<li><p>Dual GAN</p>
-</li>
-<li><p>Cycle GAN</p>
-<ul>
-<li>這三個想法幾乎一模一樣，只是團隊不同</li>
-</ul>
-</li>
-<li><p>StarGAN則是可以在多種風格間轉換(Cycle只能兩種風格)</p>
-</li>
-<li><p><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1907.10830">進階版GAN</a>，以及應用他的<a target="_blank" rel="noopener" href="https://selfie2anime.com/">網站</a></p>
-</li>
-</ul>
-<h1 id="文字風格轉換"><a href="#文字風格轉換" class="headerlink" title="文字風格轉換"></a>文字風格轉換</h1><ul>
-<li><p>輸入一個句子，輸出另一個句子 (此例是把負面句子變成正面句子)</p>
-<ul>
-<li>依樣畫葫蘆，收集一堆負面&#x2F;正面的句子(同樣沒有成對資料)</li>
-</ul>
-</li>
-<li><p>套用Cycle GAN作法</p>
-</li>
-</ul>
-<p><img src="/../images/pasted-41.png"></p>
-<ul>
-<li><p>問題: 文字的相似度如何計算?<br>  自行研究</p>
-</li>
-<li><p>輸出如果是文字接給discriminator會有問題，需要用RL做</p>
-</li>
-</ul>
-<h2 id="文字風格轉換應用-除了負面轉正面的句子"><a href="#文字風格轉換應用-除了負面轉正面的句子" class="headerlink" title="文字風格轉換應用(除了負面轉正面的句子)"></a>文字風格轉換應用(除了負面轉正面的句子)</h2><ol>
-<li>Unsupervised Abstractive Summarization (摘要練習)<ul>
-<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1810.02851">https://arxiv.org/abs/1810.02851</a></li>
-</ul>
-</li>
-<li>Unsupervised Translation (翻譯) <ul>
-<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1710.04087">https://arxiv.org/abs/1710.04087</a></li>
-<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1710.11041">https://arxiv.org/abs/1710.11041</a></li>
-</ul>
-</li>
-<li>Unsupervised ASR (語音辨識)<ul>
-<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1804.00316">https://arxiv.org/abs/1804.00316</a></li>
-<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1812.09323">https://arxiv.org/abs/1812.09323</a></li>
-<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1904.04100">https://arxiv.org/abs/1904.04100</a></li>
-</ul>
-</li>
-</ol>
-<p>    
-    </p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://laxiflora.github.io/2022/07/29/ML-2021-6-3-%E7%94%9F%E6%88%90%E5%BC%8F%E5%B0%8D%E6%8A%97%E7%B6%B2%E8%B7%AF-%E4%B8%89-%E2%80%93-%E7%94%9F%E6%88%90%E5%99%A8%E6%95%88%E8%83%BD%E8%A9%95%E4%BC%B0%E8%88%87%E6%A2%9D%E4%BB%B6%E5%BC%8F%E7%94%9F%E6%88%90/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="劉宇承">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="laxiflora的小天地">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | laxiflora的小天地">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/07/29/ML-2021-6-3-%E7%94%9F%E6%88%90%E5%BC%8F%E5%B0%8D%E6%8A%97%E7%B6%B2%E8%B7%AF-%E4%B8%89-%E2%80%93-%E7%94%9F%E6%88%90%E5%99%A8%E6%95%88%E8%83%BD%E8%A9%95%E4%BC%B0%E8%88%87%E6%A2%9D%E4%BB%B6%E5%BC%8F%E7%94%9F%E6%88%90/" class="post-title-link" itemprop="url">ML_2021_6-3 生成式對抗網路(三) – 生成器效能評估與條件式生成</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">發表於</span>
-
-      <time title="創建時間：2022-07-29 15:24:39" itemprop="dateCreated datePublished" datetime="2022-07-29T15:24:39+08:00">2022-07-29</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新於</span>
-      <time title="修改時間：2022-08-08 20:10:07" itemprop="dateModified" datetime="2022-08-08T20:10:07+08:00">2022-08-08</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <ul>
-<li>GAN的訓練仍然困難，gen跟dis有一個卡住了，就整個卡住了<ul>
-<li>Generator跟Discriminator需要互相match each other</li>
-</ul>
-</li>
-</ul>
-<h1 id="More-training-GEN-tips"><a href="#More-training-GEN-tips" class="headerlink" title="More training GEN tips"></a>More training GEN tips</h1><p><img src="/../images/20220729_2.png"></p>
-<h1 id="GAN-for-Sequence-generation"><a href="#GAN-for-Sequence-generation" class="headerlink" title="GAN for Sequence generation"></a>GAN for Sequence generation</h1><ul>
-<li><p>前面講的都是影像的GAN</p>
-</li>
-<li><p>Decoder變成了generator</p>
-</li>
-<li><p>Decoder的輸出一樣丟入discriminator訓練，產生分數<br><img src="/../images/pasted-37.png"></p>
-</li>
-<li><p>問題在於，decoder不能用梯度下降去train</p>
-<ul>
-<li>微不出decoder weight變化對discriminator的影響（distribution不變）<br><img src="/../images/20220729_3.png"></li>
-</ul>
-</li>
-<li><p>碰到很難train的地方，可以用用看RL</p>
-<ul>
-<li>RL很難train，且GAN也很難train，不好用</li>
-</ul>
-</li>
-<li><p>完整的GAN課程：<a target="_blank" rel="noopener" href="https://www.youtube.com/playlist?list=PLJV_el3uVTsMq6JEFPW35BCiOQTsoqwNw">連結</a></p>
-</li>
-<li><p>More generative models: VAE、FLOW-based Model</p>
-</li>
-</ul>
-<h1 id="可否用supervised-learning做"><a href="#可否用supervised-learning做" class="headerlink" title="可否用supervised learning做"></a>可否用supervised learning做</h1><ul>
-<li>直接把正確的圖片變成vector，作為ground truth（訓練目標）<ul>
-<li>直接放入隨機向量來生成圖片</li>
-</ul>
-</li>
-<li>可以這樣做，但是向量不能亂取，相關文章：<ul>
-<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1707.05776">Generative Latent Optimization (GLO)</a></li>
-<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2007.02798">Gradient Origin Networks</a></li>
-</ul>
-</li>
-</ul>
-<h1 id="Quality-of-GAN"><a href="#Quality-of-GAN" class="headerlink" title="Quality of GAN"></a>Quality of GAN</h1><ul>
-<li><p>如何衡量GAN的好壞</p>
-</li>
-<li><p>以往都是直接真人去看效果，但可能不客觀且價格昂貴</p>
-</li>
-<li><p>在某些任務的確可以衡量</p>
-<ul>
-<li>（作業6）提供一個動畫，看GAN能抓出幾張是人臉</li>
-</ul>
-</li>
-<li><p>分類系統，把GAN輸出的影像作為分類系統的輸入，讓這個系統分類</p>
-<ul>
-<li>Ex. GAN產生班馬，給分類系統分類該圖像是否班馬類</li>
-<li>當分類越集中，則GAN的輸出「可能」越好</li>
-<li>問題：Mode Collapse</li>
-</ul>
-</li>
-</ul>
-<h2 id="Mode-Collapse"><a href="#Mode-Collapse" class="headerlink" title="Mode Collapse"></a>Mode Collapse</h2><ul>
-<li>可能GAN輸出的圖片來來去去就那幾張，過度單一，但那些圖片都剛好分類成功</li>
-<li>GAN知道discriminter的盲點了，就集中攻擊這個點<br><img src="/../images/pasted-38.png"></li>
-<li>上圖的人臉過度單一</li>
-<li>目前暫時無解，但看得出來</li>
-</ul>
-<h2 id="Mode-Dropping"><a href="#Mode-Dropping" class="headerlink" title="Mode Dropping"></a>Mode Dropping</h2><ul>
-<li>GAN輸出的圖片看起來有一些變化性，看不出問題</li>
-<li>但可能輸出的圖片只是真實圖片的一小個子集</li>
-<li>不容易偵測出來</li>
-</ul>
-<h2 id="Diversity"><a href="#Diversity" class="headerlink" title="Diversity"></a>Diversity</h2><ul>
-<li>衡量GAN輸出的多樣性分布</li>
-</ul>
-<p><img src="/images/20220729_5.png" alt="upload successful"></p>
-<ul>
-<li><p>與quality差別在於，quality衡量只看一張圖片，分類越集中越好</p>
-</li>
-<li><p>diversity則是看一堆圖片，輸出的平均越均衡，代表多樣性越好</p>
-</li>
-<li><p>Inception score(IS)：若good quality, diversity，則large IS</p>
-</li>
-<li><p>但作業不會用inception score</p>
-<ul>
-<li>輸出都是人臉，對於IS來說diversity會很小</li>
-</ul>
-</li>
-<li><p>作業採用Frechet inception distance(FID)</p>
-<ul>
-<li>把輸出丟入CNN，再把進入softmax前的那個vector拿出來作為輸入</li>
-<li>假設真實圖片跟產生的圖片都是gaussian distribution</li>
-<li>對他們算Frechet inception distance<ul>
-<li>越小品質越高</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p>問題：需要很多samples，且不知道輸出分佈是否為gaussian</p>
-<ul>
-<li>所以不能只看這個，作業會FID跟IS都參考<br><img src="/images/20220729_6.png"></li>
-</ul>
-</li>
-<li><p>有時候，FID很好（低）而且人臉也做得很真實，也未必是一個很好的model</p>
-<ul>
-<li>memory GAN: 如果這個GAN可能是直接照抄訓練資料的，剛好符合diversity跟classification</li>
-<li>可否比對訓練資料跟輸出的相似度？<ul>
-<li>也可能GAN剛好輸出都是輸入資料的左右反轉，相似度又比不出來<br>-&gt; GAN的evaluation仍為可深入研究的題目</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1802.03446">目前的GAN evaluation的作法列舉</a></p>
-</li>
-</ul>
-<h1 id="Conditional-Generation"><a href="#Conditional-Generation" class="headerlink" title="Conditional Generation"></a>Conditional Generation</h1><ul>
-<li><p>到目前為止GAN都只講隨機的輸入</p>
-</li>
-<li><p>若給定一個x(條件)，產生y</p>
-<ul>
-<li>Text to image任務<br><img src="/../images/20220729_8.png"></li>
-</ul>
-</li>
-<li><p>根據Sample的z不同，會產生滿足x條件的不同輸出</p>
-</li>
-</ul>
-<h2 id="Discriminator"><a href="#Discriminator" class="headerlink" title="Discriminator"></a>Discriminator</h2><ul>
-<li>必須也知道文字敘述的條件，不然GAN只會產生清晰圖片，忽略條件</li>
-<li>Discriminator除了看圖片是否好，還要看是否吻合條件</li>
-</ul>
-<p><img src="/images/20220729_9.png"></p>
-<ul>
-<li><p>text-image的training data通常會需要成對的資料(condition,image)</p>
-</li>
-<li><p>但是這樣通常訓練的結果不會很好</p>
-<ul>
-<li>還是要mix一些label &#x3D; 0(故意塞錯的) 的資料（清晰圖片+錯誤描述）<br><img src="/../images/20220729_10.png"></li>
-</ul>
-</li>
-</ul>
-<h2 id="conditional-GAN其他應用"><a href="#conditional-GAN其他應用" class="headerlink" title="conditional GAN其他應用"></a>conditional GAN其他應用</h2><h3 id="sound-to-image"><a href="#sound-to-image" class="headerlink" title="sound to image"></a>sound to image</h3><ul>
-<li><p>給聲音，然後畫出圖片</p>
-<ul>
-<li>給sound一些label其實不難收集，可以爬影片然後get sound以及相關畫面</li>
-<li>(sound, “a dog barking sound”)</li>
-<li>(sound, “river sound”)<br><img src="/../images/20220729_12.png"></li>
-</ul>
-</li>
-<li><p><a target="_blank" rel="noopener" href="https://wjohn1483.github.io/audio_to_scene/index.html">參考網站</a></p>
-</li>
-</ul>
-<h3 id="talking-head-generation"><a href="#talking-head-generation" class="headerlink" title="talking head generation"></a>talking head generation</h3><p><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1905.08233">相關文獻</a></p>
-<h3 id="image-to-image"><a href="#image-to-image" class="headerlink" title="image to image"></a>image to image</h3><p><img src="/../images/20220729_11.png"></p>
-<ul>
-<li><p>Conditional GAN也可以做image translation（輸入圖片，輸出吻合條件的圖片）</p>
-<ul>
-<li>pix2pix</li>
-</ul>
-</li>
-<li><p>老樣子，image 2 image用supervisied learning，可能會學習到類似的情況下，圖片輸入很多種，導致輸出模糊（同GAN一開始小精靈的例子）</p>
-<ul>
-<li>所以還是要用GAN<ul>
-<li>但GAN可能還是會有想像力過度豐富的問題</li>
-<li>兩者需要同時使用</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p><a target="_blank" rel="noopener" href="https://arxiv.org/avs/1611.07004">相關文獻</a></p>
 </li>
 </ul>
 

@@ -125,13 +125,13 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">44</span>
+          <span class="site-state-item-count">46</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-count">10</span>
         <span class="site-state-item-name">標籤</span></a>
       </div>
   </nav>
@@ -160,6 +160,606 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://laxiflora.github.io/2022/07/04/ML-2021-1-1-%E7%9B%A3%E7%9D%A3%E5%BC%8F%E5%AD%B8%E7%BF%92%E6%A6%82%E8%AB%96/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="劉宇承">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="laxiflora的小天地">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | laxiflora的小天地">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2022/07/04/ML-2021-1-1-%E7%9B%A3%E7%9D%A3%E5%BC%8F%E5%AD%B8%E7%BF%92%E6%A6%82%E8%AB%96/" class="post-title-link" itemprop="url">ML_2021_1-1 監督式學習概論</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2022-07-04 22:15:57" itemprop="dateCreated datePublished" datetime="2022-07-04T22:15:57+08:00">2022-07-04</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新於</span>
+      <time title="修改時間：2022-08-08 20:10:07" itemprop="dateModified" datetime="2022-08-08T20:10:07+08:00">2022-08-08</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="前言：什麼是機器學習"><a href="#前言：什麼是機器學習" class="headerlink" title="前言：什麼是機器學習"></a>前言：什麼是機器學習</h1><p>機器學習，就是用機器的力量幫忙找出一個合適的函數</p>
+<ul>
+<li>函數的輸入可以是vector、matrix、sequence</li>
+<li>輸出可以是數值(regression)、類別(classification)、文章、圖片<br>深度學習，就是用神經網路的方法來製造函數</li>
+</ul>
+<h1 id="預測頻道觀看人數"><a href="#預測頻道觀看人數" class="headerlink" title="預測頻道觀看人數"></a>預測頻道觀看人數</h1><h2 id="基本原理"><a href="#基本原理" class="headerlink" title="基本原理"></a>基本原理</h2><ul>
+<li>loss function的輸入是weight跟bias，輸出是這組參數有多好」</li>
+<li>Optimization : 找出最好的一組參數(w*,b*)使loss function最小<ul>
+<li>常用gradient descent<ul>
+<li>隨機決定w_0</li>
+<li>把L對w做偏微分，若斜率&gt;0則提高w，反之降低w(變動量&#x3D;η，屬於hyperparameters)</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<details>
+<summary> step1: 製作一個學習函數 </summary>
+
+<h2 id="純粹Linear-Model"><a href="#純粹Linear-Model" class="headerlink" title="純粹Linear Model"></a>純粹Linear Model</h2><ol>
+<li><p>先隨便設一個函數<br>  $$f &#x3D; w_0 x_1$$<br>  其中$x_1$是昨天的觀看人數</p>
+</li>
+<li><p>根據loss function的結果嘗試把$w$、$b$優化，使得$f &#x3D; w_0 x_1 + b$有最小損失函數(這裡優化方法採梯度下降)</p>
+</li>
+<li><p>跑測試結果發現$w$很接近1 (看似很合理，因為昨天的頻道觀看人數與今天的頻道觀看人數差距應該不多)，其實預測都是前一天的結果平移而已，命中率有限 -&gt; 試試看一次看多幾天，變成以周為單位</p>
+</li>
+<li><p>修改函數<br>  $$f_1 \leftarrow y &#x3D; b+ \sum_{j&#x3D;1}^7 w_j x_j$$<br>  表示預測一天的觀看人數，需要前面七天觀看人數作為參考</p>
+</li>
+<li><p>命中率有效提高了（這是linear model）</p>
+</li>
+</ol>
+<h2 id="Piecewise-Linear-Curve"><a href="#Piecewise-Linear-Curve" class="headerlink" title="Piecewise Linear Curve"></a>Piecewise Linear Curve</h2><ul>
+<li>linear model過於簡單，x與y之間的關係是直線(w改動斜率，b改動原點)</li>
+<li>利用一系列的線性函數相加，使加總後的函數有彎折</li>
+<li>Piecewise Linear Curve &#x3D; constant + sum of a set of 藍線 (下圖紅線就是我們想求的「預測模型」函數f )<br>  <img src="/../images/20220701_1.png"></li>
+<li>假設有無窮多個藍色function，就可以塑造出任意形狀的紅色function，如上圖所示</li>
+</ul>
+<h3 id="當特徵-x3D-1"><a href="#當特徵-x3D-1" class="headerlink" title="當特徵&#x3D;1"></a>當特徵&#x3D;1</h3><ul>
+<li>如何寫出藍線式子?<ul>
+<li>藍線函數令為 $f_{blue1} \leftarrow y &#x3D; c_i sigmoid(b_i+w_ix_1)$</li>
+<li>使用sigmoid，把藍線變成曲型來逼近原型</li>
+<li>原型稱為hard sigmoid</li>
+<li>讓藍線凸在對的地方-&gt;修改w,b,c</li>
+</ul>
+</li>
+<li>綜合前面的內容，我們就可以求得單一feature下的紅色function(而這樣理論上可以逼近任何連續函數)：<br>  $$f_{red1} \leftarrow y &#x3D; b + \sum_{i}c_i sigmoid(b_i + w_ix_1)$$</li>
+<li>其中b也可以根據不同藍色function有所不同，把b丟入$\sum$即可</li>
+</ul>
+<h3 id="當特徵-gt-1"><a href="#當特徵-gt-1" class="headerlink" title="當特徵&gt;1"></a>當特徵&gt;1</h3><ul>
+<li><p>當然，我們也可以進一步推廣，增加feature的量(目前只有一個，$x_1$的某特徵乘上各藍線的$w_i$)</p>
+</li>
+<li><p>解法就是修改藍線函數變成$f_{blue2} \leftarrow y &#x3D; c_i sigmoid(b_i + \sum_{j} w_{ij}x_j)$<br>  <img src="/../images/20220701_2.png" alt="upload successful"></p>
+</li>
+<li><p>同理把藍色函數相加再補上常數，紅線函數則可令為<br>$$f_{red2} \leftarrow y &#x3D; b + \sum_{i}c_i sigmoid(b_i + \sum_jw_{ij}x_j) $$</p>
+</li>
+<li><p>$w_{ij}$表示第i個sigmoid函數(aka第i條藍線)中，對於第$x_j$個特徵的權重</p>
+<details>
+<summary> 用線性代數的方式來理解 </summary>
+
+<ul>
+<li>繼續剛剛特徵&gt;1的討論</li>
+<li>令$r_i &#x3D; b_i + \sum_{j}w_{ij}x_j$ (換句話說r就是sigmoid函數內的運算結果)，則可以把這個等式簡化為一個矩陣相乘<br>函數的示意圖如下:<br><img src="/../images/20220701_4.png" alt="upload successful"></li>
+<li>而$r_i$做sigmoid()以後就會得到$a_i$</li>
+<li>又稱$a &#x3D; \sigma(r)$</li>
+<li>最後把$a_i$乘上各自的$c_i$後，加總得到剛剛的$f_{red2}$ (c在相乘時是$c^T$矩陣)</li>
+<li>$b、c^T、b_i、W、x$五個向量append起來以後統稱為$\theta$</li>
+</ul>
+<p><img src="/../images/20220701_5.png" alt="upload successful"></p>
+</details></li>
+</ul>
+  </details>
+
+  <details>
+  <summary> step2: 定義訓練資料的損失函數 </summary>
+
+<ul>
+<li>Loss is a function of parameters $L(\theta)$ ($\theta$就是step1中的那個)</li>
+<li>就是x丟進去，測量y-hat跟y的差別多大  </details></li>
+</ul>
+  <details>
+  <summary> step3: 最佳化模型 </summary>
+
+<ul>
+<li>假設最佳化的參數向量是$\theta^*$</li>
+<li>則$\theta^* &#x3D; arg$ $min_{\theta}L$</li>
+<li>首先，隨機選一個$\theta^0$作為初始值</li>
+<li>Gradient descent作法<br>  $$<br>  g^T &#x3D;<br>  \begin{bmatrix}<br> \frac{\partial L}{\partial \theta_1}\<br> \frac{\partial L}{\partial \theta_2}\<br> \frac{\partial L}{\partial \theta_3}\<br> \ldots<br>  \end{bmatrix} |_{\theta &#x3D; \theta_0}<br>  $$<ul>
+<li>註：打不出1xn向量&#x3D; &#x3D;</li>
+</ul>
+</li>
+<li>則稱 g &#x3D; $\nabla L(\theta^0)$</li>
+</ul>
+<p>  求出g向量以後，就可以把它拿來更新參數列:<br>  <br><img src="/../images/pasted-0.png"></p>
+<ul>
+<li>亦即 $ \theta_1 \leftarrow \theta_0 - \eta g $</li>
+</ul>
+<h2 id="Note"><a href="#Note" class="headerlink" title="Note"></a>Note</h2><ol>
+<li>實務上通常做gradient不是所有資料都加入去更新，而是先把資料切成batch分別計算出$L^i$</li>
+</ol>
+<p><img src="/../images/20220702_1.png" alt="upload successful"></p>
+<ul>
+<li>一次的更新$\theta$是一次update，一次看完所有batch算一次epoch<ul>
+<li>所以一個epoch會有好幾次update</li>
+</ul>
+</li>
+</ul>
+<ol start="2">
+<li>Hard sigmoid也可以用兩個ReLU做出來</li>
+</ol>
+<p><img src="/../images/20220702_2.png" alt="upload successful"></p>
+<ul>
+<li>當然因為是要用兩個ReLU做出來，所以相應的紅線函數就要改<br>$$<br> f_{red_{ReLU}} \leftarrow y &#x3D; \sum_{i}c_i max(0,b_i + \sum_j w_{ij}x_j)<br>$$</li>
+<li>這種做法比sigmoid好(下周講解)</li>
+<li>ReLU跟sigmoid同為activation function  </details>
+
+<details></li>
+</ul>
+<p>  <summary> step4: 繼續修改模型 </summary></p>
+<p>  - 同樣的求a過程，我們可以做好幾次</p>
+<p><img src="/../images/20220702_3.png" alt="upload successful"><br>    注意，圖中的W’、W、b’、b互不相同</p>
+<p>  - 要做幾層同屬hyper parameter<br>  </details><br>  名詞解釋<br>  <br><img src="/../images/20220702_4.png" alt="upload successful"></p>
+<!-- Preclass結束-->
+</details>
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://laxiflora.github.io/2022/07/04/%E6%9D%8E%E5%AE%8F%E6%AF%85-%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92-%E9%A6%96%E9%A0%81/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="劉宇承">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="laxiflora的小天地">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | laxiflora的小天地">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2022/07/04/%E6%9D%8E%E5%AE%8F%E6%AF%85-%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92-%E9%A6%96%E9%A0%81/" class="post-title-link" itemprop="url">李宏毅_機器學習_首頁</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2022-07-04 22:13:53" itemprop="dateCreated datePublished" datetime="2022-07-04T22:13:53+08:00">2022-07-04</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新於</span>
+      <time title="修改時間：2022-08-17 19:31:50" itemprop="dateModified" datetime="2022-08-17T19:31:50+08:00">2022-08-17</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="機器學習總編首頁"><a href="#機器學習總編首頁" class="headerlink" title="機器學習總編首頁"></a>機器學習總編首頁</h1><p>台大李弘毅老師的課</p>
+<ul>
+<li>課程影片： <a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=Ye018rCVvOo&list=PLJV_el3uVTsMhtt7_Y6sgTHGHp1Vb2P2J">2021預習影片</a>  <a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=7XZR0-4uS5s&list=PLJV_el3uVTsPM2mM-OQzJXziCGJa8nJL8">2022正課影片</a></li>
+<li><a target="_blank" rel="noopener" href="https://speech.ee.ntu.edu.tw/~hylee/ml/2022-spring.php">課程網頁</a></li>
+</ul>
+<h1 id="2021年預習筆記"><a href="#2021年預習筆記" class="headerlink" title="2021年預習筆記"></a>2021年預習筆記</h1><h2 id="Ch-1：Introduction-of-Deep-Learning"><a href="#Ch-1：Introduction-of-Deep-Learning" class="headerlink" title="Ch 1：Introduction of Deep Learning"></a>Ch 1：Introduction of Deep Learning</h2><p>[1-1]<a href="/2022/07/04/ML-2021-1-1-%E7%9B%A3%E7%9D%A3%E5%BC%8F%E5%AD%B8%E7%BF%92%E6%A6%82%E8%AB%96/">監督式學習概論</a></p>
+<ul>
+<li>介紹甚麼是機器學習，以及機器學習的任務</li>
+<li>以預測李宏毅老師的頻道觀看人數為例，介紹監督式學習的運作流程<blockquote>
+<p>關鍵字：<br>Linear model、Piecewise Linear Curve、sigmoid介紹、ReLU介紹、theta、Batch、Epoch</p>
+</blockquote>
+</li>
+</ul>
+<hr>
+<h2 id="Ch-2：What-to-do-if-my-network-fails-to-train"><a href="#Ch-2：What-to-do-if-my-network-fails-to-train" class="headerlink" title="Ch 2：What to do if my network fails to train"></a>Ch 2：What to do if my network fails to train</h2><p>[2-1]<a href="/2022/07/04/ML-2021-2-1-%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E4%BB%BB%E5%8B%99%E6%94%BB%E7%95%A5/">機器學習任務攻略</a></p>
+<ul>
+<li>機器學習上可能碰到的疑難雜症介紹，以及如何改善</li>
+<li>區分命中率問題到底是overfitting、model bias issue還是Optimization issue，甚至是data mismatch</li>
+<li>當一個模型單次測試test data成績很好，就保證是模型很好嗎？ 如何更確保模型真的很好呢？<blockquote>
+<p>關鍵字：<br>Overfitting , model bias issue , Optimization issue之分辨、N-fold Cross Validation、data mismatch</p>
+</blockquote>
+</li>
+</ul>
+<hr>
+<p>[2-2]<a href="/2022/07/04/ML-2021-2-2-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%B8%80/">類神經網路訓練不起來怎麼辦(一)</a></p>
+<ul>
+<li>續2-1的大綱，專注在討論optimizer失靈的解決方法與成因分辨</li>
+<li>提供一個應用線性代數的例子：如何讓一個卡在鞍點的$\theta$逃離鞍點 (但計算曠日廢時)<ul>
+<li>loss function &#x3D; MSE , optimizer &#x3D; 梯度下降法</li>
+</ul>
+</li>
+<li>絕大多數的模型其實若卡在critical point，都是卡在鞍點而非局部最小值<blockquote>
+<p>關鍵字：<br>Optimization issue、critical point、saddle point、local minima、<del>三體III：死神永生</del></p>
+</blockquote>
+</li>
+</ul>
+<hr>
+<p>[2-3]<a href="/2022/07/05/ML-2021-2-3-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%BA%8C/">類神經網路訓練不起來怎麼辦(二)</a></p>
+<ul>
+<li>續2021版1-1的內容，我們這次探討batch size對於training與testing有甚麼影響</li>
+<li>big batch size好還是small batch size好？ 要看hyper para怎麼調以及對於訓練速度的需求</li>
+<li>額外介紹另一個對抗saddle point或local minima的技術 : momentum(慣性)<blockquote>
+<p>關鍵字：<br>batch size、momentum</p>
+</blockquote>
+</li>
+</ul>
+<hr>
+<p>[2-4]<a href="/2022/07/06/ML-2021-2-4-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%B8%89/">類神經網路訓練不起來怎麼辦(三)</a></p>
+<ul>
+<li>這次討論Optimizer中，關於Learning rate的問題</li>
+<li>一個模型的跑動，常常碰到單一learning rate所會碰到的困境，所以我們需要可以隨著單次訓練中各種情況變動的learning rate</li>
+<li>提供兩種改變learning rate的作法以及相關參數計算</li>
+<li>簡單介紹這些手法被現今哪些熱門優化器使用<blockquote>
+<p>關鍵字:<br>Learning rate($\eta$)、Adaptive learning rate、Adam-learning rate、RMSProp、Warm up(learning rate)、learning rate decay</p>
+</blockquote>
+</li>
+</ul>
+<hr>
+<p>[2-5]<a href="/2022/07/06/ML-2021-2-5-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E5%9B%9B/">類神經網路訓練不起來怎麼辦(四)</a></p>
+<ul>
+<li>簡短介紹當碰到分類問題的時候，最後一層激發函數該選哪個函數</li>
+<li>介紹了one-hot vector作為新的輸出型態，以及基本原因</li>
+<li>介紹分類模型的常用loss function，以及用optimizer的角度看兩種loss function的差距</li>
+<li>因為是簡短版，內附有<del>冗長版</del> 完整版連結<blockquote>
+<p>關鍵字:<br>one-hot vector、Softmax、cross entropy</p>
+</blockquote>
+</li>
+</ul>
+<hr>
+<p>[2-6]<a href="/2022/07/07/ML-2021-2-6-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%A8%93%E7%B7%B4%E4%B8%8D%E8%B5%B7%E4%BE%86%E6%80%8E%E9%BA%BC%E8%BE%A6-%E4%BA%94/">類神經網路訓練不起來怎麼辦(五)</a></p>
+<ul>
+<li>簡短介紹Batch Normalization的技術</li>
+<li>這是另一種直接改變error surface的技術(相對於動態lr)</li>
+<li>關於batch normalization為何能夠讓模型訓練更好仍是個謎<blockquote>
+<p>關鍵字：<br>Feature Normalization、Batch Normalization</p>
+</blockquote>
+</li>
+</ul>
+<hr>
+<h2 id="Ch3-image-as-input"><a href="#Ch3-image-as-input" class="headerlink" title="Ch3 : image as input"></a>Ch3 : image as input</h2><p>[3-1]<a href="/2022/07/09/ML-2021-3-1-%E5%8D%B7%E7%A9%8D%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF/">卷積神經網路</a></p>
+<ul>
+<li>介紹CNN neurol network 以及他的相關常用術語</li>
+<li>旨在讓我們了解CNN，一個入門指引</li>
+<li>以CNN：apply in image為例，用於文字辨識或是語音辨識需要更多參考相關文獻，用於影像的CNN不一定適用其他輸入<blockquote>
+<p>關鍵字：<br>Receptive Field(Kernel size)、Filter、Parameter sharing、Pattern、Stride、Convolusion、Feature Map、Subsample (pooling)、padding(pads)、channel、(Rescale、data augmentation)</p>
+</blockquote>
+</li>
+</ul>
+<hr>
+<h2 id="Ch4：Sequence-as-input"><a href="#Ch4：Sequence-as-input" class="headerlink" title="Ch4：Sequence as input"></a>Ch4：Sequence as input</h2><p>[4-1]<a href="/2022/07/13/ML-2021-4-1-%E8%87%AA%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%A9%9F%E5%88%B6%EF%BC%88%E4%B8%8A%EF%BC%89/">自注意力機制（上）</a></p>
+<ul>
+<li>介紹在碰到輸入的時候不只是一個向量，甚至可能輸入的向量數量會變動，該怎麼處理</li>
+<li>簡單介紹輸入為sequence的常見問題以及不同輸出的類別</li>
+<li>介紹如果輸入的sequence，不同vector之間互相影響該怎麽處理</li>
+<li>本課程著重在討論sequence中每個vector都會有獨立一個label輸出的情況<blockquote>
+<p>關鍵字：<br>Sequence、word embedding、window(語音處理)、self-attention、transformer(提到)、seq2seq（提到）</p>
+</blockquote>
+</li>
+</ul>
+<hr>
+<p>[4-2]<a href="/2022/07/13/ML-2021-4-2-%E8%87%AA%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%A9%9F%E5%88%B6%EF%BC%88%E4%B8%8B%EF%BC%89/">自注意力機制（下）</a></p>
+<ul>
+<li>常用(上週討論的)self-attention計算方法，其實就是很多的矩陣相乘</li>
+<li>當一個vector出現在sequence的不同位置也需要考量，該怎麼處理 -&gt; Positional encoding</li>
+<li>因為attention matrix之空間大小是$\theta(n^2)$，所以當sequence很大(ex.音訊)時，該怎麼處理 -&gt; Truncated self-attention</li>
+<li>self-attention可否用於影像呢？ 如果這樣使用的話，self-attention跟CNN差別在哪？誰優誰劣呢</li>
+<li>Self-attention與RNN之間的差別在哪</li>
+<li>self-attention如何使用在graph中呢？GNN是什麼呢（refrence）</li>
+<li>Reference各種transformer的變形(survey paper)<br>PS. 這塊領域目前很新，論文大多產自2019&#x2F;2020年<blockquote>
+<p>關鍵字：<br>Transformer(self-attention塊)、positional encoding、truncation self-attention、v.s CNN、v.s RNN、GNN</p>
+</blockquote>
+</li>
+</ul>
+<hr>
+<h2 id="Ch5：Sequence-2-Sequence"><a href="#Ch5：Sequence-2-Sequence" class="headerlink" title="Ch5：Sequence 2 Sequence"></a>Ch5：Sequence 2 Sequence</h2><ul>
+<li>算是Ch4中的一種特例輸入</li>
+<li>5-1就是2-6，介紹batch norm</li>
+</ul>
+<hr>
+<p>[5-2]<a href="/2022/07/23/ML-2021-5-2-Transformer%EF%BC%88%E4%B8%8A%EF%BC%89/">Transformer(上)</a></p>
+<ul>
+<li>首先講解seq2seq類模型所可以解決的問題與應用，接下來講解seq2seq的其中一種模型「transformer」</li>
+<li>介紹transformer的大架構圖，以及transformer encoder的分解步驟</li>
+<li>除了原始的transformer encoder模型圖以外，還有reference其他種transform encoder的架構</li>
+<li>BERT其實就是transformer的encoder<blockquote>
+<p>關鍵字:<br>Transformer(總覽 &amp; encoder)、seq2seq類應用</p>
+</blockquote>
+</li>
+</ul>
+<hr>
+<p>[5-3]<a href="/2022/07/24/ML-2021-5-3-Transformer%EF%BC%88%E4%B8%8B%EF%BC%89/">Transformer（下）</a></p>
+<ul>
+<li>接續5-2，介紹原始Transformer decoder之詳細步驟，以及計算loss的方式</li>
+<li>介紹為何transformer的loss function要用cross entropy，而不能直接用如BLEU等等判別算法，並說明他們兩者之間並不一定正相關</li>
+<li>Transformer依decoder訓練方式有分為AT與NAT，本課主要講姊AT</li>
+<li>介紹Seq2Seq常見的一些training技巧與問題</li>
+</ul>
+<blockquote>
+<p>關鍵字:<br>  Transformer(decoder、loss)、AT &amp; NAT、Scheduled Sampling、Beam search、Teacher forcing、Copy mechanism、Guided Attention</p>
+</blockquote>
+<hr>
+<h2 id="Ch6：Generation-Generative-Adversarial-Network-GAN"><a href="#Ch6：Generation-Generative-Adversarial-Network-GAN" class="headerlink" title="Ch6：Generation  (Generative Adversarial Network, GAN)"></a>Ch6：Generation  (Generative Adversarial Network, GAN)</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://speech.ee.ntu.edu.tw/~hylee/ml/ml2022-course-data/Machine%20Learning%20HW6.pdf">PPT連結</a></li>
+</ul>
+<p>[6-1]<a href="/2022/07/27/ML-2021-6-1-%E7%94%9F%E6%88%90%E5%BC%8F%E5%B0%8D%E6%8A%97%E7%B6%B2%E8%B7%AF-%E4%B8%80-%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E4%BB%8B%E7%B4%B9/">生成式對抗網路(一) – 基本概念介紹</a></p>
+<ul>
+<li>介紹GAN的訓練過程、用途、基本原理</li>
+<li>GAN變種非常多</li>
+<li><del>這集超油</del></li>
+</ul>
+<blockquote>
+<p>關鍵字：<br>  discriminator、generator、Train GAN process、GAN zoo</p>
+</blockquote>
+<hr>
+<p>[6-2]<a href="/2022/07/28/ML-2021-6-2-%E7%94%9F%E6%88%90%E5%BC%8F%E5%B0%8D%E6%8A%97%E7%B6%B2%E8%B7%AF-%E4%BA%8C-%E7%90%86%E8%AB%96%E4%BB%8B%E7%B4%B9%E8%88%87WGAN/">生成式對抗網路(二) – 理論介紹與WGAN</a></p>
+<ul>
+<li>介紹Discriminator與Generator如何訓練</li>
+<li>true data跟generated data之distribution差距過大，原本的JS GAN discriminator很難evaluate</li>
+<li>WGAN的discriminator算法與reference<br>Note：這部看不是很懂，要複習</li>
+</ul>
+<blockquote>
+<p>關鍵字：<br>  WGAN、Wasserstein distance、1-Lipschitz function(待查)</p>
+</blockquote>
+<hr>
+<p>[6-3]<a href="/2022/07/29/ML-2021-6-3-%E7%94%9F%E6%88%90%E5%BC%8F%E5%B0%8D%E6%8A%97%E7%B6%B2%E8%B7%AF-%E4%B8%89-%E2%80%93-%E7%94%9F%E6%88%90%E5%99%A8%E6%95%88%E8%83%BD%E8%A9%95%E4%BC%B0%E8%88%87%E6%A2%9D%E4%BB%B6%E5%BC%8F%E7%94%9F%E6%88%90/">生成式對抗網路(三) – 生成器效能評估與條件式生成</a></p>
+<ul>
+<li>續6-2，貼了一些關於GAN training tips的延伸學習</li>
+<li>GAN + Transformer (GAN in sequence generation)</li>
+<li>除了GAN以外，還有哪些也是在做generation的model</li>
+<li>GAN的優劣如何衡量？ 會有哪些問題被忽略？</li>
+<li>Conditional GAN(把開頭GAN被拔掉的x放回來了)</li>
+<li>Conditional GAN相關天馬行空的應用</li>
+</ul>
+<blockquote>
+<p>關鍵字：<br>    VAE、FLOW-based Model、Mode Collapse、Mode Dropping、Inception score(IS)、Frechet inception distance(FID)、Conditional Generation</p>
+</blockquote>
+<hr>
+<p>[6-4]<a href="/2022/07/29/ML-2021-6-4-%E7%94%9F%E6%88%90%E5%BC%8F%E5%B0%8D%E6%8A%97%E7%B6%B2%E8%B7%AF-%E5%9B%9B-%E2%80%93-Cycle-GAN/">生成式對抗網路(四) – Cycle GAN</a></p>
+<ul>
+<li>以影像風格轉換為例，說明cycle GAN如何應用在unsupervised learning上面</li>
+<li>reference 可以接受更多風格的非監督式GAN</li>
+<li>介紹其他更多任務的GAN unsupervised learning (撇除圖片)</li>
+</ul>
+<p>Note: 有一些地方觀念模糊，為何generator輸出是文字，丟給discriminator會出現問題？為何需要用RL？</p>
+<blockquote>
+<p>關鍵字：<br>  cycle GAN 、GAN unsupervised learning、seq2seq generator unsupervised learning</p>
+</blockquote>
+<hr>
+<h2 id="Ch-6-5-：Recent-Advance-of-Self-supervised-learning-for-NLP"><a href="#Ch-6-5-：Recent-Advance-of-Self-supervised-learning-for-NLP" class="headerlink" title="Ch 6.5 ：Recent Advance of Self-supervised learning for NLP"></a>Ch 6.5 ：Recent Advance of Self-supervised learning for NLP</h2><p><strong>以BERT、GPT為例介紹近期self-supervised learning model的原理與在NLP上的應用</strong></p>
+<p>[X-1 &amp; X-2]<a href="/2022/07/30/ML-2021-X-1-X-2-BERT%E7%B0%A1%E4%BB%8B/">自督導式學習(一、二) – BERT簡介</a></p>
+<ul>
+<li>簡介BERT的訓練(pretrain)方法，以及一些應用</li>
+<li>how to fine-tune BERT in some cases.</li>
+<li>帶一下pretrain decoder的方法</li>
+</ul>
+<blockquote>
+<p>關鍵字：<br>  Fine-tune、pretrain (Next sentence prediction、sentence order prediction(SOP)、masking input)</p>
+</blockquote>
+<hr>
+<p>[X-3]<a href="/2022/08/03/ML-2021-X-3-BERT%E7%9A%84%E5%A5%87%E8%81%9E%E8%BB%BC%E4%BA%8B/">自督導式學習(三) - BERT的奇聞軼事</a></p>
+<ul>
+<li><p>Why BERT works？ 簡單介紹word embedding</p>
+</li>
+<li><p>關於BERT的表現作了一些相關實驗</p>
+<ol>
+<li>BERT學習填空，是否真的是看得懂文章？ 如果輸入的sequence毫無邏輯，BERT是否受到影響？</li>
+<li>如果BERT pretrain使用多種語言，是否可以用於解決新的語言的問題？</li>
+</ol>
+</li>
+<li><p>對於BERT的猜想</p>
+<blockquote>
+<p>關鍵字：<br>  contextualized word embedding、Multi-lingual BERT</p>
+</blockquote>
+</li>
+</ul>
+<hr>
+<p>[X-4]<a href="/2022/08/04/ML-2021-X-4-GPT%E7%9A%84%E9%87%8E%E6%9C%9B/">自督導式學習(四) – GPT的野望</a></p>
+<ul>
+<li>介紹另一個self-supervised learning model：GPT</li>
+<li>GPT的任務目標比起BERT更加有野心：期望能夠輸入task description與問題，就能自己預測出答案</li>
+<li>GPT的訓練方式類似transformer的decoder，給定一個seq，要能預測下一個token是甚麼<blockquote>
+<p>關鍵字：<br>GPT</p>
+</blockquote>
+</li>
+</ul>
+<hr>
+<h2 id="Ch8：Auto-encoder-x2F-Anomaly-Detection"><a href="#Ch8：Auto-encoder-x2F-Anomaly-Detection" class="headerlink" title="Ch8：Auto-encoder&#x2F; Anomaly Detection"></a>Ch8：Auto-encoder&#x2F; Anomaly Detection</h2><p>[8-1]<a href="/2022/08/08/ML-2021-8-1-%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/">自編碼器(上) – 基本概念</a></p>
+<ul>
+<li>介紹auto-encoder的模型，以及它的學習任務</li>
+<li>auto-encoder跟現今cycle GAN的2 generator關係很像</li>
+<li>介紹de-noising auto-encoder，並且分析它與現今的self-supervised learning model(BERT)的相似</li>
+<li>auto-encoding 具備降維壓縮的功能</li>
+</ul>
+<blockquote>
+<p>關鍵字<br>  de-noising auto-encoder、embedding(Representation, Code)、dimention reduction</p>
+</blockquote>
+<hr>
+<p>[8-2]<a href="/2022/08/09/ML-2021-8-2-%E9%A0%98%E7%B5%90%E8%AE%8A%E8%81%B2%E5%99%A8%E8%88%87%E6%9B%B4%E5%A4%9A%E6%87%89%E7%94%A8/">自編碼器(下) – 領結變聲器與更多應用</a></p>
+<ul>
+<li>柯南的領結變聲器，就是一種voice conversion的應用。現實中要做到這一點，就需要對embedding有更多理解 – Feature Disentanglement</li>
+<li>除了傳統的auto-encoder之外，還有各種auto-encoder的變形</li>
+<li>embedding(representation)的各種花招以及模型修改</li>
+<li>auto-encoder的更多應用，比如本次作業會用到的異常檢測</li>
+</ul>
+<blockquote>
+<p>關鍵字<br>  Feature Disentanglement、Discrete Latent Representation、Text&#x2F;Tree as Representation、VAE、Anomaly Detection</p>
+</blockquote>
+<hr>
+<p>Note:<br>8-3 ~ 8-8 是Anomaly Detection主題的內容<br><a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=gDp2LXGnVLQ&t=5s">第一部影片連結</a><br>這裡先略過</p>
+<hr>
+<h2 id="Ch9：Explainable-AI"><a href="#Ch9：Explainable-AI" class="headerlink" title="Ch9：Explainable AI"></a>Ch9：Explainable AI</h2><p>[9-1]<a href="/2022/08/09/ML-2021-9-1-%E7%82%BA%E4%BB%80%E9%BA%BC%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E5%8F%AF%E4%BB%A5%E6%AD%A3%E7%A2%BA%E5%88%86%E8%BE%A8%E5%AF%B6%E5%8F%AF%E5%A4%A2%E5%92%8C%E6%95%B8%E7%A2%BC%E5%AF%B6%E8%B2%9D%E5%91%A2/">機器學習模型的可解釋性(上) – 為什麼類神經網路可以正確分辨寶可夢和數碼寶貝呢？</a></p>
+<ul>
+<li>為何需要可解釋性的AI? 對於AI可解釋的標準定義是?</li>
+<li>可解釋性AI的類型</li>
+<li>要能找出一個輸入的哪個部位重要，有哪些技巧?</li>
+<li>要能看出機器怎麼對輸入做處理，有那些技巧?</li>
+</ul>
+<blockquote>
+<p>關鍵字：<br>  local&#x2F;global explanation、Saliency map、SmoothGrad、Visualization、Probing</p>
+</blockquote>
+<hr>
+<p>[9-2]<a href="/2022/08/10/ML-2021-9-2-%E6%A9%9F%E5%99%A8%E5%BF%83%E4%B8%AD%E7%9A%84%E8%B2%93%E9%95%B7%E4%BB%80%E9%BA%BC%E6%A8%A3%E5%AD%90/">機器學習模型的可解釋性(下) – 機器心中的貓長什麼樣子？</a></p>
+<ul>
+<li>著重在global explainable的各種approach<ul>
+<li>觀察convoluation layer output</li>
+<li>看classifier output</li>
+<li>做一個簡易版可解釋的model模仿他的行為</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="Ch10：Adversarial-Attack"><a href="#Ch10：Adversarial-Attack" class="headerlink" title="Ch10：Adversarial Attack"></a>Ch10：Adversarial Attack</h2><p>[10-1]<a href="/2022/08/11/ML-2021-10-1-%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/">來自人類的惡意攻擊(上) – 基本概念</a></p>
+<ul>
+<li>介紹攻擊的原理、作法之精神</li>
+<li>常見attack相關限制的介紹與計算方式<ul>
+<li>新圖與原圖的距離差距與計算方法</li>
+</ul>
+</li>
+<li>實際攻擊的一種approach method</li>
+</ul>
+<blockquote>
+<p>關鍵字：<br>  benign image&#x2F;attacked image、FGSM</p>
+</blockquote>
+<hr>
+<p>[10-2]<a href="/2022/08/11/ML-2021-10-2-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%83%BD%E5%90%A6%E8%BA%B2%E9%81%8E%E4%BA%BA%E9%A1%9E%E6%B7%B1%E4%B8%8D%E8%A6%8B%E5%BA%95%E7%9A%84%E6%83%A1%E6%84%8F/">來自人類的惡意攻擊(下) – 類神經網路能否躲過人類深不見底的惡意？</a></p>
+<ul>
+<li>除了白箱攻擊以外，講解黑箱攻擊的技巧</li>
+<li>簡單探討為何黑箱攻擊具有可行性 -&gt; 資料的特徵問題，而非模型?</li>
+<li>可攻擊的領域與方法</li>
+<li>如何防禦黑箱攻擊</li>
+</ul>
+<blockquote>
+<p>關鍵字：<br>  Proxy network、Ensemble attack、One pixel attack、Universal Adversarial Attack、Adversarial reprogramming、Backdoor in model、被動：Randomization、主動：Adversarial training、、、、、、</p>
+</blockquote>
+<hr>
+<h2 id="Ch11：Adaptation"><a href="#Ch11：Adaptation" class="headerlink" title="Ch11：Adaptation"></a>Ch11：Adaptation</h2><p>[11-1]<a href="/2022/08/15/ML-2021-11-1-%E6%A6%82%E8%BF%B0%E9%A0%98%E5%9F%9F%E8%87%AA%E9%81%A9%E6%87%89/">概述領域自適應</a></p>
+<ul>
+<li>概述何為Domain shift</li>
+<li>Domain adaptation名詞解釋</li>
+<li>根據condition的不同(target,source差距、手握的data量)，簡單講解domain adaptation的各種approach<ul>
+<li>本課著重在target domain unlabeled data很多的前提</li>
+</ul>
+</li>
+<li>提供各種condition的參考文獻（列入關鍵字）<blockquote>
+<p>關鍵字：<br>source&#x2F;target domain、Domain Adversarial training、Feature Extractor、Domain Classifier、Label Predictor、Universal domain adaptation、Testing time training、Domain Generalization</p>
+</blockquote>
+</li>
+</ul>
+<hr>
+<h2 id="CH12：Reinforcement-Learning"><a href="#CH12：Reinforcement-Learning" class="headerlink" title="CH12：Reinforcement Learning"></a>CH12：Reinforcement Learning</h2><p>[12-1]<a href="/2022/08/17/ML-2021-12-1-%E5%A2%9E%E5%BC%B7%E5%BC%8F%E5%AD%B8%E7%BF%92%E8%B7%9F%E6%A9%9F%E5%99%A8%E5%AD%B8%E7%BF%92%E4%B8%80%E6%A8%A3%E9%83%BD%E6%98%AF%E4%B8%89%E5%80%8B%E6%AD%A5%E9%A9%9F/">概述增強式學習(一) – 增強式學習跟機器學習一樣都是三個步驟</a></p>
+<hr>
+<h1 id="2022年正課筆記"><a href="#2022年正課筆記" class="headerlink" title="2022年正課筆記"></a>2022年正課筆記</h1><p>[1-1]<a href="/2022/07/04/ML-2022-1-1-%E6%AD%A3%E8%AA%B2%E5%85%A7%E5%AE%B9%E4%BB%8B%E7%B4%B9/">正課內容介紹</a></p>
+<ul>
+<li>介紹各講的重點核心</li>
+<li>$X-y$中的X對應的是第幾講，2021年的編號也同樣，是按造課程網頁的syllabus排的</li>
+</ul>
+<hr>
+<p>[2-1]<a href="/2022/07/04/ML-2022-2-1-%E5%86%8D%E6%8E%A2%E5%AF%B6%E5%8F%AF%E5%A4%A2%E3%80%81%E6%95%B8%E7%A2%BC%E5%AF%B6%E8%B2%9D%E5%88%86%E9%A1%9E%E5%99%A8/">再探寶可夢、數碼寶貝分類器</a></p>
+<hr>
+<h1 id="作業區-有寫的部分orz"><a href="#作業區-有寫的部分orz" class="headerlink" title="作業區(有寫的部分orz)"></a>作業區(有寫的部分orz)</h1><p><a href="/2022/07/11/ML-LEE-2022-hw3/">作業3 - 圖像辨識，使用CNN</a></p>
+<hr>
+<p><a href="/2022/07/23/ML-LEE-2022-hw4/">作業4 - 語音辨識，使用Transformer</a></p>
+<hr>
+<p><a href="/2022/08/04/ML-LEE-2022-hw5/">作業5 - Transformer</a></p>
+<hr>
+<p><a href="/2022/08/04/ML-LEE-2022-hw6/">作業6 - GAN</a></p>
+<hr>
+<p><a href="/2022/08/04/ML-LEE-2022-hw7/">作業7 - BERT</a></p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
