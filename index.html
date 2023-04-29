@@ -125,7 +125,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">46</span>
+          <span class="site-state-item-count">47</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
@@ -160,6 +160,107 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://laxiflora.github.io/2023/04/29/%E6%B7%BA%E8%AB%87c-c-%E7%9A%84VLA/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="劉宇承">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="laxiflora的小天地">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | laxiflora的小天地">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2023/04/29/%E6%B7%BA%E8%AB%87c-c-%E7%9A%84VLA/" class="post-title-link" itemprop="url">淺談c/c++的VLA</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+      
+
+      <time title="創建時間：2023-04-29 17:01:42 / 修改時間：22:26:37" itemprop="dateCreated datePublished" datetime="2023-04-29T17:01:42+08:00">2023-04-29</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="在C-傳遞二維VLA的難題"><a href="#在C-傳遞二維VLA的難題" class="headerlink" title="在C++傳遞二維VLA的難題"></a>在C++傳遞二維VLA的難題</h1><p>在寫某題leetcode時，碰到了需要宣告2維陣列，且陣列大小是變數的狀況。因為自己本身習慣使用VLA(variable-length arrays)，所以理所當然的宣告了二維陣列，並將他丟入函式處理，格式如下</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">foo</span><span class="params">(<span class="type">int</span> y_axis, <span class="type">bool</span> map[][y_axis])</span></span>&#123;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">bool</span> map[x_axis][y_axis];</span><br><span class="line"><span class="built_in">foo</span>(y_axis, map)</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>值得注意的是，如果把argument map放在y_axis前面的話，會造成編譯器先看到map然後無法解讀y_axis (未宣告的變數)</p>
+</blockquote>
+<p>這個方法在C中行得通，然而在C++會跳出錯誤訊息:</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">error: use of parameter outside function body before ‘]’ token</span><br><span class="line">    <span class="number">3</span> | <span class="function"><span class="type">void</span> <span class="title">foo</span><span class="params">(<span class="type">int</span> n, <span class="type">int</span> array[][n])</span></span>&#123;</span><br></pre></td></tr></table></figure>
+
+<p>若是把map改成bool**作為參數，則會:</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">foo</span><span class="params">(<span class="type">int</span> y_axis, <span class="type">bool</span>** map)</span></span>&#123;</span><br><span class="line"></span><br><span class="line">error: cannot convert ‘<span class="built_in">int</span> (*)[n]’ to ‘<span class="type">int</span>**’</span><br><span class="line">   <span class="number">11</span> |     <span class="built_in">foo</span>(n, array);</span><br></pre></td></tr></table></figure>
+
+
+<p>但如果陣列的大小是常數，卻可以編譯通過</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">foo</span><span class="params">(<span class="type">int</span> n, <span class="type">int</span> (*array)[<span class="number">3</span>])</span></span>&#123;</span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">(<span class="type">void</span>)</span></span>&#123;</span><br><span class="line">    <span class="type">int</span> m, n;</span><br><span class="line">    std::cin&gt;&gt;m&gt;&gt;n;</span><br><span class="line">    <span class="type">int</span> array[<span class="number">2</span>][<span class="number">3</span>];</span><br><span class="line">    <span class="built_in">foo</span>(n, array);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>看來問題出在C++中，多維陣列的local宣告不可用變數作為參數(VLA)</p>
+<p>嗯? 你說你在C++可以用<code>int array[m][n];</code>宣告成功並使用，只是不能丟入函數? 這其實只是編譯器給你行方便而已，GPT給出了回答:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">C++ does not support variable-length arrays (VLA) as a language feature, unlike C99 which introduced VLAs as a standard feature. However, some C++ compilers may offer support for VLAs as an extension, allowing you to declare and use them in your code.</span><br><span class="line"></span><br><span class="line">The ability to declare a VLA 2D array like int array[m][n] in C++ may be possible because some C++ compilers may allow it as an extension to the language. However, the behavior of such extensions can vary between different compilers, and they may not be portable across different platforms or architectures.</span><br><span class="line"></span><br><span class="line">It&#x27;s important to note that relying on such extensions may not be the best approach for writing portable and maintainable C++ code. Instead, it&#x27;s recommended to use alternative approaches for dynamically allocating memory, such as using the std::vector container or dynamic memory allocation with the new and delete operators. These approaches provide more portable and flexible solutions for dynamically allocating memory in C++.</span><br></pre></td></tr></table></figure>
+
+
+<h1 id="解決方法"><a href="#解決方法" class="headerlink" title="解決方法"></a>解決方法</h1><p>C++相對於把動態變換大小的資料存放在stack，更鼓勵將資料放在heap中，方法是透過vector STL或是new pointer:</p>
+<blockquote>
+<p>C++中vector元素的存放位置是heap，push_back元素時實際上new了一個新object</p>
+</blockquote>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 用new的</span></span><br><span class="line"><span class="type">int</span>** a = <span class="keyword">new</span> <span class="type">int</span>*[x_axis];</span><br><span class="line"><span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>; i &lt; x_axis; ++i)</span><br><span class="line">    a[i] = <span class="keyword">new</span> <span class="type">int</span>[y_axis];</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// 用vector，因為vector是動態延展大小，所以這裡包含了輸入</span></span><br><span class="line">vector&lt; vector&lt;<span class="type">int</span>&gt; &gt; a;</span><br><span class="line"><span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">0</span>;i&lt;x_axis;i++)&#123;</span><br><span class="line">    vector&lt;<span class="type">int</span>&gt; newRow;</span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> j=<span class="number">0</span>;j&lt;y_axis;j++)&#123;</span><br><span class="line">        <span class="type">int</span> input;</span><br><span class="line">        cin&gt;&gt;input;</span><br><span class="line">        newRow.<span class="built_in">push_back</span>(input);</span><br><span class="line">    &#125;</span><br><span class="line">    a.<span class="built_in">push_back</span>(newRow);</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+<h1 id="為什麼會這樣"><a href="#為什麼會這樣" class="headerlink" title="為什麼會這樣"></a>為什麼會這樣</h1><p><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/1887097/why-arent-variable-length-arrays-part-of-the-c-standard">這裡給出了解釋</a>，大致是說如果直接宣告的話，第一可能有stack overflow的風險(將stack allocation交由輸入者決定是危險的)，第二則是對於編譯器實作會有額外的負擔，必須在run time才能知道stack要被allocate多少大小</p>
+<p>當然，這也有一定的trade-off，如果我們將資料放在heap中，相比於記憶體地址連續的stack，或多或少會傷害到cache performance(當然還是要看CPU的實作)，且要allocate in stack只要延伸sp指的位置就好，不像<code>new</code>還要跟記憶體互動</p>
+<p>不過，傳統的C99是允許VLA的，現今常見的編譯器(gcc, clang等)都有支援基本的VLA，但要注意的是<em>這不是C++的standard</em>，而是來自於編譯器的extention，將C++的宣告方法轉成C風格、支援VLA的格式</p>
+<h1 id="結論"><a href="#結論" class="headerlink" title="結論"></a>結論</h1><p>如果要用C++寫程式，就善用STL容器吧。</p>
+<p>C++與C對於相同的概念，有不同的實作方式：C++希望設計師使用他們提供的解方(STL)來解決問題；C則更相信程式設計師知道自己在幹嘛(有stack overflow的風險)，但提供自由與看似方便的宣告方法的背後，就是程式莫名崩潰的風險。</p>
+<p>別被C允許VLA的開發方式慣壞了，為了讓程式更安全並兼顧速度，根據使用狀況判斷使用heap還是stack來存放資料是好習慣</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1080,133 +1181,6 @@
 
 
 
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://laxiflora.github.io/2022/08/11/ML-2021-10-1-%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="劉宇承">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="laxiflora的小天地">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | laxiflora的小天地">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/08/11/ML-2021-10-1-%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/" class="post-title-link" itemprop="url">ML_2021_10-1 基本概念</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">發表於</span>
-      
-
-      <time title="創建時間：2022-08-11 15:24:48 / 修改時間：19:32:45" itemprop="dateCreated datePublished" datetime="2022-08-11T15:24:48+08:00">2022-08-11</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>光是正確率高還不夠，若想要讓model放在真實世界運用，還要能防止針對模型的惡意攻擊</p>
-<ul>
-<li>本課一樣是舉圖形分類問題為例</li>
-</ul>
-<h1 id="How-to-attack"><a href="#How-to-attack" class="headerlink" title="How to attack"></a>How to attack</h1><p>我們將原本正常的圖片(Benign image)vector都加上一些小小的值，做成Attacked image，則雖然肉眼看不出來，對機器來說卻很容易造成誤判<br><img src="/../images/20220811_5.png" alt="上圖是雜訊被過度加大的結果，正常是什麼都看不出來的"></p>
-<h1 id="如何找出攻擊的參數"><a href="#如何找出攻擊的參數" class="headerlink" title="如何找出攻擊的參數"></a>如何找出攻擊的參數</h1><p>雜訊並非亂加就好，需要解出一個optimization問題<br>假設原始圖片benign image是$x^0$，則輸出$y^0 &#x3D; f(x^0)$是一個分布</p>
-<p>現在我們想要找到attacked image $\ x^*$，使得他</p>
-<ol>
-<li>與原始$y^0$所屬的類別$\hat{y}$差距越大越好</li>
-<li>與想被誤判的目標類別$y^{target}$越小越好</li>
-<li>與原始圖片$x^0$的差距越小越好（才不會被抓到偷改）</li>
-</ol>
-<p>則我們會需要解出一個最佳化圖片$x^*$使<br>$$<br>x^* &#x3D; arg\ min_{d(x^0,x)\leq \epsilon}\ L(x) \\\<br>L(x) &#x3D; -e(y,\hat{y}) + e(y,y^{target})<br>$$<br>其中e表示cross entropy，L表示loss function，$\epsilon$表示與原圖差距的極限值</p>
-<h2 id="原圖與攻擊圖的差距計算"><a href="#原圖與攻擊圖的差距計算" class="headerlink" title="原圖與攻擊圖的差距計算"></a>原圖與攻擊圖的差距計算</h2><ul>
-<li><p>方便計算，這裡均假設他們是一個vector，則原圖與修改圖之間的差距就是他們的向量相減。</p>
-<ul>
-<li>問題是，如何定義這樣的差值的距離？</li>
-</ul>
-</li>
-<li><p>可以用L2-norm或L-infinity等等算法算距離<br><img src="/../images/20220811_6.png" alt="差值計算方法與L2、L-infinity的公式"></p>
-</li>
-</ul>
-<p>要用哪種norm好呢？<br>舉例，給定一個圖片，進行兩種修改：<br><img src="/../images/20220811_8.png?200x200" alt="右上角的圖片4個色塊都小量更改; 右下圖片只修改一個色塊但修改較多"></p>
-<p>則如果套用L2-norm，則兩種改法的距離差一樣，但是如果套用L-infinity，右下的距離會大幅大於右上</p>
-<p>為了要瞞過人眼，應該是要讓每張圖的pixel都不會看起來變異過多，故此時應該採用L-infinity更符合實際需求。</p>
-<hr>
-<h1 id="Attack-approach"><a href="#Attack-approach" class="headerlink" title="Attack approach"></a>Attack approach</h1><p>要求出$x^*$的步驟</p>
-<ol>
-<li>首先，init parameters，可以直接從$x^0$開始</li>
-<li>For t&#x3D;1 to T，做gradient descend，同訓練模型，此時暫時不考慮上面提到的constraints<br>$$<br>x^t \leftarrow x^{t-w}-\eta g<br>$$</li>
-</ol>
-<p><img src="/../images/20220811_9.png?100x100" alt="g的算法"></p>
-<ol start="3">
-<li>套回剛剛的限制：確認$x^*$與$x^0$差距小於$\epsilon$<br>$$<br>if\ d(x^0,x^t)&gt; \epsilon: \\\<br>\ \ \ x^t \leftarrow fix(x^t)<br>$$</li>
-</ol>
-<p>現今有很多種的attack method，但精神都不脫離現在的範例，不同的地方主要是</p>
-<ul>
-<li>optimization的方法</li>
-<li>Constraints的設計不同</li>
-</ul>
-<hr>
-<h1 id="Fast-Gradient-Sign-Method-FGSM"><a href="#Fast-Gradient-Sign-Method-FGSM" class="headerlink" title="Fast Gradient Sign Method(FGSM)"></a>Fast Gradient Sign Method(FGSM)</h1><ul>
-<li><p><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1412.6572">相關論文</a></p>
-</li>
-<li><p>只更新一次參數</p>
-</li>
-<li><p>g裡面的元素只可能是+1,-1</p>
-<ul>
-<li>一樣做偏微分，但如果結果為正，輸出1，反之輸出-1</li>
-</ul>
-</li>
-<li><p>根據$\epsilon$的不同，$x^1 &#x3D; x^0 - \epsilon g$</p>
-</li>
-<li><p>這麼做可以確保修正後的圖片可以達到限制的$\epsilon$極值的一個角落</p>
-</li>
-<li><p>可以嘗試多跑幾個iteration，但這樣有可能就不小心出界了，還需要套用剛剛的constraint，把出界的x拉回來</p>
-</li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
   <nav class="pagination">
     <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="下一頁"></i></a>
   </nav>
@@ -1220,7 +1194,7 @@
 
 <div class="copyright">
   &copy; 
-  <span itemprop="copyrightYear">2022</span>
+  <span itemprop="copyrightYear">2023</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
