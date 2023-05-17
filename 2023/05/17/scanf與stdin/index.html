@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css" integrity="sha256-xejo6yLi6vGtAjcMIsY8BHdKsLg7QynVlFMzdQgUuy8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"laxiflora.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":true,"version":"8.12.3","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="在一個美好的coding日，你希望可以從stdin中讀取一個數字以及一個字元，於是你寫了下面這段code: 12345678910#include &lt;stdio.h&gt;#include &lt;stdlib.h&gt;int main(void)&amp;#123;    int a&#x3D;0;    char c&#x3D;&amp;#x27;-&amp;#x27;;    scanf(&quot;%d%c&quot;,&amp;a">
+<meta property="og:type" content="article">
+<meta property="og:title" content="scanf與stdin">
+<meta property="og:url" content="https://laxiflora.github.io/2023/05/17/scanf%E8%88%87stdin/index.html">
+<meta property="og:site_name" content="laxiflora的小天地">
+<meta property="og:description" content="在一個美好的coding日，你希望可以從stdin中讀取一個數字以及一個字元，於是你寫了下面這段code: 12345678910#include &lt;stdio.h&gt;#include &lt;stdlib.h&gt;int main(void)&amp;#123;    int a&#x3D;0;    char c&#x3D;&amp;#x27;-&amp;#x27;;    scanf(&quot;%d%c&quot;,&amp;a">
+<meta property="og:locale" content="zh_TW">
+<meta property="article:published_time" content="2023-05-17T12:14:12.000Z">
+<meta property="article:modified_time" content="2023-05-17T13:23:13.620Z">
+<meta property="article:author" content="劉宇承">
+<meta property="article:tag" content="C">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://laxiflora.github.io/2023/05/17/scanf%E8%88%87stdin/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://laxiflora.github.io/2023/05/17/scanf%E8%88%87stdin/","path":"2023/05/17/scanf與stdin/","title":"scanf與stdin"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>scanf與stdin | laxiflora的小天地</title>
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">laxiflora的小天地</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">前進軟體工程師的練功之路</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>標籤</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%99%BC%E7%94%9F%E4%BA%86%E7%94%9A%E9%BA%BC%E4%BA%8B"><span class="nav-number">1.</span> <span class="nav-text">發生了甚麼事</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B9%BE%E7%A8%AE%E5%8F%AF%E8%A1%8C%E7%9A%84%E8%A7%A3%E6%B1%BA%E6%96%B9%E6%B3%95"><span class="nav-number">1.1.</span> <span class="nav-text">幾種可行的解決方法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#scanf%E7%9A%84%E8%A1%8C%E7%82%BA"><span class="nav-number">2.</span> <span class="nav-text">scanf的行為</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#scanf-%E2%80%9C-d%E2%80%9D"><span class="nav-number">2.1.</span> <span class="nav-text">scanf(“%d”)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#scanf-%E2%80%9C-c%E2%80%9D"><span class="nav-number">2.2.</span> <span class="nav-text">scanf(“%c”)</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%B0%8F%E6%B8%AC%E8%A9%A6"><span class="nav-number">3.</span> <span class="nav-text">小測試</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">劉宇承</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">48</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">標籤</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://laxiflora.github.io/2023/05/17/scanf%E8%88%87stdin/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="劉宇承">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="laxiflora的小天地">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="scanf與stdin | laxiflora的小天地">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          scanf與stdin
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+      
+
+      <time title="創建時間：2023-05-17 20:14:12 / 修改時間：21:23:13" itemprop="dateCreated datePublished" datetime="2023-05-17T20:14:12+08:00">2023-05-17</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>在一個美好的coding日，你希望可以從stdin中讀取一個數字以及一個字元，於是你寫了下面這段code:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">void</span>)</span>&#123;</span><br><span class="line">    <span class="type">int</span> a=<span class="number">0</span>;</span><br><span class="line">    <span class="type">char</span> c=<span class="string">&#x27;-&#x27;</span>;</span><br><span class="line">    <span class="built_in">scanf</span>(<span class="string">&quot;%d%c&quot;</span>,&amp;a,&amp;c);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;|%d  %c|&quot;</span>, a, c);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>並輸入了<code>32\nX</code>做為測試(‘\n’代指換行)，卻發現他的輸出不是|32 X|，而是|32 \n|</p>
+<h1 id="發生了甚麼事"><a href="#發生了甚麼事" class="headerlink" title="發生了甚麼事"></a>發生了甚麼事</h1><p>因為scanf(“%c”)在執行期間會「無條件」吃下下一個字元並返回，而scanf(“%d”)也不會將使他中斷讀取的字元移出stream，造成scanf(“%c”)吃到原本要讓%d中斷的字(也就是’\n’)</p>
+<h2 id="幾種可行的解決方法"><a href="#幾種可行的解決方法" class="headerlink" title="幾種可行的解決方法"></a>幾種可行的解決方法</h2><ol>
+<li><p>告訴scanf省略掉下一個垃圾字元再做%c:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">void</span>)</span>&#123;</span><br><span class="line">    <span class="type">int</span> a=<span class="number">0</span>;</span><br><span class="line">    <span class="type">char</span> c=<span class="string">&#x27;-&#x27;</span>;</span><br><span class="line">    <span class="built_in">scanf</span>(<span class="string">&quot;%d %c&quot;</span>,&amp;a,&amp;c);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;|%d  %c|&quot;</span>, a, c);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>用一個空的scanf(“%c”)吸收掉垃圾字元:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">void</span>)</span>&#123;</span><br><span class="line">    <span class="type">int</span> a=<span class="number">0</span>;</span><br><span class="line">    <span class="type">char</span> c=<span class="string">&#x27;-&#x27;</span>;</span><br><span class="line">    <span class="built_in">scanf</span>(<span class="string">&quot;%d&quot;</span>,&amp;a);</span><br><span class="line">    <span class="built_in">scanf</span>(<span class="string">&quot;%c&quot;</span>, &amp;c);</span><br><span class="line">    <span class="built_in">scanf</span>(<span class="string">&quot;%c&quot;</span>, &amp;c);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;|%d  %c|&quot;</span>, a, c);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>用一個空的其他function吸收掉垃圾字元:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">void</span>)</span>&#123;</span><br><span class="line">    <span class="type">int</span> a=<span class="number">0</span>;</span><br><span class="line">    <span class="type">char</span> c=<span class="string">&#x27;-&#x27;</span>;</span><br><span class="line">    <span class="built_in">scanf</span>(<span class="string">&quot;%d&quot;</span>,&amp;a);</span><br><span class="line">    fgetc(<span class="built_in">stdin</span>);</span><br><span class="line">    <span class="built_in">scanf</span>(<span class="string">&quot;%c&quot;</span>, &amp;c);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;|%d  %c|&quot;</span>, a, c);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h1 id="scanf的行為"><a href="#scanf的行為" class="headerlink" title="scanf的行為"></a>scanf的行為</h1><p>scanf在看到不同的<strong>conversion format</strong>，會有不同的反應，而正是這些處理方法的不同導致了奇怪的結果產生。下面分別討論scanf %d跟%c的反應:</p>
+<h2 id="scanf-“-d”"><a href="#scanf-“-d”" class="headerlink" title="scanf(“%d”)"></a>scanf(“%d”)</h2><ul>
+<li><p>在看到%d時，scanf會略過所有的換行&#x2F;空白字元，直至碰到第一個非換行&#x2F;空白字元才開始讀取，並讀取直到碰到下一個非數字字元、換行&#x2F;空白字元並結束，並留下使他結束讀取的那個字元在stream；</p>
+</li>
+<li><p>如果碰到的第一個非換行&#x2F;空白字元不是數字(範例2)，scanf函數**會整個結束掉(包括後續的讀取)**，且不會設置errno(perror出來是Success)</p>
+</li>
+<li><p><strong>範例1</strong> :現在input stream裡面有<code>&quot;\n\n 32X \n&quot;</code>，則scanf(“%d”)以後他會讀取到32這個數字，input stream剩下<code>&quot;X \n&quot;</code> (前面的”\n\n”被無視且吃掉了)</p>
+</li>
+<li><p><strong>範例2</strong> :現在input stream裡面有<code>&quot;\n XD\n \n&quot;</code>，則scanf(“%d%c”)以後他會在讀到’X’的時候發生錯誤，直接結束整行的scanf(%c也會因此讀不到東西)，此時的input stream剩下<code>&quot;XD\n \n&quot;</code></p>
+</li>
+</ul>
+<h2 id="scanf-“-c”"><a href="#scanf-“-c”" class="headerlink" title="scanf(“%c”)"></a>scanf(“%c”)</h2><ul>
+<li><p>在看到%c時，scanf會「無條件」吃下下一個位元並返回(不管是’ ‘還是’\n’或是’\r\n’)</p>
+</li>
+<li><p>常常是吃到垃圾字的受害者</p>
+</li>
+</ul>
+<h1 id="小測試"><a href="#小測試" class="headerlink" title="小測試"></a>小測試</h1><ul>
+<li>如果我們輸入”32X\n”，在一開始的程式碼也會成功喔!</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/C/" rel="tag"># C</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/04/29/%E6%B7%BA%E8%AB%87c-c-%E7%9A%84VLA/" rel="prev" title="淺談c/c++的VLA">
+                  <i class="fa fa-chevron-left"></i> 淺談c/c++的VLA
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">劉宇承</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>

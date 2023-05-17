@@ -125,7 +125,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">47</span>
+          <span class="site-state-item-count">48</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
@@ -160,6 +160,205 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://laxiflora.github.io/2022/08/11/ML-2021-10-2-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%83%BD%E5%90%A6%E8%BA%B2%E9%81%8E%E4%BA%BA%E9%A1%9E%E6%B7%B1%E4%B8%8D%E8%A6%8B%E5%BA%95%E7%9A%84%E6%83%A1%E6%84%8F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="劉宇承">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="laxiflora的小天地">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | laxiflora的小天地">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2022/08/11/ML-2021-10-2-%E9%A1%9E%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%E8%83%BD%E5%90%A6%E8%BA%B2%E9%81%8E%E4%BA%BA%E9%A1%9E%E6%B7%B1%E4%B8%8D%E8%A6%8B%E5%BA%95%E7%9A%84%E6%83%A1%E6%84%8F/" class="post-title-link" itemprop="url">ML_2021_10-2 類神經網路能否躲過人類深不見底的惡意?</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2022-08-11 16:26:19" itemprop="dateCreated datePublished" datetime="2022-08-11T16:26:19+08:00">2022-08-11</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新於</span>
+      <time title="修改時間：2022-08-15 02:00:01" itemprop="dateModified" datetime="2022-08-15T02:00:01+08:00">2022-08-15</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>在前面的攻擊，是假設我們知道模型的weights，這類攻擊稱為White box attack</p>
+<p>白箱攻擊非常簡單，盡量不要暴露parameters</p>
+<p>下面課程前半部以圖片辨識為例介紹</p>
+<h1 id="Black-box-attack"><a href="#Black-box-attack" class="headerlink" title="Black box attack"></a>Black box attack</h1><h2 id="1-Proxy-network"><a href="#1-Proxy-network" class="headerlink" title="1. Proxy network"></a>1. Proxy network</h2><h3 id="a-原理"><a href="#a-原理" class="headerlink" title="a. 原理"></a>a. 原理</h3><p>我們雖然不知道想攻擊的模型的參數，但我們可以透過用同樣一批訓練資料，練出一個自己的網路。當我們能透過白箱攻擊讓Proxy network出現漏洞，則我們也有可能可以用同樣的方式讓想攻擊的network淪陷</p>
+<h3 id="b-若無訓練資料"><a href="#b-若無訓練資料" class="headerlink" title="b. 若無訓練資料"></a>b. 若無訓練資料</h3><p>如果沒有訓練資料，也可以透過自己準備一批資料，餵給想攻擊的模型，讓他吐出一堆輸出，把輸入與輸出綁成成對資料，再拿去訓練自己的proxy network</p>
+<p><img src="/../images/20220814_1.png" alt="上圖是用不同網路去攻擊各網路的accuracy，對角線因為是為白箱攻擊，所以不計入(能破proxy必能破attacked)"></p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://arxiv.org/pdf/1611.02770">上圖來源(相關論文)</a></li>
+</ul>
+<h3 id="c-Advanced-technique-Ensemble-attack"><a href="#c-Advanced-technique-Ensemble-attack" class="headerlink" title="c. Advanced technique: Ensemble attack"></a>c. Advanced technique: Ensemble attack</h3><ul>
+<li>透過使用Ensemble model有效提高攻擊的強度</li>
+</ul>
+<p><img src="/../images/20220814_2.png"><br>上圖縱列是指拿掉甚麼network，橫列則是被攻擊的network，如「-ResNet-152」那列就是結合除了ResNet-152以外的4個network所訓練出來的proxy network對各網路的攻擊結果；其中非對角線部分因為已在proxy network被訓練過，均視為白箱攻擊，不計入(0%)</p>
+<h1 id="為何黑箱攻擊如此容易成功"><a href="#為何黑箱攻擊如此容易成功" class="headerlink" title="為何黑箱攻擊如此容易成功?"></a>為何黑箱攻擊如此容易成功?</h1><ul>
+<li><strong>至今仍然還沒有確定性的答案</strong></li>
+<li>多數人相信是因為模型之間存在著相似性，如下圖<br><img src="/../images/20220814.png"></li>
+</ul>
+<p>圖片為一個高維向量，圖片的值是為原點，圖片的橫軸為可以讓攻擊成功的維度變化量，縱軸則為其他維度的偏移量。</p>
+<p>可以發現，能在VGG-16攻擊成功的維度偏移方向，與其餘4種network均很相近。也就是說，能找到在VGG-16攻擊成功的圖片偏移方向與大小，在其他network上均大同小異。</p>
+<ul>
+<li><p><a target="_blank" rel="noopener" href="https://arxiv.org/pdf/1611.02770.pdf">論文來源</a></p>
+</li>
+<li><p>目前有一群人認為：或許Adversarial attack會成功，不是因為模型的問題，而是資料本身的特徵真的就是長那樣 $\rightarrow$ 或許資料量更大就能避免</p>
+</li>
+</ul>
+<h1 id="One-pixel-attack"><a href="#One-pixel-attack" class="headerlink" title="One pixel attack"></a>One pixel attack</h1><p>只動圖片裡的1 pixel就達成攻擊目的</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1710.08864">來源論文</a></li>
+<li>目前效果有限</li>
+</ul>
+<h1 id="Universal-Adversarial-Attack"><a href="#Universal-Adversarial-Attack" class="headerlink" title="Universal Adversarial Attack"></a>Universal Adversarial Attack</h1><ul>
+<li>針對一個network的全方位攻擊方式</li>
+</ul>
+<p>針對不同的圖片輸入，客製化出一個攻擊方式</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1610.08401">來源論文</a></li>
+</ul>
+<h1 id="Adversarial-reprogramming"><a href="#Adversarial-reprogramming" class="headerlink" title="Adversarial reprogramming"></a>Adversarial reprogramming</h1><p>有點像殭屍寄生，讓原本的model輸出非他原本訓練想要的結果<br><img src="/../images/20220815_7.png" alt="upload successful"></p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1806.11146">來源論文</a></li>
+</ul>
+<h1 id="Backdoor-in-model"><a href="#Backdoor-in-model" class="headerlink" title="Backdoor in model"></a>Backdoor in model</h1><ul>
+<li>在訓練階段就展開攻擊</li>
+<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1804.00792">來源論文</a></li>
+<li>在訓練資料就放入attacked image，讓模型練完以後看似正常，卻只對單一類型圖片會出現問題，如同後門</li>
+</ul>
+<p>$rightarrow$ 若這樣的技術成熟，公開資料集將會變得不安全</p>
+<hr>
+<h1 id="其他領域的攻擊應用"><a href="#其他領域的攻擊應用" class="headerlink" title="其他領域的攻擊應用"></a>其他領域的攻擊應用</h1><h2 id="1-Speech-processing"><a href="#1-Speech-processing" class="headerlink" title="1. Speech processing"></a>1. Speech processing</h2><ul>
+<li>Detect synthesized speech：抓出合成的聲音訊號</li>
+</ul>
+<p>攻擊者刻意在合成音裡面加入雜訊，讓機器以為那是原聲</p>
+<h2 id="2-NLP"><a href="#2-NLP" class="headerlink" title="2. NLP"></a>2. NLP</h2><p>文字輸入，進行機器QA</p>
+<p>刻意在文字中加入雜訊，讓機器搞錯重點</p>
+<ul>
+<li>範例：(<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1908.07125">https://arxiv.org/abs/1908.07125</a>)</li>
+</ul>
+<h2 id="3-人臉辨識：真實世界攻擊"><a href="#3-人臉辨識：真實世界攻擊" class="headerlink" title="3. 人臉辨識：真實世界攻擊"></a>3. 人臉辨識：真實世界攻擊</h2><ul>
+<li>既然能在虛擬世界中對圖片加工造成機器判別錯誤，當然也有可能在現實世界中對人臉加裝配件對機器造成攻擊</li>
+</ul>
+<p><a target="_blank" rel="noopener" href="https://www.cs.cmu.edu/~sbhagava/papers/face-rec-ccs16.pdf">來源論文</a><br><img src="/../images/20220815_5.png"></p>
+<ul>
+<li>現實世界需要考慮諸多因素<ul>
+<li>攝影角度 $\rightarrow$ universal attack(?<br>    - 解析度問題<br>    - 眼鏡印製的色差問題</li>
+</ul>
+</li>
+</ul>
+<p>除此以外，也有針對交通號誌的攻擊，讓自駕車變得困難<br><img src="/../images/20220815_6.png"></p>
+<hr>
+<h1 id="Defence"><a href="#Defence" class="headerlink" title="Defence"></a>Defence</h1><ul>
+<li>防禦分為兩種<ul>
+<li>主動防禦</li>
+<li>被動防禦</li>
+</ul>
+</li>
+</ul>
+<h2 id="1-被動防禦"><a href="#1-被動防禦" class="headerlink" title="1. 被動防禦"></a>1. 被動防禦</h2><ul>
+<li><p>network不動，在圖片丟入之前放一個Filter，來隔絕雜訊</p>
+</li>
+<li><p>一種簡單的做法是刻意把圖片模糊化，讓原本可以讓攻擊成功的維度偏移量改變</p>
+<ul>
+<li>但同時也會降低原始正常圖片的辨識度</li>
+</ul>
+</li>
+</ul>
+<h3 id="a-更多作法"><a href="#a-更多作法" class="headerlink" title="a. 更多作法"></a>a. 更多作法</h3><ul>
+<li><p>圖片壓縮(刻意失真)</p>
+</li>
+<li><p>讓Generator重新把input image重新畫一遍</p>
+<ul>
+<li>是有方法讓Generator產生一樣東西的，但因為generator沒看過雜訊，會產生不出來<br>    - <a target="_blank" rel="noopener" href="https://arxiv.org/abs/1805.06605">相關文獻</a></li>
+</ul>
+</li>
+<li><p>被動防禦(模糊化)也可以視為在network前面加入一層，所以一旦被知道以後，防禦力將會大減 $\rightarrow$ 隨機化</p>
+</li>
+</ul>
+<h3 id="b-Randomization"><a href="#b-Randomization" class="headerlink" title="b. Randomization"></a>b. Randomization</h3><ul>
+<li>把圖片隨機resize,padded一些背景之後再丟入network</li>
+</ul>
+<p><img src="/../images/20220814_8.png" alt="upload successful"></p>
+<ul>
+<li><p><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1711.01991">相關文獻</a></p>
+</li>
+<li><p>仍然有可能被攻破，抓出所有可能以後用universal attack</p>
+</li>
+</ul>
+<h2 id="2-主動防禦"><a href="#2-主動防禦" class="headerlink" title="2. 主動防禦"></a>2. 主動防禦</h2><h3 id="a-Adversarial-training"><a href="#a-Adversarial-training" class="headerlink" title="a. Adversarial training"></a>a. Adversarial training</h3><ul>
+<li><p>在訓練階段就讓模型被攻擊</p>
+</li>
+<li><p>把原始圖片做成attacked image後標上正確label以後再丟入model</p>
+</li>
+<li><p>某種程度上就是data augmentation (有洞就補洞)</p>
+<ul>
+<li>就算不會被攻擊，也會有人用這樣的方式來強化model(降低overfitting可能性)</li>
+</ul>
+</li>
+<li><p>訓練過程需要大量訓練資源，且如果碰到沒補過洞的attack algorithm，依然會被攻破</p>
+</li>
+<li><p>有方法是不需額外計算的情況下做到adversarial training</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1904.12843">相關文獻</a></li>
+</ul>
+</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1359,152 +1558,6 @@
 </ul>
 </li>
 </ul>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://laxiflora.github.io/2022/08/03/ML-2021-X-3-BERT%E7%9A%84%E5%A5%87%E8%81%9E%E8%BB%BC%E4%BA%8B/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="劉宇承">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="laxiflora的小天地">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | laxiflora的小天地">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/08/03/ML-2021-X-3-BERT%E7%9A%84%E5%A5%87%E8%81%9E%E8%BB%BC%E4%BA%8B/" class="post-title-link" itemprop="url">ML_2021_X-3 BERT的奇聞軼事</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">發表於</span>
-
-      <time title="創建時間：2022-08-03 01:33:10" itemprop="dateCreated datePublished" datetime="2022-08-03T01:33:10+08:00">2022-08-03</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新於</span>
-      <time title="修改時間：2022-08-08 22:00:39" itemprop="dateModified" datetime="2022-08-08T22:00:39+08:00">2022-08-08</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <ul>
-<li><p>明明只學填空，為何BERT有用?</p>
-</li>
-<li><p>you shall know a word by the company it keeps</p>
-</li>
-<li><p>詞向量並非是BERT為祖先</p>
-<ul>
-<li>BERT(contextualized word embedding) 、 CBOW(word embedding)</li>
-</ul>
-</li>
-<li><p>BERT會把各個詞彙變成一個詞向量，詞義越相近的詞彙，則他們的向量相似度會更像<br><img src="/../images/20220803_4.png"></p>
-</li>
-</ul>
-<hr>
-<h1 id="BERT是否真的看得懂文章？"><a href="#BERT是否真的看得懂文章？" class="headerlink" title="BERT是否真的看得懂文章？"></a>BERT是否真的看得懂文章？</h1><ul>
-<li><p>基於語言學假設，知道詞彙的意思要看他的前後文</p>
-</li>
-<li><p>但BERT真的只拿詞彙的前後文當判別依據嗎？</p>
-<ul>
-<li>拿BERT做DNA分類</li>
-</ul>
-</li>
-<li><p>把DNA序列(A,T,C,G)變成好幾個英文詞彙(隨機對)然後直接丟入BERT 做fine-tune training</p>
-<ul>
-<li>BERT pretrained by English</li>
-<li>ex. ATTACG -&gt; He She She He It Us</li>
-</ul>
-</li>
-<li><p>出乎意料的用有pretrain的BERT命中率比直接用隨機參數的transformer encoder模型還高 (<a target="_blank" rel="noopener" href="https://arxiv.org/abs/2103.07162">Reference</a>)</p>
-<ul>
-<li>這個實驗可以發現就算這整串文章毫無邏輯，BERT也可以表現的比完全隨機還好，表示機器就算看不懂文章，也學到了某些東西<br>    - 關於BERT學習過程仍待研究</li>
-</ul>
-</li>
-</ul>
-<p>    <br>關於BERT的研究(變形)</p>
-<ul>
-<li><a target="_blank" rel="noopener" href="https://youtu.be/1_gRK9EIQpc">BERT(上)</a></li>
-<li><a target="_blank" rel="noopener" href="https://youtu.be/Bywo7m6ySlk">BERT(下)</a></li>
-</ul>
-<hr>
-<h1 id="Multi-lingual-BERT"><a href="#Multi-lingual-BERT" class="headerlink" title="Multi-lingual BERT"></a>Multi-lingual BERT</h1><p> <b><em>Train BERT with different languages</em></b></p>
-<ul>
-<li><p>用多國語言訓練(pretrain)BERT，就可以解中文的資料集</p>
-<ul>
-<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1909.09587">相關論文實驗</a></li>
-<li>多語言BERT模型的表現是最好的</li>
-</ul>
-</li>
-<li><p>或許對於不同語言之間差異不大? (仍有待研究)</p>
-<ul>
-<li>ex. 兔跟rabbit相近、游跟swim相近</li>
-</ul>
-</li>
-</ul>
-<p> 老師的lab一開始也是嘗試train自己的multi-lingual BERT以查清BERT學習的方法</p>
-<ul>
-<li>實驗結果顯示multi-lingual BERT需要的dataset很大<br><img src="/../images/20220803_1.png"><br><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2010.10938">Reference</a></li>
-</ul>
-<hr>
-<ul>
-<li>但是既然語言特性並非BERT的學習重點，為何不會輸入中文，吐出日文?<ul>
-<li>表示BERT還是會注意語言之間的差異</li>
-<li>那如果抵銷掉語言之間的差異呢？</li>
-</ul>
-</li>
-</ul>
-<p>    <br>   <br><img src="/../images/20220803_2.png"></p>
-<ul>
-<li>老師的lab實際把英文丟入BERT模型內，再加上一個向量，這個向量是英文與中文詞向量平均之間的差距，可以得出輸入英文，輸出中文的填空結果</li>
-</ul>
-<p><img src="/../images/20220803_3.png"></p>
 
       
     </div>

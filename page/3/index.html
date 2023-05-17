@@ -125,7 +125,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">47</span>
+          <span class="site-state-item-count">48</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
@@ -160,6 +160,152 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://laxiflora.github.io/2022/08/03/ML-2021-X-3-BERT%E7%9A%84%E5%A5%87%E8%81%9E%E8%BB%BC%E4%BA%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="劉宇承">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="laxiflora的小天地">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | laxiflora的小天地">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2022/08/03/ML-2021-X-3-BERT%E7%9A%84%E5%A5%87%E8%81%9E%E8%BB%BC%E4%BA%8B/" class="post-title-link" itemprop="url">ML_2021_X-3 BERT的奇聞軼事</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2022-08-03 01:33:10" itemprop="dateCreated datePublished" datetime="2022-08-03T01:33:10+08:00">2022-08-03</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新於</span>
+      <time title="修改時間：2022-08-08 22:00:39" itemprop="dateModified" datetime="2022-08-08T22:00:39+08:00">2022-08-08</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <ul>
+<li><p>明明只學填空，為何BERT有用?</p>
+</li>
+<li><p>you shall know a word by the company it keeps</p>
+</li>
+<li><p>詞向量並非是BERT為祖先</p>
+<ul>
+<li>BERT(contextualized word embedding) 、 CBOW(word embedding)</li>
+</ul>
+</li>
+<li><p>BERT會把各個詞彙變成一個詞向量，詞義越相近的詞彙，則他們的向量相似度會更像<br><img src="/../images/20220803_4.png"></p>
+</li>
+</ul>
+<hr>
+<h1 id="BERT是否真的看得懂文章？"><a href="#BERT是否真的看得懂文章？" class="headerlink" title="BERT是否真的看得懂文章？"></a>BERT是否真的看得懂文章？</h1><ul>
+<li><p>基於語言學假設，知道詞彙的意思要看他的前後文</p>
+</li>
+<li><p>但BERT真的只拿詞彙的前後文當判別依據嗎？</p>
+<ul>
+<li>拿BERT做DNA分類</li>
+</ul>
+</li>
+<li><p>把DNA序列(A,T,C,G)變成好幾個英文詞彙(隨機對)然後直接丟入BERT 做fine-tune training</p>
+<ul>
+<li>BERT pretrained by English</li>
+<li>ex. ATTACG -&gt; He She She He It Us</li>
+</ul>
+</li>
+<li><p>出乎意料的用有pretrain的BERT命中率比直接用隨機參數的transformer encoder模型還高 (<a target="_blank" rel="noopener" href="https://arxiv.org/abs/2103.07162">Reference</a>)</p>
+<ul>
+<li>這個實驗可以發現就算這整串文章毫無邏輯，BERT也可以表現的比完全隨機還好，表示機器就算看不懂文章，也學到了某些東西<br>    - 關於BERT學習過程仍待研究</li>
+</ul>
+</li>
+</ul>
+<p>    <br>關於BERT的研究(變形)</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://youtu.be/1_gRK9EIQpc">BERT(上)</a></li>
+<li><a target="_blank" rel="noopener" href="https://youtu.be/Bywo7m6ySlk">BERT(下)</a></li>
+</ul>
+<hr>
+<h1 id="Multi-lingual-BERT"><a href="#Multi-lingual-BERT" class="headerlink" title="Multi-lingual BERT"></a>Multi-lingual BERT</h1><p> <b><em>Train BERT with different languages</em></b></p>
+<ul>
+<li><p>用多國語言訓練(pretrain)BERT，就可以解中文的資料集</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1909.09587">相關論文實驗</a></li>
+<li>多語言BERT模型的表現是最好的</li>
+</ul>
+</li>
+<li><p>或許對於不同語言之間差異不大? (仍有待研究)</p>
+<ul>
+<li>ex. 兔跟rabbit相近、游跟swim相近</li>
+</ul>
+</li>
+</ul>
+<p> 老師的lab一開始也是嘗試train自己的multi-lingual BERT以查清BERT學習的方法</p>
+<ul>
+<li>實驗結果顯示multi-lingual BERT需要的dataset很大<br><img src="/../images/20220803_1.png"><br><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2010.10938">Reference</a></li>
+</ul>
+<hr>
+<ul>
+<li>但是既然語言特性並非BERT的學習重點，為何不會輸入中文，吐出日文?<ul>
+<li>表示BERT還是會注意語言之間的差異</li>
+<li>那如果抵銷掉語言之間的差異呢？</li>
+</ul>
+</li>
+</ul>
+<p>    <br>   <br><img src="/../images/20220803_2.png"></p>
+<ul>
+<li>老師的lab實際把英文丟入BERT模型內，再加上一個向量，這個向量是英文與中文詞向量平均之間的差距，可以得出輸入英文，輸出中文的填空結果</li>
+</ul>
+<p><img src="/../images/20220803_3.png"></p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1737,161 +1883,6 @@
 <li>k,v向量可以因此映射到kxd維，因為k為hyper-parameter，複雜度可降至 $O(nk)$</li>
 <li>範例：linformer</li>
 <li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2006.04768">相關論文</a></li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://laxiflora.github.io/2022/07/13/ML-2021-4-2-%E8%87%AA%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%A9%9F%E5%88%B6%EF%BC%88%E4%B8%8B%EF%BC%89/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="劉宇承">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="laxiflora的小天地">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | laxiflora的小天地">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/07/13/ML-2021-4-2-%E8%87%AA%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%A9%9F%E5%88%B6%EF%BC%88%E4%B8%8B%EF%BC%89/" class="post-title-link" itemprop="url">ML_2021_4-2 自注意力機制（下）</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">發表於</span>
-
-      <time title="創建時間：2022-07-13 16:30:46" itemprop="dateCreated datePublished" datetime="2022-07-13T16:30:46+08:00">2022-07-13</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新於</span>
-      <time title="修改時間：2022-08-08 20:10:07" itemprop="dateModified" datetime="2022-08-08T20:10:07+08:00">2022-08-08</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <ul>
-<li>延續上篇的內容，b其實可以水平同時計算</li>
-</ul>
-<h2 id="線性代數的角度理解"><a href="#線性代數的角度理解" class="headerlink" title="線性代數的角度理解"></a>線性代數的角度理解</h2><p><img src="/../images/pasted-18.png"></p>
-<p><img src="/../images/pasted-19.png"><br>把它延展到$\alpha_{4,4}$</p>
-<p><img src="/../images/20220713_7.png"></p>
-<ul>
-<li>之後再對A做softmax(或其他激發函數)得到A’</li>
-</ul>
-<p><img src="/../images/20220713_8.png"></p>
-<h3 id="總圖"><a href="#總圖" class="headerlink" title="總圖"></a>總圖</h3><p><img src="/../images/20220713_9.png"></p>
-<ul>
-<li>上圖中只有$W^{q,k,v}$training data訓練</li>
-</ul>
-<h2 id="Multi-head-self-attention"><a href="#Multi-head-self-attention" class="headerlink" title="Multi-head self-attention"></a>Multi-head self-attention</h2><ul>
-<li>可以把q,k,v產生多個<br><img src="/../images/pasted-20.png"></li>
-</ul>
-<h2 id="Positional-encoding"><a href="#Positional-encoding" class="headerlink" title="Positional encoding"></a>Positional encoding</h2><ul>
-<li>每一個vector出現在sequence的不同位置可能會有不同的意義</li>
-<li>前述之計算並無考慮到相對位置，大家算法都一樣，也都有全部平等的計算</li>
-<li>為每一個位置設置一個vector $e^i$，再把這個vector加上$a^i$</li>
-<li>$e^i$可以透過某個function產生，也可能是hand-crafted</li>
-<li>或也可以是learn by data</li>
-<li>仍然是尚待研究的主題</li>
-</ul>
-<h2 id="Self-attention應用"><a href="#Self-attention應用" class="headerlink" title="Self-attention應用"></a>Self-attention應用</h2><ul>
-<li>Bert（NLP）</li>
-<li>transformer</li>
-</ul>
-<h2 id="Truncated-self-attention"><a href="#Truncated-self-attention" class="headerlink" title="Truncated self-attention"></a>Truncated self-attention</h2><ul>
-<li>當sequence很大，我們的attention matrix會非常大</li>
-<li>一次訓練的時候不要看所有sequence，看某一段就好</li>
-</ul>
-<h2 id="Self-attention-for-image"><a href="#Self-attention-for-image" class="headerlink" title="Self-attention for image"></a>Self-attention for image</h2><ul>
-<li>相片也可以看作是一個vector set，ex. 給定一個5x10 pixel的彩色圖片<ul>
-<li>把channel當作一個vector(RGB)</li>
-<li>則一張圖片是一個5x10的vector set</li>
-</ul>
-</li>
-<li>Self-attention GAN</li>
-<li>DETR</li>
-</ul>
-<h3 id="Self-attention-v-s-CNN"><a href="#Self-attention-v-s-CNN" class="headerlink" title="Self-attention v.s CNN"></a>Self-attention v.s CNN</h3><ul>
-<li>CNN會考慮receptive field</li>
-<li>self-attention則是會考慮整張圖（整個vector set的vector）<br><img src="/../images/20220713_10.png"></li>
-<li>self-attention可以說是複雜版、更自由的ＣＮＮ</li>
-<li>receptive field變成可學習、控制的大小(truncated self attention)<ul>
-<li>Ref. CNN章節<br><img src="/../images/20220713_11.png"></li>
-</ul>
-</li>
-<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1911.93584">這篇論文</a>用嚴謹的數學證明CNN $\subset$ self-attention</li>
-<li>Ref.一開始的章節，我們知道更flexible的模型需要更多training data<br><img src="/../images/20220713_12.png"></li>
-</ul>
-<h3 id="Self-attention-v-s-RNN"><a href="#Self-attention-v-s-RNN" class="headerlink" title="Self-attention v.s RNN"></a>Self-attention v.s RNN</h3><ul>
-<li>RNN不再講到，因為self-attention大多可取代</li>
-<li>RNN也是處理input是sequence的情況<ul>
-<li>第一個vector做RNN，輸出丟FC，產生輸出，也加入第二個vector丟入RNN…<br><img src="/../images/pasted-22.png"></li>
-</ul>
-</li>
-<li>RNN不可以平行處理，self-attention可以</li>
-<li>RNN難以考慮全面（左右更好），self-attention則可以（天涯若壁鄰）</li>
-<li>Self-attention加上一些東西以後，其實也能變成RNN(<a target="_blank" rel="noopener" href="https://arxiv.org/abs/2006.16236">ref.</a>)</li>
-</ul>
-<h3 id="Self-attention-for-graph"><a href="#Self-attention-for-graph" class="headerlink" title="Self-attention for graph"></a>Self-attention for graph</h3><ul>
-<li>因為edge，所以我們知道哪兩個節點之間會有關聯性</li>
-<li>Attention matrix可以只計算有相連的部分就好<br><img src="/../images/20220713_14.png"></li>
-<li>這算是一種Graph neural network (GNN)</li>
-</ul>
-<h4 id="GNN-REF"><a href="#GNN-REF" class="headerlink" title="GNN REF."></a>GNN REF.</h4><p><a target="_blank" rel="noopener" href="https://youtu.be/eybCCtNKwzA">影片1</a></p>
-<p><a target="_blank" rel="noopener" href="https://youtu.be/M9ht8vsVEw8">影片2</a></p>
-<h2 id="結論"><a href="#結論" class="headerlink" title="結論"></a>結論</h2><ul>
-<li>Self-attention有很多種變形</li>
-<li>他的缺點是計算量過大(廣義版CNN…汗)</li>
-<li>self-attention最早用於transformer<ul>
-<li>有時候叫transformer其實就是指self-attention</li>
-</ul>
-</li>
-<li>performance跟speed的平衡</li>
-<li>介紹各式各樣的transformers的變形：<a target="_blank" rel="noopener" href="https://arxiv.org/abs/2009.06732">Efficient Transformers: A survey</a><br><img src="/../images/20220713_15.png"></li>
 </ul>
 
       
